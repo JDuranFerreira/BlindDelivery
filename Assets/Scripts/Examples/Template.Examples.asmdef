@@ -1,0 +1,20 @@
+{
+    "name": "Template.Examples",
+    "rootNamespace": "Template.Examples",
+    "references": [
+        "Template.Core",
+        "Template.Services",
+        "Template.Gameplay",
+        "UnityEngine.UI",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

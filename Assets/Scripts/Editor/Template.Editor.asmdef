@@ -1,0 +1,20 @@
+{
+    "name": "Template.Editor",
+    "rootNamespace": "Template.Editor",
+    "references": [
+        "Template.Core",
+        "Template.Services",
+        "Template.Gameplay"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

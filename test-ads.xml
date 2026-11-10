@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Unity_Mobile_Template" tests="7" failures="2" errors="0" skipped="0" time="0.089">
+  <testsuite name="Template.Tests.EditMode.AdServiceTests" tests="7" failures="2" errors="0" skipped="0" time="0.089">
+    <testcase name="InterstitialCooldown_BlocksSecondInsideInterval_AllowsAfter" classname="Template.Tests.EditMode.AdServiceTests" time="0.050">
+      <system-out>[ADDONE] built fixture=-159059722 bus=1161764280 svc=-1306632304
+[ADEV] start on fake-test-holder-bus -159059722
+[ADEV] start on fake-test-holder-bus -159059722</system-out>
+    </testcase>
+    <testcase name="InterstitialMaxPerSession_BlocksRegardlessOfCooldown" classname="Template.Tests.EditMode.AdServiceTests" time="0.003">
+      <system-out>[ADDONE] built fixture=-159059722 bus=-1036234968 svc=-1658988012
+[ADEV] start on fake-test-holder-bus -159059722</system-out>
+    </testcase>
+    <testcase name="NoFill_IsGracefulResult_NotAnError" classname="Template.Tests.EditMode.AdServiceTests" time="0.016">
+      <failure message="Expected: 0&#13;&#10;  But was:  3" type="Failed">at Template.Tests.EditMode.AdServiceTests.NoFill_IsGracefulResult_NotAnError () [0x0009a] in C:\AIAccess\Projects\Unity_Mobile_Template\Assets\Tests\EditMode\AdServiceTests.cs:68</failure>
+      <system-out>[ADDONE] built fixture=-159059722 bus=-783544816 svc=-222885660
+[ADDBG] NoFill after init started=3 bus=-783544816
+[ADDBG] NoFill after shows started=3</system-out>
+    </testcase>
+    <testcase name="RemoveAds_PersistsImmediately_SurvivesFreshService_AndBlocksInterstitials" classname="Template.Tests.EditMode.AdServiceTests" time="0.006">
+      <system-out>[ADDONE] built fixture=-159059722 bus=-883210372 svc=-118595108</system-out>
+    </testcase>
+    <testcase name="RestoredRemoveAds_AppliesSilently_AndBlocksBanners" classname="Template.Tests.EditMode.AdServiceTests" time="0.005">
+      <system-out>[ADDONE] built fixture=-159059722 bus=872610796 svc=247100360</system-out>
+    </testcase>
+    <testcase name="RewardedNotShown_CallbackStillFires_WithNoReward" classname="Template.Tests.EditMode.AdServiceTests" time="0.004">
+      <system-out>[ADDONE] built fixture=-159059722 bus=1012295632 svc=1426580560
+[ADEV] start on fake-test-holder-bus -159059722</system-out>
+    </testcase>
+    <testcase name="RewardedShow_DucksAudio_PublishesFacts_AndGrantsRewardOnlyViaCallback" classname="Template.Tests.EditMode.AdServiceTests" time="0.004">
+      <failure message="Expected: 1&#13;&#10;  But was:  5" type="Failed">at Template.Tests.EditMode.AdServiceTests.RewardedShow_DucksAudio_PublishesFacts_AndGrantsRewardOnlyViaCallback () [0x000f2] in C:\AIAccess\Projects\Unity_Mobile_Template\Assets\Tests\EditMode\AdServiceTests.cs:87</failure>
+      <system-out>[ADDONE] built fixture=-159059722 bus=1025635392 svc=-1418944624
+[ADEV] start on fake-test-holder-bus -159059722
+Saving results to: C:\Users\Jose\AppData\Local\Temp\unity-test-2kckq1l3.j30\results.xml</system-out>
+    </testcase>
+  </testsuite>
+</testsuites>

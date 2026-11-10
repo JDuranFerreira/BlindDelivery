@@ -1,0 +1,17 @@
+{
+    "name": "Template.Gameplay",
+    "rootNamespace": "Template.Gameplay",
+    "references": [
+        "Template.Core",
+        "Template.Services"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

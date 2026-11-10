@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Unity_Mobile_Template" tests="1" failures="0" errors="0" skipped="0" time="0.053">
+  <testsuite name="Template.Tests.EditMode.AdServiceTests" tests="1" failures="0" errors="0" skipped="0" time="0.053">
+    <testcase name="NoFill_IsGracefulResult_NotAnError" classname="Template.Tests.EditMode.AdServiceTests" time="0.053">
+      <system-out>Saving results to: C:\Users\Jose\AppData\Local\Temp\unity-test-4nb5cp44.i33\results.xml</system-out>
+    </testcase>
+  </testsuite>
+</testsuites>
