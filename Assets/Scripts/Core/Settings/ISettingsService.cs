@@ -1,8 +1,8 @@
-using System.Threading;
+﻿using System.Threading;
 
-namespace Template.Core.Settings
+namespace BlindDelivery.Core.Settings
 {
-    /// <summary>Which setting a <see cref="Template.Core.Events.SettingsChanged"/> refers to.</summary>
+    /// <summary>Which setting a <see cref="BlindDelivery.Core.Events.SettingsChanged"/> refers to.</summary>
     public enum SettingsKey
     {
         MusicVolume,
@@ -18,7 +18,7 @@ namespace Template.Core.Settings
     /// <summary>
     /// The player's taste, kept apart from save data (architecture note, M2: PlayerPrefs for
     /// settings only). Typed properties so no string keys leak into callers; setters persist
-    /// immediately and publish one <c>SettingsChanged</c> on the bus — subsystems apply what
+    /// immediately and publish one <c>SettingsChanged</c> on the bus â€” subsystems apply what
     /// they own when they see it (audio on the volumes, framerate here, vibration in gameplay).
     /// Runtime application (target frame rate, quality level) happens at initialization, so
     /// settings are live before the first scene, no reload needed.
@@ -48,3 +48,4 @@ namespace Template.Core.Settings
         int TargetFrameRate { get; set; }
     }
 }
+

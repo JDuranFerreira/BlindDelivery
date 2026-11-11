@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Save
+namespace BlindDelivery.Core.Save
 {
     /// <summary>Validates document keys. Keys become file names, so path punctuation is rejected.</summary>
     public static class SaveKey

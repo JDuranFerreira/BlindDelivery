@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using Template.Core.Audio;
-using Template.Core.Purchases;
+﻿using System.Collections.Generic;
+using BlindDelivery.Core.Audio;
+using BlindDelivery.Core.Purchases;
 
-namespace Template.Tests.EditMode.Fakes
+namespace BlindDelivery.Tests.EditMode.Fakes
 {
     /// <summary>Records every duck instruction the ad service issues around full-screen shows.</summary>
     public sealed class FakeAudioService : IAudioService
@@ -55,3 +55,4 @@ namespace Template.Tests.EditMode.Fakes
         }
     }
 }
+

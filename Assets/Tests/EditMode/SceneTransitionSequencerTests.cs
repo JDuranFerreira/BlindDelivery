@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Scenes;
-using Template.Core.UI;
+using BlindDelivery.Core.Scenes;
+using BlindDelivery.Core.UI;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The transition's shape, driven with fake overlays and operations (real scene ops need a
     /// player loop): cover first, activation exactly at the gate, mapped progress reaching 100%,
-    /// uncover last — and cancellation/vanishing overlay never leaving a broken screen.
+    /// uncover last â€” and cancellation/vanishing overlay never leaving a broken screen.
     /// </summary>
     public class SceneTransitionSequencerTests
     {

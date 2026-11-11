@@ -1,4 +1,4 @@
-namespace Template.Core.Events
+﻿namespace BlindDelivery.Core.Events
 {
     /// <summary>
     /// Marker for anything allowed to travel on the event bus. It exists so
@@ -10,3 +10,4 @@ namespace Template.Core.Events
     {
     }
 }
+

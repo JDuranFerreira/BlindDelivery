@@ -1,12 +1,12 @@
-using System;
-using Template.Core.Ads;
+﻿using System;
+using BlindDelivery.Core.Ads;
 
-namespace Template.Services.Ads
+namespace BlindDelivery.Services.Ads
 {
     /// <summary>
-    /// The template's default ad provider: never fills. A real SDK (LevelPlay, AdMob, MAX)
+    /// The BlindDelivery's default ad provider: never fills. A real SDK (LevelPlay, AdMob, MAX)
     /// replaces it by implementing <see cref="IAdProvider"/> and being passed into
-    /// <see cref="AdService"/> at the composition root — no other change. Its two knobs make it
+    /// <see cref="AdService"/> at the composition root â€” no other change. Its two knobs make it
     /// also the honest fake in tests: a scripted availability and a scripted outcome per show.
     /// </summary>
     public sealed class StubAdProvider : IAdProvider
@@ -61,3 +61,5 @@ namespace Template.Services.Ads
         }
     }
 }
+
+

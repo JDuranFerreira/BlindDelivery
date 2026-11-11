@@ -1,26 +1,26 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Events;
-using Template.Core.Notifications;
-using Template.Core.Save;
-using Template.Core.Services;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Notifications;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Core.Services;
 using UnityEngine;
 
-namespace Template.Services.Notifications
+namespace BlindDelivery.Services.Notifications
 {
     /// <summary>
     /// The M8 notification service (goals note system 12). Owns every decision so the provider
     /// stays mechanical:
     ///
-    /// - permission is never asked on its own — the game shows the benefit screen first, then
+    /// - permission is never asked on its own â€” the game shows the benefit screen first, then
     ///   calls <see cref="RequestAuthorizationAsync"/>; scheduling while permission is known
     ///   denied is rejected outright instead of silently swallowed;
     /// - every schedule/cancel is applied to the provider and persisted immediately, so a fresh
     ///   service over the same store (an app restart, a crash) boots with the same pending set
-    ///   and reapplies it — "cancel + reschedule every launch" (architecture note, M8);
+    ///   and reapplies it â€” "cancel + reschedule every launch" (architecture note, M8);
     /// - facts (scheduled / cancelled / permission change) are published on the bus.
     /// </summary>
     public sealed class NotificationService : INotificationService, IAppService
@@ -60,7 +60,7 @@ namespace Template.Services.Notifications
         public async Task InitializeAsync(CancellationToken token = default)
         {
             // Fresh defaults when nothing was ever saved; otherwise the pending list the last
-            // session left behind. Nothing is re-fired on the bus here — boot restore
+            // session left behind. Nothing is re-fired on the bus here â€” boot restore
             // re-fires nothing, the same contract the ads/purchase restore uses.
             if (save.Exists(SaveKeyPath))
             {
@@ -160,7 +160,7 @@ namespace Template.Services.Notifications
         {
             // Entries that were supposed to fire while the app was closed can never fire; keeping
             // them would resurrect stale notifications on every future launch (architecture note,
-            // M8: cancel + reschedule every launch). They are pruned and dropped, not re-fired —
+            // M8: cancel + reschedule every launch). They are pruned and dropped, not re-fired â€”
             // rescheduling is only for entries still in the future.
             DateTime now = nowUtc();
             int expired = document.entries.RemoveAll(e => e.FireAtUtc <= now);
@@ -201,3 +201,4 @@ namespace Template.Services.Notifications
         }
     }
 }
+

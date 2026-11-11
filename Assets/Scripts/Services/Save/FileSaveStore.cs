@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Template.Core.Save;
+using BlindDelivery.Core.Save;
 using UnityEngine;
 
-namespace Template.Services.Save
+namespace BlindDelivery.Services.Save
 {
     /// <summary>
     /// The disk half of saving: one UTF-8 text document per key under

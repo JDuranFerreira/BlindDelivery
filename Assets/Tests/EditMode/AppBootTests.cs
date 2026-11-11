@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Boot;
-using Template.Core.Events;
-using Template.Core.Services;
-using Template.Services.Events;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Boot;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The boot chain is the one piece of M1 whose failure would be silent in a build: services
@@ -128,3 +128,4 @@ namespace Template.Tests.EditMode
         }
     }
 }
+

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.Events;
-using Template.Services.Events;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Services.Events;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     public class EventBusTests
     {
@@ -132,3 +132,4 @@ namespace Template.Tests.EditMode
         }
     }
 }
+

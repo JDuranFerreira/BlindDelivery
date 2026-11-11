@@ -1,7 +1,7 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Scenes
+namespace BlindDelivery.Core.Scenes
 {
     /// <summary>
     /// One in-flight scene load as the transition sequencer drives it, or one queued task in

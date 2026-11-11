@@ -1,16 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.GameServices;
-using Template.Core.Services;
+using BlindDelivery.Core.GameServices;
+using BlindDelivery.Core.Services;
 using UnityEngine;
 
-namespace Template.Services.GameServices
+namespace BlindDelivery.Services.GameServices
 {
     /// <summary>
     /// The platform social system over any <see cref="IGameServicesProvider"/> (goals note system
-    /// 11). Sign-in is optional and silent: a denial — like a null provider — never blocks
+    /// 11). Sign-in is optional and silent: a denial â€” like a null provider â€” never blocks
     /// gameplay, scores and achievements just queue. Reports carry stable game-side keys; the
     /// <see cref="PlatformIdMap"/> translates them to platform ids at SEND time, so a key missing
     /// from the config is dropped with a log rather than guessed. Offline reports flush when a
@@ -24,7 +24,7 @@ namespace Template.Services.GameServices
 
         public GameServicesService(IGameServicesProvider provider, PlatformIdMap platformIds)
         {
-            // A null provider is the template default — the platform is optional, not required.
+            // A null provider is the BlindDelivery default â€” the platform is optional, not required.
             this.provider = provider;
             this.platformIds = platformIds ?? new PlatformIdMap();
         }
@@ -65,7 +65,7 @@ namespace Template.Services.GameServices
         {
             if (!IsSignedIn || provider == null)
             {
-                // No-op offline per contract — the platform UI cannot open without the account.
+                // No-op offline per contract â€” the platform UI cannot open without the account.
                 return;
             }
 
@@ -112,7 +112,7 @@ namespace Template.Services.GameServices
                     queue.RemoveAt(i);
                     sent++;
                 }
-                // else: not sent, keep queued — the next flush or sign-in retries it.
+                // else: not sent, keep queued â€” the next flush or sign-in retries it.
             }
 
             return Task.FromResult(sent);
@@ -154,3 +154,4 @@ namespace Template.Services.GameServices
         }
     }
 }
+

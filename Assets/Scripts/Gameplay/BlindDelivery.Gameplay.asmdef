@@ -1,0 +1,18 @@
+﻿{
+    "name": "BlindDelivery.Gameplay",
+    "rootNamespace": "BlindDelivery.Gameplay",
+    "references": [
+        "BlindDelivery.Core",
+        "BlindDelivery.Services"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+

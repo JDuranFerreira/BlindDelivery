@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Pooling;
-using Template.Core.Services;
+using BlindDelivery.Core.Pooling;
+using BlindDelivery.Core.Services;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// Tests the pooling contracts: IPoolable lifecycle, IObjectPool Get/Release, IPoolManager registration.

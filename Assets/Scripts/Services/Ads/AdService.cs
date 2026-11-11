@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Ads;
-using Template.Core.Audio;
-using Template.Core.Events;
-using Template.Core.Save;
-using Template.Core.Services;
+using BlindDelivery.Core.Ads;
+using BlindDelivery.Core.Audio;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Core.Services;
 using UnityEngine;
 
-namespace Template.Services.Ads
+namespace BlindDelivery.Services.Ads
 {
     /// <summary>Save document for remove-ads. One field, JsonUtility-serializable.</summary>
     public class AdsDocument
@@ -18,10 +18,10 @@ namespace Template.Services.Ads
 
     /// <summary>
     /// The ad system over any <see cref="IAdProvider"/> (goals note system 10). The stub provider
-    /// never fills, so the template boots ad-free with zero SDK packages; a game swaps in
+    /// never fills, so the BlindDelivery boots ad-free with zero SDK packages; a game swaps in
     /// LevelPlay/AdMob/MAX at the composition root without touching gameplay code.
     ///
-    /// Order of a show decision: remove-ads (RemovedByPurchase) first — an owned purchase may not
+    /// Order of a show decision: remove-ads (RemovedByPurchase) first â€” an owned purchase may not
     /// be contradicted by anything else; then provider readiness (NoFill is an expected graceful
     /// outcome, not an error); then the frequency policy (BlockedByPolicy). Only after every gate
     /// passes does the provider get the show call.
@@ -29,10 +29,10 @@ namespace Template.Services.Ads
     /// Full-screen shows duck the audio directly (<see cref="IAudioService.Duck"/>) and announce
     /// themselves on the bus with <see cref="FullScreenAdStarted"/>, so gameplay pauses itself;
     /// <see cref="FullScreenAdFinished"/> ends both. Rewards are granted only through the game's
-    /// callback inside the provider's outcome callback — never a return value.
+    /// callback inside the provider's outcome callback â€” never a return value.
     ///
-    /// Remove-ads persists immediately through <see cref="ISaveService"/> — an owned purchase must
-    /// not depend on the next save tick — and re-applies at boot through
+    /// Remove-ads persists immediately through <see cref="ISaveService"/> â€” an owned purchase must
+    /// not depend on the next save tick â€” and re-applies at boot through
     /// <see cref="RestoreAdsRemoved"/> without re-firing the purchase event.
     /// </summary>
     public sealed class AdService : IAdService, IAppService
@@ -79,7 +79,7 @@ namespace Template.Services.Ads
 
         public bool AreInterstitialsRemoved => adsRemoved;
 
-        /// <summary>Raised once when remove-ads turns on in this session — never at boot restore.</summary>
+        /// <summary>Raised once when remove-ads turns on in this session â€” never at boot restore.</summary>
         public event Action OnInterstitialsRemoved;
 
         public Task InitializeAsync(CancellationToken token = default)
@@ -100,7 +100,7 @@ namespace Template.Services.Ads
             }
             catch (Exception error)
             {
-                // A corrupted monetization document degrades to "ads serve again" — it must never
+                // A corrupted monetization document degrades to "ads serve again" â€” it must never
                 // block boot, and it is also the cheapest possible mistake against the player.
                 Debug.LogWarning($"[AdService] Remove-ads document did not load ({error.Message}); serving ads as not-removed.");
             }
@@ -138,7 +138,7 @@ namespace Template.Services.Ads
         public void HideBanner()
         {
             // The banner seam is provider-owned once shown; the policy layer only decides whether
-            // a banner may start. Hiding is the provider's business — the stub ignores it and a
+            // a banner may start. Hiding is the provider's business â€” the stub ignores it and a
             // real SDK maps it onto its own hide call.
         }
 
@@ -233,3 +233,5 @@ namespace Template.Services.Ads
         }
     }
 }
+
+

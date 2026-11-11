@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.UI;
+using BlindDelivery.Core.UI;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The bar's contract: the raw op's 0.9 stall maps to a bar that keeps creeping to 100%, so

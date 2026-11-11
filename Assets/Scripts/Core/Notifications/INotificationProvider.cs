@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace Template.Core.Notifications
+namespace BlindDelivery.Core.Notifications
 {
     /// <summary>OS permission state for local notifications.</summary>
     public enum NotificationPermission
     {
-        /// <summary>Nobody asked yet — the prompt has not been shown to the player.</summary>
+        /// <summary>Nobody asked yet â€” the prompt has not been shown to the player.</summary>
         NotRequested,
 
         /// <summary>Notifications are allowed.</summary>
@@ -46,7 +46,7 @@ namespace Template.Core.Notifications
     /// <summary>
     /// The low-level seam the engine SDK plugs into (Unity Mobile Notifications, Firebase, a
     /// sim). Mechanics only: one prompt, schedule/cancel, read the OS permission state. Every
-    /// decision — when to ask, which entries exist, rescheduling each launch — lives in
+    /// decision â€” when to ask, which entries exist, rescheduling each launch â€” lives in
     /// <see cref="INotificationService"/> so it is testable with a stub.
     /// </summary>
     public interface INotificationProvider
@@ -64,3 +64,4 @@ namespace Template.Core.Notifications
         Task CancelAllAsync();
     }
 }
+

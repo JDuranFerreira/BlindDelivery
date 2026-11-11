@@ -1,8 +1,8 @@
-using Template.Core.Events;
+﻿using BlindDelivery.Core.Events;
 
-namespace Template.Core.Ads
+namespace BlindDelivery.Core.Ads
 {
-    /// <summary>The three ad shapes the template supports (goals note system 10).</summary>
+    /// <summary>The three ad shapes the BlindDelivery supports (goals note system 10).</summary>
     public enum AdType
     {
         Interstitial,
@@ -13,7 +13,7 @@ namespace Template.Core.Ads
     /// <summary>Why a show attempt did not happen. No-fill is an expected outcome, not an error.</summary>
     public enum AdFailureReason
     {
-        /// <summary>The provider had no ad loaded — the game must fall back gracefully.</summary>
+        /// <summary>The provider had no ad loaded â€” the game must fall back gracefully.</summary>
         NoFill,
         /// <summary>The frequency cap or cooldown said not yet.</summary>
         BlockedByPolicy,
@@ -24,7 +24,7 @@ namespace Template.Core.Ads
     }
 
     /// <summary>
-    /// What a show call ended with. Rewarded rewards are never a return value here — they arrive
+    /// What a show call ended with. Rewarded rewards are never a return value here â€” they arrive
     /// through the callback the game passed to <see cref="IAdService.ShowRewarded"/>, which is the
     /// provider's reward callback itself (goals note: grant rewards only in the reward callback).
     /// </summary>
@@ -53,13 +53,13 @@ namespace Template.Core.Ads
 
     /// <summary>
     /// The ad seam (goals note system 10: monetization behind interfaces so providers can be
-    /// swapped — LevelPlay, AdMob, AppLovin). The template's provider is a stub out of the box; a
+    /// swapped â€” LevelPlay, AdMob, AppLovin). The BlindDelivery's provider is a stub out of the box; a
     /// concrete SDK slots in as an <see cref="IAdProvider"/> without touching gameplay code.
     /// Full-screen ads pause audio and game time: the service ducks audio directly and announces
     /// the show on the bus with <see cref="FullScreenAdStarted"/>/<see cref="FullScreenAdFinished"/>
     /// structs, which gameplay listens to for its own pause.
     /// </summary>
-    public interface IAdService : Template.Core.Services.IAppService
+    public interface IAdService : BlindDelivery.Core.Services.IAppService
     {
         /// <summary>True after RemoveAds; interstitials and banners go dark.</summary>
         bool AreInterstitialsRemoved { get; }
@@ -85,7 +85,7 @@ namespace Template.Core.Ads
         /// <summary>Shows an interstitial, subject to the frequency caps and cooldowns.</summary>
         AdShowResult ShowInterstitial();
 
-        /// <summary>Persists immediately — an owned purchase must not depend on the next save tick.</summary>
+        /// <summary>Persists immediately â€” an owned purchase must not depend on the next save tick.</summary>
         void PurchaseRemoveAds();
 
         /// <summary>Re-applies a restored remove-ads flag at boot without re-firing the purchase event.</summary>
@@ -126,7 +126,7 @@ namespace Template.Core.Ads
     /// <summary>
     /// The provider seam a concrete ad SDK implements (goals note #10: one concrete impl behind
     /// the interface; the default here is the stub, zero package dependency). Each Show call
-    /// completes through exactly one callback — synchronously under the stub and in tests,
+    /// completes through exactly one callback â€” synchronously under the stub and in tests,
     /// asynchronously under a real SDK. Availability false is the normal no-fill state.
     /// </summary>
     public interface IAdProvider
@@ -154,3 +154,5 @@ namespace Template.Core.Ads
         public bool EarnedReward { get; }
     }
 }
+
+

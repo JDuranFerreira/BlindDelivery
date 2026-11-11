@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Template.Core.GameServices
+namespace BlindDelivery.Core.GameServices
 {
     /// <summary>
     /// Platform id mapping in one config (goals note system 11: per-platform achievement/board ids,
@@ -43,3 +43,4 @@ namespace Template.Core.GameServices
         }
     }
 }
+

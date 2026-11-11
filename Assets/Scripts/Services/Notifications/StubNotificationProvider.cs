@@ -1,20 +1,20 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Template.Core.Notifications;
+using BlindDelivery.Core.Notifications;
 
-namespace Template.Services.Notifications
+namespace BlindDelivery.Services.Notifications
 {
     /// <summary>
-    /// The template's default provider (M6/M7 pattern: stubs at the SDK seam, zero package
+    /// The BlindDelivery's default provider (M6/M7 pattern: stubs at the SDK seam, zero package
     /// dependency). It keeps the last permission answer and the currently-scheduled set in
-    /// memory, so the service's logic can be exercised — a game installs
+    /// memory, so the service's logic can be exercised â€” a game installs
     /// com.unity.mobile.notifications and passes its own provider at this seam.
     /// </summary>
     public sealed class StubNotificationProvider : INotificationProvider
     {
         public NotificationPermission NextPermission = NotificationPermission.Granted;
 
-        /// <summary>What the OS prompt answers when explicitly asked — separate from the
+        /// <summary>What the OS prompt answers when explicitly asked â€” separate from the
         /// passive permission read above, matching a real device (read: NotRequested, ask: Granted).</summary>
         public NotificationPermission NextRequestAnswer = NotificationPermission.Granted;
 
@@ -56,3 +56,5 @@ namespace Template.Services.Notifications
         }
     }
 }
+
+

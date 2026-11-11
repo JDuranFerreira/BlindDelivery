@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Purchases;
-using Template.Core.Save;
-using Template.Core.Services;
+using BlindDelivery.Core.Purchases;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Core.Services;
 using UnityEngine;
 
-namespace Template.Services.Purchases
+namespace BlindDelivery.Services.Purchases
 {
     /// <summary>Save document for owned non-consumables (consumable and subscription ownership is session-only by nature).</summary>
     public class PurchasesDocument
@@ -16,7 +16,7 @@ namespace Template.Services.Purchases
         /// <summary>
         /// CSV of owned non-consumable product ids. JsonUtility has no List&lt;string&gt;, so the ids
         /// ride one string; ',' must never appear inside a product id (they are dot-reversed
-        /// domains in practice) — the catalog is authored with that constraint.
+        /// domains in practice) â€” the catalog is authored with that constraint.
         /// </summary>
         public string ownedNonConsumables = "";
     }
@@ -27,12 +27,12 @@ namespace Template.Services.Purchases
     /// changes.
     ///
     /// Ownership rules: non-consumables are persisted through <see cref="ISaveService"/> inside
-    /// the completion path — the save is awaited BEFORE <see cref="OnPurchaseCompleted"/> fires, so
+    /// the completion path â€” the save is awaited BEFORE <see cref="OnPurchaseCompleted"/> fires, so
     /// a crash after the store callback cannot lose a paid unlock (the M7 acceptance: a purchase
     /// survives a simulated crash via a fresh service over the same store). Subscriptions are
     /// owned for the session only; consumables never enter the owned list, so buying again is
     /// always possible. Restoring re-persists non-consumables but deliberately does NOT fire the
-    /// completed event — restore must not re-run grant effects; callers read IsOwned afterwards.
+    /// completed event â€” restore must not re-run grant effects; callers read IsOwned afterwards.
     /// </summary>
     public sealed class PurchaseService : IPurchaseService, IAppService
     {
@@ -59,7 +59,7 @@ namespace Template.Services.Purchases
         {
             store.Initialize(catalog.Products);
 
-            // A fresh document (nothing saved yet) loads as an empty string — no ids owned.
+            // A fresh document (nothing saved yet) loads as an empty string â€” no ids owned.
             try
             {
                 PurchasesDocument document = await save.LoadAsync<PurchasesDocument>(SaveKeyPath, token);
@@ -73,7 +73,7 @@ namespace Template.Services.Purchases
             }
             catch (Exception error)
             {
-                // A corrupted purchases document degrades to "everything re-buyable" — it must
+                // A corrupted purchases document degrades to "everything re-buyable" â€” it must
                 // never block boot, and the player's next successful purchase re-persists.
                 Debug.LogWarning($"[PurchaseService] Ownership document did not load ({error.Message}); starting unowned.");
             }
@@ -116,7 +116,7 @@ namespace Template.Services.Purchases
                 return result;
             }
 
-            // Consumables never enter the owned list — they stay re-buyable by design. A
+            // Consumables never enter the owned list â€” they stay re-buyable by design. A
             // subscription DOES enter (it is what blocks a double grant) but is session-only:
             // BuildDocument persists non-consumables only.
             if (product.Type != ProductType.Consumable && !owned.Contains(productId))
@@ -143,7 +143,7 @@ namespace Template.Services.Purchases
                 if (!catalog.TryGet(productId, out ProductData product) || product.Type != ProductType.NonConsumable)
                 {
                     // Unknown to the catalog or not persistent by kind: the store keeps it, the
-                    // template makes no game grant from it.
+                    // BlindDelivery makes no game grant from it.
                     continue;
                 }
 
@@ -159,7 +159,7 @@ namespace Template.Services.Purchases
                 await save.SaveAsync(SaveKeyPath, BuildDocument(), token);
             }
 
-            // Deliberately no OnPurchaseCompleted here — see the class comment.
+            // Deliberately no OnPurchaseCompleted here â€” see the class comment.
             return restored;
         }
 
@@ -200,3 +200,4 @@ namespace Template.Services.Purchases
         }
     }
 }
+

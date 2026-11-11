@@ -1,16 +1,16 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Scenes;
+using BlindDelivery.Core.Scenes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Template.Services.Scenes
+namespace BlindDelivery.Services.Scenes
 {
     /// <summary>
     /// The <see cref="ISceneOperation"/> adapter over a Unity <c>AsyncOperation</c> (a
     /// <c>LoadSceneAsync</c> or <c>UnloadSceneAsync</c> result). Activation is the explicit
     /// <c>allowSceneActivation</c> write, the heartbeat is <c>Awaitable.NextFrameAsync</c>, and
-    /// progress is exactly what Unity reports — its stall at 0.9 is the contract the sequencer
+    /// progress is exactly what Unity reports â€” its stall at 0.9 is the contract the sequencer
     /// was built around.
     /// </summary>
     public sealed class AsyncSceneOperation : ISceneOperation

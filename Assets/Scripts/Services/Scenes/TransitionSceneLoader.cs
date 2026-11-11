@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Events;
-using Template.Core.Scenes;
-using Template.Core.Services;
-using Template.Core.UI;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Scenes;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Core.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Template.Services.Scenes
+namespace BlindDelivery.Services.Scenes
 {
     /// <summary>
     /// The real <see cref="ISceneLoader"/>: covered, reporting transitions (M3) through the pure

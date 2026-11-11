@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.UI;
+using BlindDelivery.Core.UI;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>Back navigation is only trustworthy if the stack itself is. These pin push/pop.</summary>
     public class ScreenStackTests

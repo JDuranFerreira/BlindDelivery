@@ -1,21 +1,21 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using Template.Core.Input;
-using Template.Core.Services;
+using BlindDelivery.Core.Input;
+using BlindDelivery.Core.Services;
 
-namespace Template.Services.Input
+namespace BlindDelivery.Services.Input
 {
     /// <summary>
     /// Wraps the new Input System into the IInputService seam. Pure EditorMode-testable logic
     /// (threshold math, UI filtering) lives in InputProcessor; this class handles the
     /// InputActionAsset binding and platform quirks.
     /// </summary>
-    [AddComponentMenu("Template/Input/Input Service")]
+    [AddComponentMenu("BlindDelivery/Input/Input Service")]
     public sealed class InputService : MonoBehaviour, IInputService
     {
         public const string ServiceName = "Input";
@@ -39,11 +39,11 @@ namespace Template.Services.Input
         InputAction pointerPositionAction;
         InputAction pointerPressAction;
 
-        Template.Core.Input.Vector2? lastPointerPosition;
-        Template.Core.Input.Vector2? pressStartPosition;
+        BlindDelivery.Core.Input.Vector2? lastPointerPosition;
+        BlindDelivery.Core.Input.Vector2? pressStartPosition;
         float pressStartTime;
         float lastTapTime;
-        Template.Core.Input.Vector2? lastTapPosition;
+        BlindDelivery.Core.Input.Vector2? lastTapPosition;
         bool isPointerDown;
         int touchCount;
 
@@ -53,21 +53,21 @@ namespace Template.Services.Input
 
         public string Name => ServiceName;
 
-        public event Action<Template.Core.Input.Vector2> OnTap;
-        public event Action<Template.Core.Input.Vector2> OnDoubleTap;
-        public event Action<Template.Core.Input.Vector2> OnHold;
-        public event Action<Template.Core.Input.Vector2> OnSwipe;
-        public event Action<Template.Core.Input.Vector2> OnDrag;
+        public event Action<BlindDelivery.Core.Input.Vector2> OnTap;
+        public event Action<BlindDelivery.Core.Input.Vector2> OnDoubleTap;
+        public event Action<BlindDelivery.Core.Input.Vector2> OnHold;
+        public event Action<BlindDelivery.Core.Input.Vector2> OnSwipe;
+        public event Action<BlindDelivery.Core.Input.Vector2> OnDrag;
         public event Action<float> OnPinch;
 
-        public Template.Core.Input.Vector2? PointerPosition => lastPointerPosition;
+        public BlindDelivery.Core.Input.Vector2? PointerPosition => lastPointerPosition;
         public bool IsPointerDown => isPointerDown;
 
         public async Task InitializeAsync(CancellationToken token = default)
         {
             if (inputActions == null)
             {
-                Debug.LogWarning($"[{ServiceName}] No InputActionAsset assigned — input will not work.");
+                Debug.LogWarning($"[{ServiceName}] No InputActionAsset assigned â€” input will not work.");
                 return;
             }
 
@@ -145,14 +145,14 @@ namespace Template.Services.Input
         void OnPointerPosition(InputAction.CallbackContext ctx)
         {
             UnityEngine.Vector2 pos = ctx.ReadValue<UnityEngine.Vector2>();
-            lastPointerPosition = new Template.Core.Input.Vector2(pos.x, pos.y);
+            lastPointerPosition = new BlindDelivery.Core.Input.Vector2(pos.x, pos.y);
         }
 
         void OnTapPerformed(InputAction.CallbackContext ctx)
         {
             if (IsOverUI()) return;
 
-            Template.Core.Input.Vector2 pos = lastPointerPosition ?? Template.Core.Input.Vector2.Zero;
+            BlindDelivery.Core.Input.Vector2 pos = lastPointerPosition ?? BlindDelivery.Core.Input.Vector2.Zero;
             float now = Time.unscaledTime;
 
             // Double-tap detection
@@ -176,7 +176,7 @@ namespace Template.Services.Input
             if (IsOverUI()) return;
             if (ctx.phase == InputActionPhase.Started)
             {
-                OnHold?.Invoke(lastPointerPosition ?? Template.Core.Input.Vector2.Zero);
+                OnHold?.Invoke(lastPointerPosition ?? BlindDelivery.Core.Input.Vector2.Zero);
             }
         }
 
@@ -187,7 +187,7 @@ namespace Template.Services.Input
             UnityEngine.Vector2 delta = ctx.ReadValue<UnityEngine.Vector2>();
             if (delta.magnitude >= scaledSwipeMinDistance)
             {
-                OnSwipe?.Invoke(new Template.Core.Input.Vector2(delta.x, delta.y).Normalized);
+                OnSwipe?.Invoke(new BlindDelivery.Core.Input.Vector2(delta.x, delta.y).Normalized);
             }
         }
 
@@ -198,7 +198,7 @@ namespace Template.Services.Input
             UnityEngine.Vector2 delta = ctx.ReadValue<UnityEngine.Vector2>();
             if (delta.magnitude >= scaledDragThreshold)
             {
-                OnDrag?.Invoke(new Template.Core.Input.Vector2(delta.x, delta.y));
+                OnDrag?.Invoke(new BlindDelivery.Core.Input.Vector2(delta.x, delta.y));
             }
         }
 
@@ -221,3 +221,4 @@ namespace Template.Services.Input
         }
     }
 }
+

@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Template.Core.OptIn
+namespace BlindDelivery.Core.OptIn
 {
     /// <summary>
     /// Bonus system 2 (opt-in file, not base wiring): step-based tutorial. The game defines the
     /// ordered steps (ids are the markers its UI reacts to); the sequence answers the current
     /// step and advances only when the right step completes, so a double-complete or a late UI
-    /// event of an old step cannot skip ahead. Saved via <see cref="ProgressIndex"/> — one int
+    /// event of an old step cannot skip ahead. Saved via <see cref="ProgressIndex"/> â€” one int
     /// the game persists through the save service and restores in the constructor.
     /// <see cref="SkipAll"/> covers the skippable contract; the game decides which steps offer a
     /// skip button.
@@ -73,3 +73,4 @@ namespace Template.Core.OptIn
         }
     }
 }
+

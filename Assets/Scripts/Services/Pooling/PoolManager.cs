@@ -1,20 +1,20 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
-using Template.Core.Pooling;
-using Template.Core.Services;
+using BlindDelivery.Core.Pooling;
+using BlindDelivery.Core.Services;
 using UPool = UnityEngine.Pool;
 
-namespace Template.Services.Pooling
+namespace BlindDelivery.Services.Pooling
 {
     /// <summary>
     /// Unity ObjectPool-backed implementation of IObjectPool. Wraps Unity's pool
     /// and adds IPoolable lifecycle calls.
     /// </summary>
-    internal sealed class UnityObjectPool<T> : Template.Core.Pooling.IObjectPool<T> where T : class
+    internal sealed class UnityObjectPool<T> : BlindDelivery.Core.Pooling.IObjectPool<T> where T : class
     {
         readonly UPool.ObjectPool<T> pool;
         readonly bool callPoolableLifecycle;
@@ -54,10 +54,10 @@ namespace Template.Services.Pooling
     }
 
     /// <summary>
-    /// Central PoolManager — holds all pools keyed by string id (prefab name or game-specific key).
+    /// Central PoolManager â€” holds all pools keyed by string id (prefab name or game-specific key).
     /// Uses Unity's ObjectPool under the hood; pre-warms on demand.
     /// </summary>
-    [AddComponentMenu("Template/Pooling/Pool Manager")]
+    [AddComponentMenu("BlindDelivery/Pooling/Pool Manager")]
     public sealed class PoolManager : MonoBehaviour, IPoolManager
     {
         public const string ServiceName = "PoolManager";
@@ -73,14 +73,14 @@ namespace Template.Services.Pooling
             await Task.Yield();
         }
 
-        public Template.Core.Pooling.IObjectPool<T> GetPool<T>(string key) where T : class
+        public BlindDelivery.Core.Pooling.IObjectPool<T> GetPool<T>(string key) where T : class
         {
             if (pools.TryGetValue(key, out var existing))
             {
-                return (Template.Core.Pooling.IObjectPool<T>)existing;
+                return (BlindDelivery.Core.Pooling.IObjectPool<T>)existing;
             }
 
-            // Pool not found — caller must have registered the factory via Prewarm first
+            // Pool not found â€” caller must have registered the factory via Prewarm first
             throw new InvalidOperationException($"Pool '{key}' not registered. Call Prewarm<T>(key, count) first to register the factory.");
         }
 
@@ -88,7 +88,7 @@ namespace Template.Services.Pooling
         {
             if (pools.ContainsKey(key))
             {
-                // Already exists — maybe just ensure capacity
+                // Already exists â€” maybe just ensure capacity
                 if (pools[key] is UnityObjectPool<T> existingPool && existingPool.Count < count)
                 {
                     // Unity's ObjectPool doesn't expose Prewarm directly, so we Get/Release
@@ -101,7 +101,7 @@ namespace Template.Services.Pooling
                 return;
             }
 
-            // Need a factory — but we don't have one here. This is a design gap.
+            // Need a factory â€” but we don't have one here. This is a design gap.
             // For now, require a component on the manager or a registered factory.
             // We'll use a convention: look for a PoolFactory component on this GameObject.
             var factory = GetComponent<PoolFactory>();
@@ -152,3 +152,4 @@ namespace Template.Services.Pooling
         }
     }
 }
+

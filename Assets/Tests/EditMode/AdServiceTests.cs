@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.Ads;
-using Template.Core.Save;
-using Template.Services.Ads;
-using Template.Services.Events;
-using Template.Services.Save;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Ads;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Services.Ads;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Save;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The M7 acceptance gates for ads: no-fill handled gracefully, a shown full-screen ad ducks

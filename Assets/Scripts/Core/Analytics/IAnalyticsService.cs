@@ -1,4 +1,4 @@
-namespace Template.Core.Analytics
+﻿namespace BlindDelivery.Core.Analytics
 {
     /// <summary>One typed parameter of an analytics event. Kept as a struct so logging a
     /// gameplay event costs no allocations beyond the params array itself.</summary>
@@ -19,11 +19,11 @@ namespace Template.Core.Analytics
 
     /// <summary>
     /// The analytics seam (architecture note, Decisions table: "one-interface placeholder").
-    /// Every call is consent-gated by the implementation: until <see cref="Template.Core.Consent.ConsentState"/>'s
+    /// Every call is consent-gated by the implementation: until <see cref="BlindDelivery.Core.Consent.ConsentState"/>'s
     /// decision is Granted, no provider is initialized and events are dropped, so a game can
     /// call LogEvent freely anywhere without its own gating.
     /// </summary>
-    public interface IAnalyticsService : Template.Core.Services.IAppService
+    public interface IAnalyticsService : BlindDelivery.Core.Services.IAppService
     {
         /// <summary>True only while consent is granted and the underlying provider initialized.</summary>
         bool IsEnabled { get; }
@@ -56,3 +56,5 @@ namespace Template.Core.Analytics
         public const string ConsentDecided = "consent_decided";
     }
 }
+
+

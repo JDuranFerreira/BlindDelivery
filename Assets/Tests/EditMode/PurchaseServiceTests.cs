@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.Purchases;
-using Template.Core.Save;
-using Template.Services.Events;
-using Template.Services.Purchases;
-using Template.Services.Save;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Purchases;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Purchases;
+using BlindDelivery.Services.Save;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The M7 acceptance gates for purchases: unknown product refused, the same non-consumable

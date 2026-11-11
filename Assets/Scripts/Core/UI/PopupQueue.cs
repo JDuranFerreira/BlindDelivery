@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Template.Core.UI
+namespace BlindDelivery.Core.UI
 {
     /// <summary>
     /// The sequencing half of popups (goal system #6: pooled/cached popups for confirm, reward,

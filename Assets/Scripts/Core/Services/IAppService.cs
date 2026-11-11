@@ -1,10 +1,10 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Services
+namespace BlindDelivery.Core.Services
 {
     /// <summary>
-    /// A long-lived service owned by the bootstrapper. Plain C# — no MonoBehaviour — so the whole
+    /// A long-lived service owned by the bootstrapper. Plain C# â€” no MonoBehaviour â€” so the whole
     /// boot chain is testable without a scene.
     ///
     /// InitializeAsync runs once, in registration order, and must not depend on a later service
@@ -18,3 +18,4 @@ namespace Template.Core.Services
         Task InitializeAsync(CancellationToken token = default);
     }
 }
+

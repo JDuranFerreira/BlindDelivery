@@ -1,7 +1,7 @@
-using System;
-using Template.Core.Services;
+﻿using System;
+using BlindDelivery.Core.Services;
 
-namespace Template.Core.Pooling
+namespace BlindDelivery.Core.Pooling
 {
     /// <summary>
     /// Central registry of pools keyed by a string id (typically the prefab name or a game-specific key).

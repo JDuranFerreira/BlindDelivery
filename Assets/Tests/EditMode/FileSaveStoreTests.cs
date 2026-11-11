@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Services.Save;
+using BlindDelivery.Services.Save;
 using UnityEngine;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The disk contract with real files in a temp directory: atomic swap keeps the previous main
@@ -28,7 +28,7 @@ namespace Template.Tests.EditMode
         {
             directory = Path.Combine(
                 Application.temporaryCachePath,
-                "template-save-tests-" + Guid.NewGuid().ToString("N"));
+                "BlindDelivery-save-tests-" + Guid.NewGuid().ToString("N"));
             store = new FileSaveStore(directory);
         }
 
@@ -63,7 +63,7 @@ namespace Template.Tests.EditMode
         [Test]
         public async Task MainCorruptedOnDisk_ServiceStillLoadsFromBackup()
         {
-            SaveService service = new SaveService(store, new Template.Services.Events.EventBus());
+            SaveService service = new SaveService(store, new BlindDelivery.Services.Events.EventBus());
 
             await service.SaveAsync("progress", new SaveFileDoc
             {
@@ -98,3 +98,4 @@ namespace Template.Tests.EditMode
         }
     }
 }
+

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.Services;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     public class ServiceRegistryTests
     {
@@ -76,3 +76,4 @@ namespace Template.Tests.EditMode
         }
     }
 }
+

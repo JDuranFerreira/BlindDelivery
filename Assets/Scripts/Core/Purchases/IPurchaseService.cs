@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Purchases
+namespace BlindDelivery.Core.Purchases
 {
     /// <summary>The three product kinds the stores sell (goals note system 10).</summary>
     public enum ProductType
@@ -62,13 +62,13 @@ namespace Template.Core.Purchases
     }
 
     /// <summary>
-    /// The purchase seam (goals note system 10). The template's store is a stub out of the box;
+    /// The purchase seam (goals note system 10). The BlindDelivery's store is a stub out of the box;
     /// Unity IAP slots in as an <see cref="IStoreSink"/> without touching gameplay code.
     /// Non-consumable ownership and remove-ads are persisted through <see cref="ISaveService"/>
     /// <em>inside</em> the completion path (save immediately after a purchase), so a crash after the
     /// store callback cannot lose a paid unlock.
     /// </summary>
-    public interface IPurchaseService : Template.Core.Services.IAppService
+    public interface IPurchaseService : BlindDelivery.Core.Services.IAppService
     {
         /// <summary>True when the (restored or purchased) non-consumable/product is owned this session and post-crash.</summary>
         bool IsOwned(string productId);
@@ -115,3 +115,5 @@ namespace Template.Core.Purchases
         bool TryGet(string productId, out ProductData product);
     }
 }
+
+

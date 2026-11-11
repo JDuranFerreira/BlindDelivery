@@ -1,6 +1,6 @@
-using Template.Core.Settings;
+﻿using BlindDelivery.Core.Settings;
 
-namespace Template.Core.Settings
+namespace BlindDelivery.Core.Settings
 {
     /// <summary>
     /// Key-value persistence under <see cref="ISettingsService"/>: settings go to PlayerPrefs,

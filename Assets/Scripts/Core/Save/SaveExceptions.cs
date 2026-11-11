@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Save
+namespace BlindDelivery.Core.Save
 {
     /// <summary>
     /// The stored document is at a schema version this game build cannot read: older than the
@@ -18,7 +18,7 @@ namespace Template.Core.Save
     /// <summary>
     /// Main and backup both failed to parse. The data cannot be interpreted; throwing here is the
     /// last resort after the backup route also failed, and callers decide between a reset flow
-    /// and reporting — not the save service.
+    /// and reporting â€” not the save service.
     /// </summary>
     public class SaveCorruptException : Exception
     {

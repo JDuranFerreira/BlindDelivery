@@ -1,10 +1,10 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Scenes;
+using BlindDelivery.Core.Scenes;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Template.Services.UI
+namespace BlindDelivery.Services.UI
 {
     /// <summary>
     /// The engine half of a transition: a full-screen cover on its own top canvas, a black image

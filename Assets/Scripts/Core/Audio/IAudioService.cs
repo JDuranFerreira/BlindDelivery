@@ -1,10 +1,10 @@
-namespace Template.Core.Audio
+﻿namespace BlindDelivery.Core.Audio
 {
     /// <summary>
     /// Music and sound effects, addressed by key. Core keeps this engine-free, so gameplay and UI
     /// depend on a pure C# seam: no <see cref="AudioClip"/> leaks into callers, the library that
     /// resolves keys sits in Services. Volumes come from
-    /// <see cref="Template.Core.Settings.ISettingsService"/>; music and effects are ducked by a
+    /// <see cref="BlindDelivery.Core.Settings.ISettingsService"/>; music and effects are ducked by a
     /// temporary factor (full-screen ads), never muted mid-frame.
     /// </summary>
     public interface IAudioService
@@ -25,3 +25,4 @@ namespace Template.Core.Audio
         void Duck(float factor, float holdSeconds = 0f);
     }
 }
+

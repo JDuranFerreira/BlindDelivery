@@ -1,4 +1,4 @@
-namespace Template.Core.UI
+﻿namespace BlindDelivery.Core.UI
 {
     /// <summary>
     /// Load progress as the bar reports it. A Unity scene operation reports 0.0 while loading the

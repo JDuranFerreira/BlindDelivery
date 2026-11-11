@@ -1,7 +1,7 @@
-using Template.Core.Events;
+﻿using BlindDelivery.Core.Events;
 
 
-namespace Template.Core.Consent
+namespace BlindDelivery.Core.Consent
 {
     /// <summary>
     /// Published on the bus after every change of the consent decision, so screens listening on
@@ -17,3 +17,4 @@ namespace Template.Core.Consent
         public ConsentState State { get; }
     }
 }
+

@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using UnityEngine;
-using Template.Core.Pooling;
+using BlindDelivery.Core.Pooling;
 
-namespace Template.Services.Pooling
+namespace BlindDelivery.Services.Pooling
 {
     /// <summary>
     /// Factory component that knows how to create pooled objects for specific keys.
     /// Attach to the same GameObject as PoolManager. Each game adds its own entries.
     /// </summary>
-    [AddComponentMenu("Template/Pooling/Pool Factory")]
+    [AddComponentMenu("BlindDelivery/Pooling/Pool Factory")]
     public class PoolFactory : MonoBehaviour
     {
         [Serializable]
@@ -39,3 +39,4 @@ namespace Template.Services.Pooling
         }
     }
 }
+

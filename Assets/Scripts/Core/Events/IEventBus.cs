@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Events
+namespace BlindDelivery.Core.Events
 {
     /// <summary>
     /// Cross-system notifications, typed. The contract lives in Core; the implementation lives
-    /// in Services (Template.Services.Events.EventBus) so Core keeps zero Unity references.
+    /// in Services (BlindDelivery.Services.Events.EventBus) so Core keeps zero Unity references.
     ///
     /// There is deliberately no static state and no Reset(): a boot constructs one bus and hands
     /// it to everything that publishes or listens, so a stale handler is a wiring bug the
@@ -24,3 +24,5 @@ namespace Template.Core.Events
         void Publish<TEvent>(in TEvent evt) where TEvent : struct, IEvent;
     }
 }
+
+

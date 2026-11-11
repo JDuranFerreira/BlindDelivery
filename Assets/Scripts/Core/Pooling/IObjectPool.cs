@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Pooling
+namespace BlindDelivery.Core.Pooling
 {
     /// <summary>
-    /// Minimal pool interface — get and return. The generic keeps call sites clean.
+    /// Minimal pool interface â€” get and return. The generic keeps call sites clean.
     /// </summary>
     /// <typeparam name="T">The pooled type (typically a component or MonoBehaviour).</typeparam>
     public interface IObjectPool<T> where T : class

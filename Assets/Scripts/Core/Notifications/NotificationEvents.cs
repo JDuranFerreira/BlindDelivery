@@ -1,6 +1,6 @@
-using Template.Core.Events;
+﻿using BlindDelivery.Core.Events;
 
-namespace Template.Core.Notifications
+namespace BlindDelivery.Core.Notifications
 {
     /// <summary>Past-tense fact: a local notification was scheduled (or replaced an old entry).</summary>
     public readonly struct NotificationScheduled : IEvent
@@ -42,3 +42,4 @@ namespace Template.Core.Notifications
         public readonly NotificationPermission permission;
     }
 }
+

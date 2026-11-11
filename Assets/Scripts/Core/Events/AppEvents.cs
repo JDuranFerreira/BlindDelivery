@@ -1,6 +1,6 @@
-using Template.Core.Settings;
+﻿using BlindDelivery.Core.Settings;
 
-namespace Template.Core.Events
+namespace BlindDelivery.Core.Events
 {
     /// <summary>
     /// One settings value changed. Subscribers apply what they own and ignore the rest (audio
@@ -114,3 +114,4 @@ namespace Template.Core.Events
         public string Reason { get; }
     }
 }
+

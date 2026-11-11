@@ -1,0 +1,27 @@
+﻿{
+    "name": "BlindDelivery.Tests.EditMode",
+    "rootNamespace": "BlindDelivery.Tests.EditMode",
+    "references": [
+        "BlindDelivery.Core",
+        "BlindDelivery.Services",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "compilerOptions": "-nowarn:CS0619"
+}
+

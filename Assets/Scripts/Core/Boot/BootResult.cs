@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Boot
+namespace BlindDelivery.Core.Boot
 {
     /// <summary>
     /// What <see cref="AppBoot.RunAsync"/> hands back. The boot events on the bus say *which*
@@ -33,3 +33,4 @@ namespace Template.Core.Boot
         public Exception Error { get; }
     }
 }
+

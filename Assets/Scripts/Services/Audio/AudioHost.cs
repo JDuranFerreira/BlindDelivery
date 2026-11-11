@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Audio;
-using Template.Core.Events;
-using Template.Core.Services;
-using Template.Core.Settings;
+using BlindDelivery.Core.Audio;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Core.Settings;
 using UnityEngine;
 
-namespace Template.Services.Audio
+namespace BlindDelivery.Services.Audio
 {
     /// <summary>
     /// The audio system's engine half: the AudioSources for music and effects, pooled and prewarmed

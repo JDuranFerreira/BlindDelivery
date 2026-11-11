@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,14 +6,14 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using Template.Core.Localization;
-using Template.Core.Services;
+using BlindDelivery.Core.Localization;
+using BlindDelivery.Core.Services;
 
-namespace Template.Services.Localization
+namespace BlindDelivery.Services.Localization
 {
     /// <summary>
     /// CSV/JSON fallback implementation of ILocalizationService.
-    /// No external package dependency — reads localization tables from Resources/Localization/{locale}.json
+    /// No external package dependency â€” reads localization tables from Resources/Localization/{locale}.json
     /// or Resources/Localization/{locale}.csv at runtime.
     ///
     /// File format (JSON):
@@ -24,7 +24,7 @@ namespace Template.Services.Localization
     ///
     /// File format (CSV): key,value (plural forms as key_plural_zero, key_plural_one, etc.)
     /// </summary>
-    [AddComponentMenu("Template/Localization/Localization Service")]
+    [AddComponentMenu("BlindDelivery/Localization/Localization Service")]
     public sealed class LocalizationService : MonoBehaviour, ILocalizationService
     {
         public const string ServiceName = "Localization";
@@ -376,3 +376,4 @@ namespace Template.Services.Localization
         }
     }
 }
+

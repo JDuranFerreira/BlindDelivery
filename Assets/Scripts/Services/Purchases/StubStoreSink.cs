@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Purchases;
+using BlindDelivery.Core.Purchases;
 
-namespace Template.Services.Purchases
+namespace BlindDelivery.Services.Purchases
 {
     /// <summary>
-    /// The template's default store: buys always succeed and nothing was ever owned. A real IAP
+    /// The BlindDelivery's default store: buys always succeed and nothing was ever owned. A real IAP
     /// SDK (Unity IAP) replaces it by implementing <see cref="IStoreSink"/> and being passed into
-    /// <see cref="PurchaseService"/> at the composition root — no other change. Its knobs also make
+    /// <see cref="PurchaseService"/> at the composition root â€” no other change. Its knobs also make
     /// it the honest fake in tests: scripted outcome per purchase and a scripted restore list.
     /// </summary>
     public sealed class StubStoreSink : IStoreSink
@@ -28,7 +28,7 @@ namespace Template.Services.Purchases
 
         public StubStoreSink()
         {
-            // Template default: buys succeed so the purchase flow is playable out of the box.
+            // BlindDelivery default: buys succeed so the purchase flow is playable out of the box.
             nextOutcome = _ => true;
         }
 
@@ -67,3 +67,4 @@ namespace Template.Services.Purchases
         }
     }
 }
+

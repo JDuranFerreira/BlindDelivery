@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Audio
+namespace BlindDelivery.Core.Audio
 {
     /// <summary>
     /// The one place the 0..1 volume convention meets decibels. A volume slider is linear-0..1 for
     /// the player; an audio mixer wants dB, and the ear wants the log curve. Pure so the curve is
-    /// testable without any audio system attached — System.Math, not Mathf, because Core keeps
+    /// testable without any audio system attached â€” System.Math, not Mathf, because Core keeps
     /// no engine references.
     /// </summary>
     public static class AudioMath

@@ -1,14 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Events;
-using Template.Core.Settings;
-using Template.Services.Events;
-using Template.Services.Settings;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Settings;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Settings;
+using BlindDelivery.Tests.EditMode.Fakes;
 using UnityEngine;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// Settings must persist, apply without a scene reload, and publish exactly one event per real

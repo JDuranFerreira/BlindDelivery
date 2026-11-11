@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using Template.Core.Settings;
+﻿using System.Collections.Generic;
+using BlindDelivery.Core.Settings;
 
-namespace Template.Tests.EditMode.Fakes
+namespace BlindDelivery.Tests.EditMode.Fakes
 {
     /// <summary>Memory double of PlayerPrefs; typed boxes keep floats, ints and strings apart.</summary>
     public sealed class InMemoryPrefsStore : IPrefsStore

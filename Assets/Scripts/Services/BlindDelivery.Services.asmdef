@@ -1,0 +1,19 @@
+﻿{
+    "name": "BlindDelivery.Services",
+    "rootNamespace": "BlindDelivery.Services",
+    "references": [
+        "BlindDelivery.Core",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "compilerOptions": "-nowarn:CS0619"
+}
+

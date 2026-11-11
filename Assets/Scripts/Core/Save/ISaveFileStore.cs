@@ -1,10 +1,10 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Template.Core.Save
+namespace BlindDelivery.Core.Save
 {
     /// <summary>
     /// Raw document keys to strings. Deliberately dumber than <see cref="ISaveService"/>:
-    /// no versioning, no parsing, no events — the file store knows how to put a string on disk
+    /// no versioning, no parsing, no events â€” the file store knows how to put a string on disk
     /// safely, and only that. The default implementation keeps temp-swap atomicity and one
     /// generation of backup per key; a fake in-memory store serves the EditMode tests.
     ///

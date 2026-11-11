@@ -1,16 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Template.Services.Audio
+namespace BlindDelivery.Services.Audio
 {
     /// <summary>
     /// Key-to-clip table as a ScriptableObject, so a game's sounds are data: gameplay asks for
     /// "hit_small", the library resolves which AudioClip that is this game. A game builds its own
-    /// library asset (Create > Template > Audio Library) and hands it to the bootstrap; keys stay
+    /// library asset (Create > BlindDelivery > Audio Library) and hands it to the bootstrap; keys stay
     /// stable in code while clips get swapped without touching it.
     /// </summary>
-    [CreateAssetMenu(menuName = "Template/Audio Library", fileName = "AudioLibrary")]
+    [CreateAssetMenu(menuName = "BlindDelivery/Audio Library", fileName = "AudioLibrary")]
     public sealed class AudioLibrary : ScriptableObject
     {
         [Serializable]
@@ -71,3 +71,4 @@ namespace Template.Services.Audio
         }
     }
 }
+

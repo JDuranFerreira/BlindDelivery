@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Services;
-using Template.Core.UI;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Core.UI;
 
-namespace Template.Services.UI
+namespace BlindDelivery.Services.UI
 {
     /// <summary>
     /// The navigation service (goal system #6). It owns the screen registry, the pure

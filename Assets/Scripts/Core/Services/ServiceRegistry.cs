@@ -1,16 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Services
+namespace BlindDelivery.Core.Services
 {
     /// <summary>
     /// The service locator, kept intentionally dumb: it stores what the composition root
     /// constructed and hands it back by type, preserving registration order as the boot order.
     ///
     /// Manual injection, no container (architecture note, Decisions table). The rule is
-    /// "Bootstrap constructs, everything else receives" — this is the one place allowed to look
+    /// "Bootstrap constructs, everything else receives" â€” this is the one place allowed to look
     /// services up by type; gameplay and UI code take theirs through constructors.
     /// </summary>
     public sealed class ServiceRegistry
@@ -21,7 +21,7 @@ namespace Template.Core.Services
 
         public int Count => ordered.Count;
 
-        /// <summary>Registration order — which is boot order.</summary>
+        /// <summary>Registration order â€” which is boot order.</summary>
         public IReadOnlyList<IAppService> Services => ordered;
 
         /// <summary>
@@ -97,3 +97,4 @@ namespace Template.Core.Services
         }
     }
 }
+

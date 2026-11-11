@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Events;
-using Template.Core.Save;
-using Template.Services.Events;
-using Template.Services.Save;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Save;
+using BlindDelivery.Tests.EditMode.Fakes;
 using UnityEngine;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>The one save direction worth pinning: a payload survives every hop it can take on disk.</summary>
     [Serializable]

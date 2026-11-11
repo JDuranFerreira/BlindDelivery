@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Template.Core.OptIn
+namespace BlindDelivery.Core.OptIn
 {
     /// <summary>
     /// Bonus system 3 (opt-in file, not base wiring): server time against clock cheating. A game
@@ -8,7 +8,7 @@ namespace Template.Core.OptIn
     /// arrives (a login, a remote config poll); from then on <see cref="NowUtc"/> answers server
     /// time derived from the measured offset. Before the first sync it answers device time, and
     /// the honest <see cref="IsSynchronized"/> flag tells the game whether its timers are
-    /// cheat-proof. The offset is one immutable tick snapshot — no drifting state.
+    /// cheat-proof. The offset is one immutable tick snapshot â€” no drifting state.
     /// </summary>
     public sealed class ServerTimeService
     {
@@ -54,3 +54,4 @@ namespace Template.Core.OptIn
         }
     }
 }
+

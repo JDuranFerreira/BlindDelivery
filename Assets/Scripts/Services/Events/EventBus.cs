@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Template.Core.Events;
+using BlindDelivery.Core.Events;
 
-namespace Template.Services.Events
+namespace BlindDelivery.Services.Events
 {
     /// <summary>
     /// The bus. One instance, constructed by the composition root and handed to everything that
@@ -17,7 +17,7 @@ namespace Template.Services.Events
     {
         // Delegate rather than List<Action<T>>: a multicast delegate is immutable, so Publish reads
         // a snapshot. That is what makes it safe for a handler to subscribe or unsubscribe during a
-        // publish — the running invocation list is not the one being replaced.
+        // publish â€” the running invocation list is not the one being replaced.
         readonly Dictionary<Type, Delegate> handlers = new Dictionary<Type, Delegate>();
 
         public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : struct, IEvent
@@ -69,8 +69,9 @@ namespace Template.Services.Events
 
         /// <summary>
         /// Drops every subscription. For teardown and for tests that want to prove a bus is empty.
-        /// Not a substitute for unsubscribing — see <see cref="IEventBus"/>.
+        /// Not a substitute for unsubscribing â€” see <see cref="IEventBus"/>.
         /// </summary>
         public void Clear() => handlers.Clear();
     }
 }
+

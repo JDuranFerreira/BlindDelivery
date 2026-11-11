@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Services;
+using BlindDelivery.Core.Services;
 
-namespace Template.Tests.EditMode.Fakes
+namespace BlindDelivery.Tests.EditMode.Fakes
 {
     /// <summary>Seam used to prove the registry answers interface lookups.</summary>
     public interface IFakeSeam : IAppService
@@ -12,8 +12,8 @@ namespace Template.Tests.EditMode.Fakes
 
     /// <summary>
     /// Phantom tag types. The registry keys services by type and refuses a second registration of
-    /// the same type — the right rule for the real template, where two services sharing a class
-    /// would make <c>Get&lt;T&gt;()</c> ambiguous — so tests that need several services use
+    /// the same type â€” the right rule for the real BlindDelivery, where two services sharing a class
+    /// would make <c>Get&lt;T&gt;()</c> ambiguous â€” so tests that need several services use
     /// <see cref="FakeService{TTag}"/>, whose closed generic types are distinct types.
     /// </summary>
     public sealed class TagOne
@@ -67,3 +67,5 @@ namespace Template.Tests.EditMode.Fakes
         public Task InitializeAsync(CancellationToken token = default) => Task.CompletedTask;
     }
 }
+
+

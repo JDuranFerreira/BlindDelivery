@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.GameServices;
-using Template.Services.GameServices;
+using BlindDelivery.Core.GameServices;
+using BlindDelivery.Services.GameServices;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The M7 acceptance gates for game services: a denied sign-in leaves the game fully playable

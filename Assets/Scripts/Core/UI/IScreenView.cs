@@ -1,7 +1,7 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.UI
+namespace BlindDelivery.Core.UI
 {
     /// <summary>
     /// One screen the <c>UIManager</c> can show. The id is the key the stack and the manager work

@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace Template.Editor
+namespace BlindDelivery.Editor
 {
     /// <summary>
-    /// Bonus system 5 (opt-in file, not base wiring): the build pipeline — versioning from one
+    /// Bonus system 5 (opt-in file, not base wiring): the build pipeline â€” versioning from one
     /// constant (application version, Android version code, iOS build number), a prerequisite
     /// check (boot scenes present in Build Settings) and one-method automated builds callable
     /// headless:
     ///
-    /// Unity.exe -batchmode -quit -projectPath . -executeMethod Template.Editor.TemplateBuildPipeline.BuildAndroid
+    /// Unity.exe -batchmode -quit -projectPath . -executeMethod BlindDelivery.Editor.TemplateBuildPipeline.BuildAndroid
     ///
     /// A failed prerequisite or build throws, so the headless process exits non-zero instead of
     /// quietly shipping a broken artefact.
@@ -22,10 +22,10 @@ namespace Template.Editor
         /// <summary>Single source of truth for every platform's version stamp. A game replaces this.</summary>
         public const string TemplateVersion = "1.0.0";
 
-        public const string AndroidOutputPath = "Builds/Android/template.apk";
+        public const string AndroidOutputPath = "Builds/Android/BlindDelivery.apk";
 
         /// <summary>Stamps the version everywhere the stores read it. Also safe to run without building.</summary>
-        [MenuItem("Template/Build/Apply Versioning")]
+        [MenuItem("BlindDelivery/Build/Apply Versioning")]
         public static void ApplyVersioning()
         {
             PlayerSettings.bundleVersion = TemplateVersion;
@@ -34,7 +34,7 @@ namespace Template.Editor
             Debug.Log("[Build] Version stamps applied: " + TemplateVersion);
         }
 
-        [MenuItem("Template/Build/Android (Release)")]
+        [MenuItem("BlindDelivery/Build/Android (Release)")]
         public static void BuildAndroidMenu()
         {
             BuildAndroid();
@@ -63,8 +63,8 @@ namespace Template.Editor
         }
 
         /// <summary>
-        /// The boot scenes the M1 contract depends on must be in the build — Bootstrap.unity at
-        /// minimum — so an automated build can never ship without its entry scene.
+        /// The boot scenes the M1 contract depends on must be in the build â€” Bootstrap.unity at
+        /// minimum â€” so an automated build can never ship without its entry scene.
         /// </summary>
         public static void CheckPrerequisites(BuildTarget target)
         {
@@ -72,7 +72,7 @@ namespace Template.Editor
             if (enabledScenes.Length == 0)
             {
                 throw new InvalidOperationException(
-                    "No enabled scenes in Build Settings; run Template/Setup/Create Boot Scenes first.");
+                    "No enabled scenes in Build Settings; run BlindDelivery/Setup/Create Boot Scenes first.");
             }
 
             if (!enabledScenes.Any(scene => scene.EndsWith("Bootstrap.unity", StringComparison.OrdinalIgnoreCase)))
@@ -123,3 +123,5 @@ namespace Template.Editor
         }
     }
 }
+
+

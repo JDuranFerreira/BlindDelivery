@@ -1,22 +1,22 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.GameServices
+namespace BlindDelivery.Core.GameServices
 {
     /// <summary>
     /// The platform social seam (goals note system 11: Google Play Games / Game Center sign-in,
-    /// leaderboards, achievements). Sign-in is optional and silent — the game is fully playable
+    /// leaderboards, achievements). Sign-in is optional and silent â€” the game is fully playable
     /// without it. Scores and achievements reported while offline are queued and flushed when a
     /// signed-in state arrives again.
     /// </summary>
-    public interface IGameServices : Template.Core.Services.IAppService
+    public interface IGameServices : BlindDelivery.Core.Services.IAppService
     {
         /// <summary>True when the platform account is connected. False must never block gameplay.</summary>
         bool IsSignedIn { get; }
 
         /// <summary>
         /// Silent sign-in attempt. False (or a denial) is a normal quality of the platform, not an
-        /// error — the template records the outcome and keeps the queue for the next attempt.
+        /// error â€” the BlindDelivery records the outcome and keeps the queue for the next attempt.
         /// </summary>
         Task<bool> SignInAsync(CancellationToken token = default);
 
@@ -74,3 +74,5 @@ namespace Template.Core.GameServices
         public const int KindAchievement = 1;
     }
 }
+
+

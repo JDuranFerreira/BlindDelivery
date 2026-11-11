@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.UI;
+using BlindDelivery.Core.UI;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// One popup at a time, no duplicates. These pin the queue semantics because "no internet"
-    /// fires as a burst in every networked game — the one thing this logic must never do is show
+    /// fires as a burst in every networked game â€” the one thing this logic must never do is show
     /// five identical popups.
     /// </summary>
     public class PopupQueueTests

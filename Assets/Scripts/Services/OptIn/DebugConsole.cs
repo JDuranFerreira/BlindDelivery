@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 // Dev builds only (M8 acceptance: the debug console is absent from production builds).
 // UNITY_EDITOR keeps it alive for EditMode tests; a game's own overlay hosts it.
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
-namespace Template.Services.OptIn
+namespace BlindDelivery.Services.OptIn
 {
     /// <summary>
-    /// Bonus system 4 (opt-in file, not base wiring): the test-build debug console — cheat
+    /// Bonus system 4 (opt-in file, not base wiring): the test-build debug console â€” cheat
     /// commands plus a ring of the session log, compiled out of production builds by the define.
     /// The console owns no rendering: a game wires its own overlay/UI onto this API.
     /// </summary>
@@ -59,7 +59,7 @@ namespace Template.Services.OptIn
 
         /// <summary>
         /// Executes one input line: splits on whitespace, name first, the rest are args. Returns
-        /// false — and logs — for an unknown command or an empty line; the game decides what UI
+        /// false â€” and logs â€” for an unknown command or an empty line; the game decides what UI
         /// feedback that maps to.
         /// </summary>
         public bool TryExecute(string input)
@@ -123,3 +123,4 @@ namespace Template.Services.OptIn
     }
 }
 #endif
+

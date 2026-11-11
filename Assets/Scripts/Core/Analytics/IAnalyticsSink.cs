@@ -1,9 +1,9 @@
-namespace Template.Core.Analytics
+﻿namespace BlindDelivery.Core.Analytics
 {
     /// <summary>
     /// The concrete provider behind <see cref="IAnalyticsService"/> (Firebase Analytics /
-    /// Crashlytics, Unity Analytics, or any other). The template ships the seam only — a game
-    /// adds the implementation, so no analytics package sits in the template's dependency list.
+    /// Crashlytics, Unity Analytics, or any other). The BlindDelivery ships the seam only â€” a game
+    /// adds the implementation, so no analytics package sits in the BlindDelivery's dependency list.
     ///
     /// The service calls <see cref="Initialize"/> only after consent is granted, which is the
     /// law- and policy-relevant moment; providers typically start their network chatter in
@@ -24,3 +24,5 @@ namespace Template.Core.Analytics
         void Shutdown();
     }
 }
+
+

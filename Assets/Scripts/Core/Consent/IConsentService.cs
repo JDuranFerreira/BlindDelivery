@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 
 
-namespace Template.Core.Consent
+namespace BlindDelivery.Core.Consent
 {
     /// <summary>The GDPR/ATT tracking decision. Unknown is the first-run state: nothing
     /// analytics-shaped may initialize while it lasts (architecture note, M6).</summary>
@@ -18,7 +18,7 @@ namespace Template.Core.Consent
     /// (analytics, later M7 ads) reads it before its first initialize or network call. The
     /// decision persists across launches via an IPrefsStore, so returning players keep it.
     /// </summary>
-    public interface IConsentService : Template.Core.Services.IAppService
+    public interface IConsentService : BlindDelivery.Core.Services.IAppService
     {
         /// <summary>Raised after every change of <see cref="State"/>.</summary>
         event Action<ConsentState> OnConsentChanged;
@@ -37,3 +37,5 @@ namespace Template.Core.Consent
         void Deny();
     }
 }
+
+

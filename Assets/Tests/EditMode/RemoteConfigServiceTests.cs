@@ -1,10 +1,10 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.RemoteConfig;
-using Template.Services.RemoteConfig;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.RemoteConfig;
+using BlindDelivery.Services.RemoteConfig;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The acceptance gates (architecture note, M6): defaults work offline, a successful fetch
@@ -166,7 +166,7 @@ namespace Template.Tests.EditMode
         [Test]
         public async Task CorruptCache_FallsBackToDefaults()
         {
-            prefs.SetString("template.remoteconfig.cache", "{not json");
+            prefs.SetString("BlindDelivery.remoteconfig.cache", "{not json");
             prefs.Save();
 
             RemoteConfigService service = Make(null);
@@ -176,3 +176,5 @@ namespace Template.Tests.EditMode
         }
     }
 }
+
+

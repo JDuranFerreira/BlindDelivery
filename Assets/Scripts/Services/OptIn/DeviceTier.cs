@@ -1,6 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Template.Services.OptIn
+namespace BlindDelivery.Services.OptIn
 {
     /// <summary>Which qualification bucket a device belongs to. Low is the cautious default.</summary>
     public enum DeviceTier
@@ -65,3 +65,4 @@ namespace Template.Services.OptIn
             SystemInfo.graphicsMemorySize);
     }
 }
+

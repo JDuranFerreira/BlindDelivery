@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Events;
-using Template.Core.Services;
-using Template.Core.Settings;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Core.Settings;
 using UnityEngine;
 
-namespace Template.Services.Settings
+namespace BlindDelivery.Services.Settings
 {
     /// <summary>
     /// The real settings service. Typed properties with immediate persistence and one
@@ -17,7 +17,7 @@ namespace Template.Services.Settings
     /// </summary>
     public sealed class SettingsService : ISettingsService, IAppService
     {
-        const string Prefix = "template.settings.";
+        const string Prefix = "BlindDelivery.settings.";
         const string MusicVolumeKey = Prefix + "music-volume";
         const string SfxVolumeKey = Prefix + "sfx-volume";
         const string MusicMutedKey = Prefix + "music-muted";
@@ -264,3 +264,4 @@ namespace Template.Services.Settings
         }
     }
 }
+

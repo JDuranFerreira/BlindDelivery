@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Template.Core.UI
+namespace BlindDelivery.Core.UI
 {
     /// <summary>
     /// Pure navigation history for screens (goal system #6). Stores screens in push order; the top

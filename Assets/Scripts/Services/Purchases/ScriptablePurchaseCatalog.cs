@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Template.Core.Purchases;
+using BlindDelivery.Core.Purchases;
 using UnityEngine;
 
-namespace Template.Services.Purchases
+namespace BlindDelivery.Services.Purchases
 {
     /// <summary>
     /// Per-product entry. Kept serializable by the inspector (fields only, JsonUtility-free).
@@ -18,10 +18,10 @@ namespace Template.Services.Purchases
     /// <summary>
     /// The catalog as a ScriptableObject (goals note system 10: catalog in a ScriptableObject, ids
     /// are the store product ids). Core keeps the <see cref="IPurchaseCatalog"/> contract pure; this
-    /// scriptable version lives next to the service that consumes it. Empty by default — the
-    /// template boots with no ids until a game authors them.
+    /// scriptable version lives next to the service that consumes it. Empty by default â€” the
+    /// BlindDelivery boots with no ids until a game authors them.
     /// </summary>
-    [CreateAssetMenu(menuName = "Template/Purchase Catalog", fileName = "PurchaseCatalog")]
+    [CreateAssetMenu(menuName = "BlindDelivery/Purchase Catalog", fileName = "PurchaseCatalog")]
     public sealed class ScriptablePurchaseCatalog : ScriptableObject, IPurchaseCatalog
     {
         [SerializeField, Tooltip("Store product ids the catalog owns. They must not contain the ',' used to persist ownership.")]
@@ -62,3 +62,4 @@ namespace Template.Services.Purchases
         }
     }
 }
+

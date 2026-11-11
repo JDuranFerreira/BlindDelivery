@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Services;
+using BlindDelivery.Core.Services;
 
-namespace Template.Core.Input
+namespace BlindDelivery.Core.Input
 {
     /// <summary>
     /// One clean layer over touch, gestures, and optional controller/keyboard support.
@@ -37,7 +37,7 @@ namespace Template.Core.Input
     }
 
     /// <summary>
-    /// Simple 2D vector for input events — no UnityEngine dependency in Core.
+    /// Simple 2D vector for input events â€” no UnityEngine dependency in Core.
     /// </summary>
     public readonly struct Vector2 : IEquatable<Vector2>
     {

@@ -1,7 +1,7 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Scenes
+namespace BlindDelivery.Core.Scenes
 {
     /// <summary>
     /// The seam every scene transition goes through. Direct scene loading behind this interface
@@ -23,3 +23,4 @@ namespace Template.Core.Scenes
         Task UnloadAsync(string sceneName, CancellationToken token = default);
     }
 }
+

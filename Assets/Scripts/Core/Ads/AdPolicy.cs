@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Template.Core.Ads
+namespace BlindDelivery.Core.Ads
 {
     /// <summary>
     /// Frequency caps and cooldowns for ad shows (goals note system 10). Pure data + one pure
@@ -18,7 +18,7 @@ namespace Template.Core.Ads
         /// <summary>
         /// True when an interstitial show is allowed at <paramref name="now"/>, given when it was
         /// last shown and how many times this session. Rewards are gameplay content, not
-        /// interruptions — the policy never throttles them.
+        /// interruptions â€” the policy never throttles them.
         /// </summary>
         public bool InterstitialAllowed(DateTime lastShownUtc, int showsThisSession, DateTime nowUtc)
         {
@@ -36,3 +36,4 @@ namespace Template.Core.Ads
         }
     }
 }
+

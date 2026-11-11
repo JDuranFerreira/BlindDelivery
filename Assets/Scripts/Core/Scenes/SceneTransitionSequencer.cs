@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.UI;
+using BlindDelivery.Core.UI;
 
-namespace Template.Core.Scenes
+namespace BlindDelivery.Core.Scenes
 {
     /// <summary>
     /// The shape every covered transition takes, pure C# so EditMode tests can drive it with fake

@@ -1,35 +1,35 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Boot;
-using Template.Core.Events;
-using Template.Core.Input;
-using Template.Core.Localization;
-using Template.Core.Pooling;
-using Template.Core.Save;
-using Template.Core.Scenes;
-using Template.Core.Analytics;
-using Template.Core.Consent;
-using Template.Core.RemoteConfig;
-using Template.Core.Services;
-using Template.Core.Settings;
-using Template.Services.Audio;
-using Template.Services.Events;
-using Template.Services.Input;
-using Template.Services.Localization;
-using Template.Services.Pooling;
-using Template.Services.Save;
-using Template.Services.Scenes;
-using Template.Services.Settings;
-using Template.Services.UI;
+using BlindDelivery.Core.Boot;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Input;
+using BlindDelivery.Core.Localization;
+using BlindDelivery.Core.Pooling;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Core.Scenes;
+using BlindDelivery.Core.Analytics;
+using BlindDelivery.Core.Consent;
+using BlindDelivery.Core.RemoteConfig;
+using BlindDelivery.Core.Services;
+using BlindDelivery.Core.Settings;
+using BlindDelivery.Services.Audio;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Input;
+using BlindDelivery.Services.Localization;
+using BlindDelivery.Services.Pooling;
+using BlindDelivery.Services.Save;
+using BlindDelivery.Services.Scenes;
+using BlindDelivery.Services.Settings;
+using BlindDelivery.Services.UI;
 using UnityEngine;
 
-namespace Template.Gameplay
+namespace BlindDelivery.Gameplay
 {
     /// <summary>
     /// The composition root (architecture note, Decisions table: "Bootstrap constructs, everything
     /// else receives"). It owns the registry and the bus, constructs every service, and runs the
-    /// boot chain. Nothing else in the template news up a service.
+    /// boot chain. Nothing else in the BlindDelivery news up a service.
     /// </summary>
     [DefaultExecutionOrder(-1000)]
     public sealed class AppBootstrap : MonoBehaviour
@@ -198,49 +198,49 @@ namespace Template.Gameplay
             // M6: consent before analytics (GDPR/ATT - nothing analytics-shaped initializes until
             // the decision is Granted) and remote config between them, per the fixed init order
             // save - settings - audio - localization - analytics.
-            Template.Services.Consent.ConsentService consent =
-                new Template.Services.Consent.ConsentService(new PlayerPrefsStore(), Bus);
+            BlindDelivery.Services.Consent.ConsentService consent =
+                new BlindDelivery.Services.Consent.ConsentService(new PlayerPrefsStore(), Bus);
             registry.Register(consent);
 
             // Defaults are the game's choice (kill switches, ad frequency, force-update flag);
-            // the template ships an empty document and a null source - no remote package yet.
-            registry.Register(new Template.Services.RemoteConfig.RemoteConfigService(
+            // the BlindDelivery ships an empty document and a null source - no remote package yet.
+            registry.Register(new BlindDelivery.Services.RemoteConfig.RemoteConfigService(
                 new RemoteConfigDocument { version = "0" },
                 null,
                 new PlayerPrefsStore()));
 
             // The sink is the game's concrete provider (Firebase Analytics, ...); null keeps the
-            // service a dropper-only no-op in the template, at zero package dependency.
-            registry.Register(new Template.Services.Analytics.AnalyticsService(consent, null));
+            // service a dropper-only no-op in the BlindDelivery, at zero package dependency.
+            registry.Register(new BlindDelivery.Services.Analytics.AnalyticsService(consent, null));
 
-            // M7: ads, purchases, game services. The providers here are the template stubs - no
+            // M7: ads, purchases, game services. The providers here are the BlindDelivery stubs - no
             // SDK package, no fill, no sign-in. A game swaps in LevelPlay/AdMob, Unity IAP and
             // Play Games/Game Center by passing its own implementations at this one seam.
-            registry.Register(new Template.Services.Ads.AdService(
-                new Template.Services.Ads.StubAdProvider(),
-                new Template.Core.Ads.AdPolicy(),
+            registry.Register(new BlindDelivery.Services.Ads.AdService(
+                new BlindDelivery.Services.Ads.StubAdProvider(),
+                new BlindDelivery.Core.Ads.AdPolicy(),
                 Bus,
                 Services.Get<ISaveService>(),
-                Services.Get<Template.Core.Audio.IAudioService>()));
+                Services.Get<BlindDelivery.Core.Audio.IAudioService>()));
 
             // Catalog ids are the game asset (assign on the AppBootstrap prefab); until one is
-            // authored the store answers UnknownProduct and the template stays honest.
-            registry.Register(new Template.Services.Purchases.PurchaseService(
-                new Template.Services.Purchases.StubStoreSink(),
-                ScriptableObject.CreateInstance<Template.Services.Purchases.ScriptablePurchaseCatalog>(),
+            // authored the store answers UnknownProduct and the BlindDelivery stays honest.
+            registry.Register(new BlindDelivery.Services.Purchases.PurchaseService(
+                new BlindDelivery.Services.Purchases.StubStoreSink(),
+                ScriptableObject.CreateInstance<BlindDelivery.Services.Purchases.ScriptablePurchaseCatalog>(),
                 Services.Get<ISaveService>()));
 
             // No provider: the social platform stays optional - the game is fully playable and
             // offline reports queue until a game wires Play Games / Game Center here.
-            registry.Register(new Template.Services.GameServices.GameServicesService(
+            registry.Register(new BlindDelivery.Services.GameServices.GameServicesService(
                 null,
-                new Template.Core.GameServices.PlatformIdMap()));
+                new BlindDelivery.Core.GameServices.PlatformIdMap()));
 
-            // M8: notifications. The provider here is the template stub - no SDK package, no OS
+            // M8: notifications. The provider here is the BlindDelivery stub - no SDK package, no OS
             // prompt by itself. A game swaps in com.unity.mobile.notifications by passing its own
             // provider at this seam, and asks for permission only after its own benefit screen.
-            registry.Register(new Template.Services.Notifications.NotificationService(
-                new Template.Services.Notifications.StubNotificationProvider(),
+            registry.Register(new BlindDelivery.Services.Notifications.NotificationService(
+                new BlindDelivery.Services.Notifications.StubNotificationProvider(),
                 Bus,
                 Services.Get<ISaveService>()));
         }
@@ -260,3 +260,5 @@ namespace Template.Gameplay
         }
     }
 }
+
+

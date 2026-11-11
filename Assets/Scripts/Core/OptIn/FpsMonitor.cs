@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 
-namespace Template.Core.OptIn
+namespace BlindDelivery.Core.OptIn
 {
     /// <summary>
     /// Bonus system 6, half one (opt-in file, not base wiring): a rolling FPS monitor fed frame
-    /// deltas by whoever owns the player loop (a debug overlay, a game update hook). Pure C# —
+    /// deltas by whoever owns the player loop (a debug overlay, a game update hook). Pure C# â€”
     /// the average is count / sum(dt) over the last window frames, so it is exact and
     /// unit-testable. The tier classifier pairs with it in Services; this class only measures.
     /// </summary>
@@ -58,3 +58,4 @@ namespace Template.Core.OptIn
         }
     }
 }
+

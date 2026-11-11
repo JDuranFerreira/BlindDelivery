@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.GameServices;
+using BlindDelivery.Core.GameServices;
 
-namespace Template.Services.GameServices
+namespace BlindDelivery.Services.GameServices
 {
     /// <summary>
-    /// The template's default platform provider: sign-in succeeds (or is scripted false) and every
+    /// The BlindDelivery's default platform provider: sign-in succeeds (or is scripted false) and every
     /// queued item is "sent" into the void. A real SDK (Play Games, Game Center) replaces it by
     /// implementing <see cref="IGameServicesProvider"/> and being passed into
     /// <see cref="GameServicesService"/> at the composition root. Its knobs also make it the fake
@@ -28,7 +28,7 @@ namespace Template.Services.GameServices
 
         public StubGameServicesProvider()
         {
-            // Template default: sign-in succeeds silently, sends always succeed.
+            // BlindDelivery default: sign-in succeeds silently, sends always succeed.
             signIn = () => true;
             sendResult = true;
         }
@@ -40,7 +40,7 @@ namespace Template.Services.GameServices
             return this;
         }
 
-        /// <summary>Scripted send outcome — false keeps the item queued.</summary>
+        /// <summary>Scripted send outcome â€” false keeps the item queued.</summary>
         public StubGameServicesProvider WithSendResult(bool result)
         {
             sendResult = result;
@@ -69,3 +69,4 @@ namespace Template.Services.GameServices
         }
     }
 }
+

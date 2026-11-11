@@ -1,4 +1,4 @@
-namespace Template.Core.UI
+﻿namespace BlindDelivery.Core.UI
 {
     /// <summary>Distances from a rectangle's four borders to the safe area, all in the same unit.</summary>
     public readonly struct SafeAreaInsets

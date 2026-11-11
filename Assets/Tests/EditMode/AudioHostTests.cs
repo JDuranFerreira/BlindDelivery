@@ -1,14 +1,14 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Events;
-using Template.Services.Audio;
-using Template.Services.Events;
-using Template.Services.Settings;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Services.Audio;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Settings;
+using BlindDelivery.Tests.EditMode.Fakes;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// Audio behaviour without a real player loop: tests drive <see cref="AudioHost.Tick"/> with

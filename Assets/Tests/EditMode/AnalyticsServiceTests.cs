@@ -1,15 +1,15 @@
-using NUnit.Framework;
-using Template.Core.Consent;
-using Template.Services.Analytics;
-using Template.Services.Consent;
-using Template.Services.Events;
-using Template.Tests.EditMode.Fakes;
+﻿using NUnit.Framework;
+using BlindDelivery.Core.Consent;
+using BlindDelivery.Services.Analytics;
+using BlindDelivery.Services.Consent;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
-    /// The acceptance gates (architecture note, M6): consent denied → nothing initializes, no
-    /// event reaches the provider; consent granted → the provider comes up and events flow; the
+    /// The acceptance gates (architecture note, M6): consent denied â†’ nothing initializes, no
+    /// event reaches the provider; consent granted â†’ the provider comes up and events flow; the
     /// master switch and a mid-session revoke both cut the provider off.
     /// </summary>
     public class AnalyticsServiceTests
@@ -55,7 +55,7 @@ namespace Template.Tests.EditMode
             Assert.That(sink.IsInitialized, Is.True);
 
             analytics.LogEvent("level_completed",
-                new Template.Core.Analytics.AnalyticsParam("level", 3));
+                new BlindDelivery.Core.Analytics.AnalyticsParam("level", 3));
 
             Assert.That(sink.Logged, Is.EqualTo(new[] { "level_completed" }));
         }
@@ -125,3 +125,5 @@ namespace Template.Tests.EditMode
         }
     }
 }
+
+

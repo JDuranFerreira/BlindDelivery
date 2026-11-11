@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Events;
-using Template.Core.Services;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Services;
 
-namespace Template.Core.Boot
+namespace BlindDelivery.Core.Boot
 {
     /// <summary>
     /// Runs the services in registration order and reports through the bus. Pure C# on purpose:
-    /// the boot chain — the thing most likely to break silently — is covered by EditMode tests
+    /// the boot chain â€” the thing most likely to break silently â€” is covered by EditMode tests
     /// with fake services, no scene and no Unity player loop involved.
     ///
     /// Failure policy: the first exception stops the chain. A save service that cannot load means
@@ -73,3 +73,4 @@ namespace Template.Core.Boot
         }
     }
 }
+

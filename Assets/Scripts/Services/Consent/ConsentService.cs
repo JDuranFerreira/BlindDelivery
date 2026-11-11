@@ -1,23 +1,23 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Analytics;
-using Template.Core.Consent;
-using Template.Core.Events;
-using Template.Core.Settings;
+using BlindDelivery.Core.Analytics;
+using BlindDelivery.Core.Consent;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Settings;
 
 
-namespace Template.Services.Consent
+namespace BlindDelivery.Services.Consent
 {
     /// <summary>
     /// The consent gate. Loads the stored decision at boot (Unknown on first launch), persists
-    /// Grant/Deny through the prefs store (IPrefsStore — taste and legality, not progress), and
+    /// Grant/Deny through the prefs store (IPrefsStore â€” taste and legality, not progress), and
     /// raises both its own event and a <see cref="ConsentChanged"/> struct on the bus, so screens
     /// listening on the bus react exactly like services listening on the interface event.
     /// </summary>
-    public sealed class ConsentService : IConsentService, Template.Core.Services.IAppService
+    public sealed class ConsentService : IConsentService, BlindDelivery.Core.Services.IAppService
     {
-        const string ConsentKey = "template.consent.state";
+        const string ConsentKey = "BlindDelivery.consent.state";
 
         readonly IPrefsStore prefs;
         readonly IEventBus bus;
@@ -69,3 +69,5 @@ namespace Template.Services.Consent
         }
     }
 }
+
+

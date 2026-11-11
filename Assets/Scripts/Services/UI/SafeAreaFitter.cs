@@ -1,7 +1,7 @@
-using Template.Core.UI;
+﻿using BlindDelivery.Core.UI;
 using UnityEngine;
 
-namespace Template.Services.UI
+namespace BlindDelivery.Services.UI
 {
     /// <summary>
     /// The engine half of safe-area layout (goal system #6): a stretched panel that keeps its

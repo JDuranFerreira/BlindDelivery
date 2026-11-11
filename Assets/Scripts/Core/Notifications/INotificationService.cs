@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Template.Core.Notifications
+namespace BlindDelivery.Core.Notifications
 {
     /// <summary>What happened to a schedule call.</summary>
     public enum NotificationScheduleOutcome
@@ -18,7 +18,7 @@ namespace Template.Core.Notifications
 
     /// <summary>
     /// Local notification decisions (goals note system 12): what is pending, permission asked
-    /// *only* when the game says the moment is right — the benefit screen first, then the ask —
+    /// *only* when the game says the moment is right â€” the benefit screen first, then the ask â€”
     /// and the pending list is reapplied to the provider on every launch, so notifications
     /// survive an app restart. Ends in tick-accuracy facts on the bus; no strings leave Core.
     /// </summary>
@@ -47,3 +47,4 @@ namespace Template.Core.Notifications
         Task ReschedulePendingAsync();
     }
 }
+

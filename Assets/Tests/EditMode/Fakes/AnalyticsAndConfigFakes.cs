@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Analytics;
-using Template.Core.RemoteConfig;
+using BlindDelivery.Core.Analytics;
+using BlindDelivery.Core.RemoteConfig;
 
-namespace Template.Tests.EditMode.Fakes
+namespace BlindDelivery.Tests.EditMode.Fakes
 {
     /// <summary>Records every call, so consent-gating tests assert on provider traffic.</summary>
     public sealed class FakeAnalyticsSink : IAnalyticsSink
@@ -51,7 +51,7 @@ namespace Template.Tests.EditMode.Fakes
 
         public string Version { get; set; } = "remote-1";
 
-        /// <summary>When set, FetchAsync hangs until the token fires — the timeout path.</summary>
+        /// <summary>When set, FetchAsync hangs until the token fires â€” the timeout path.</summary>
         public bool HangForever { get; set; }
 
         public async Task<RemoteConfigFetchResult> FetchAsync(
@@ -80,3 +80,4 @@ namespace Template.Tests.EditMode.Fakes
         }
     }
 }
+

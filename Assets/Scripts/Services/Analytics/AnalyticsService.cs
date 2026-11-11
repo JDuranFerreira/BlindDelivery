@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Analytics;
-using Template.Core.Consent;
-using Template.Core.Services;
+using BlindDelivery.Core.Analytics;
+using BlindDelivery.Core.Consent;
+using BlindDelivery.Core.Services;
 
-namespace Template.Services.Analytics
+namespace BlindDelivery.Services.Analytics
 {
     /// <summary>
     /// The consent gate over the analytics provider (goals note system 9: never initialize
@@ -29,7 +29,7 @@ namespace Template.Services.Analytics
 
         /// <summary>
         /// True only while consent is granted, the provider is initialized, and the master switch
-        /// is on. With no sink registered (the template default) nothing can ever be enabled.
+        /// is on. With no sink registered (the BlindDelivery default) nothing can ever be enabled.
         /// </summary>
         public bool IsEnabled =>
             consent.State == ConsentState.Granted
@@ -61,7 +61,7 @@ namespace Template.Services.Analytics
                 sink.Shutdown();
             }
             // Switching back On must bring the provider back, but only behind the same consent
-            // gate a fresh boot would take — never without consent.
+            // gate a fresh boot would take â€” never without consent.
             if (enabled && masterEnabled && consent.State == ConsentState.Granted)
             {
                 InitializeSink();
@@ -115,3 +115,5 @@ namespace Template.Services.Analytics
         }
     }
 }
+
+

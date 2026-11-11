@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Template.Core.OptIn;
-using Template.Services.OptIn;
+using BlindDelivery.Core.OptIn;
+using BlindDelivery.Services.OptIn;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// Bonus systems as opt-in files (M8): the currency wallet's one-way mutations, the tutorial
@@ -115,8 +115,8 @@ namespace Template.Tests.EditMode
             time.SynchronizeWithServer(trusted);
             Assert.That(time.OffsetTicks, Is.EqualTo((trusted - device).Ticks));
 
-            // Between syncs server time only advances with the device clock — one clock channel
-            // cannot detect a wall-clock shift. The template pairs the snapshot with re-syncing
+            // Between syncs server time only advances with the device clock â€” one clock channel
+            // cannot detect a wall-clock shift. The BlindDelivery pairs the snapshot with re-syncing
             // on every connect, and the game gates its timers on IsSynchronized.
             device += TimeSpan.FromHours(1);
             Assert.That(time.NowUtc(), Is.EqualTo(device + TimeSpan.FromMinutes(3)));
@@ -196,3 +196,5 @@ namespace Template.Tests.EditMode
         }
     }
 }
+
+

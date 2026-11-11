@@ -1,17 +1,17 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace Template.Core.RemoteConfig
+namespace BlindDelivery.Core.RemoteConfig
 {
     public enum RemoteConfigStatus
     {
         /// <summary>A new config arrived and is now the served state.</summary>
         Fetched = 0,
 
-        /// <summary>The fetch failed outright (no network, bad url) — fallback values are served.</summary>
+        /// <summary>The fetch failed outright (no network, bad url) â€” fallback values are served.</summary>
         Offline = 1,
-        /// <summary>The fetch hit the fetch timeout — fallback values are served.</summary>
+        /// <summary>The fetch hit the fetch timeout â€” fallback values are served.</summary>
         Timeout = 2
     }
 
@@ -31,8 +31,8 @@ namespace Template.Core.RemoteConfig
 
     /// <summary>
     /// A place the config comes from (goals note system 14: Firebase or Unity Remote Config for
-    /// real). The template ships the seam plus a cache-backed service; a game adds the concrete
-    /// source, so no package sits in the template's dependency list.
+    /// real). The BlindDelivery ships the seam plus a cache-backed service; a game adds the concrete
+    /// source, so no package sits in the BlindDelivery's dependency list.
     /// </summary>
     public interface IRemoteConfigSource
     {
@@ -64,7 +64,7 @@ namespace Template.Core.RemoteConfig
     /// timeout, and failure leaves whatever was last known serving (goals note: never break
     /// offline, never block the boot).
     /// </summary>
-    public interface IRemoteConfig : Template.Core.Services.IAppService
+    public interface IRemoteConfig : BlindDelivery.Core.Services.IAppService
     {
         /// <summary>Served values come from the last successful fetch when true, otherwise defaults.</summary>
         bool HasRemoteValues { get; }
@@ -83,3 +83,5 @@ namespace Template.Core.RemoteConfig
         Task<RemoteConfigFetchResult> FetchAsync(CancellationToken token = default);
     }
 }
+
+

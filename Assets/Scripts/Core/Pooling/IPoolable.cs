@@ -1,4 +1,4 @@
-namespace Template.Core.Pooling
+﻿namespace BlindDelivery.Core.Pooling
 {
     /// <summary>
     /// Implement on pooled objects to reset state when they are taken from or returned to the pool.

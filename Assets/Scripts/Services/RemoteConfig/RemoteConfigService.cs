@@ -1,28 +1,28 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Settings;
+using BlindDelivery.Core.Settings;
 
-namespace Template.Services.RemoteConfig
+namespace BlindDelivery.Services.RemoteConfig
 {
     /// <summary>
     /// Typed configuration values with this hierarchy: fetched last-good values, then shipped
     /// defaults, then the caller's own fallback (goals note system 14: never break offline,
     /// never block the boot).
     ///
-    /// The template carries only the cache — a game supplies the concrete
+    /// The BlindDelivery carries only the cache â€” a game supplies the concrete
     /// <see cref="IRemoteConfigSource"/> (Firebase or Unity Remote Config) and its shipped
     /// defaults document. Kill switches and force-update flags are ordinary bool/keys read
     /// through <see cref="GetBool"/>; nothing here is ad- or updater-specific.
     /// </summary>
-    public sealed class RemoteConfigService : Template.Core.RemoteConfig.IRemoteConfig,
-        Template.Core.Services.IAppService
+    public sealed class RemoteConfigService : BlindDelivery.Core.RemoteConfig.IRemoteConfig,
+        BlindDelivery.Core.Services.IAppService
     {
-        const string CacheKey = "template.remoteconfig.cache";
+        const string CacheKey = "BlindDelivery.remoteconfig.cache";
 
-        readonly Template.Core.RemoteConfig.IRemoteConfigSource source;
+        readonly BlindDelivery.Core.RemoteConfig.IRemoteConfigSource source;
         readonly IPrefsStore prefs;
         readonly float timeoutSeconds;
         readonly Dictionary<string, string> defaults;
@@ -37,8 +37,8 @@ namespace Template.Services.RemoteConfig
         /// <param name="prefs">Durable cache for the last successful fetch, so airplane mode still serves values.</param>
         /// <param name="timeoutSeconds">Hard cap on one fetch attempt; the boot never waits past this.</param>
         public RemoteConfigService(
-            Template.Core.RemoteConfig.RemoteConfigDocument defaults,
-            Template.Core.RemoteConfig.IRemoteConfigSource source,
+            BlindDelivery.Core.RemoteConfig.RemoteConfigDocument defaults,
+            BlindDelivery.Core.RemoteConfig.IRemoteConfigSource source,
             IPrefsStore prefs,
             float timeoutSeconds = 5f)
         {
@@ -65,7 +65,7 @@ namespace Template.Services.RemoteConfig
             // fetch this session could succeed or fail.
             if (prefs != null && prefs.TryGetString(CacheKey, out string cached))
             {
-                Template.Core.RemoteConfig.RemoteConfigDocument cachedDoc = JsonSafe(cached);
+                BlindDelivery.Core.RemoteConfig.RemoteConfigDocument cachedDoc = JsonSafe(cached);
                 if (cachedDoc != null)
                 {
                     Serve(Parse(cachedDoc), cachedDoc.version);
@@ -117,33 +117,33 @@ namespace Template.Services.RemoteConfig
         /// Fetches once with a hard timeout. Never throws (a throwing source counts as offline)
         /// and never blocks beyond the timeout.
         /// </summary>
-        public async Task<Template.Core.RemoteConfig.RemoteConfigFetchResult> FetchAsync(
+        public async Task<BlindDelivery.Core.RemoteConfig.RemoteConfigFetchResult> FetchAsync(
             CancellationToken token = default)
         {
             if (source == null || token.IsCancellationRequested)
             {
-                return new Template.Core.RemoteConfig.RemoteConfigFetchResult(
-                    Template.Core.RemoteConfig.RemoteConfigStatus.Offline);
+                return new BlindDelivery.Core.RemoteConfig.RemoteConfigFetchResult(
+                    BlindDelivery.Core.RemoteConfig.RemoteConfigStatus.Offline);
             }
 
-            Template.Core.RemoteConfig.RemoteConfigDocument document =
-                new Template.Core.RemoteConfig.RemoteConfigDocument();
+            BlindDelivery.Core.RemoteConfig.RemoteConfigDocument document =
+                new BlindDelivery.Core.RemoteConfig.RemoteConfigDocument();
 
-            Task<Template.Core.RemoteConfig.RemoteConfigFetchResult> fetchTask =
+            Task<BlindDelivery.Core.RemoteConfig.RemoteConfigFetchResult> fetchTask =
                 source.FetchAsync(document, token);
             Task winner = await Task.WhenAny(fetchTask, Task.Delay(TimeoutSpan(), token))
                 .ConfigureAwait(false);
 
             if (winner != fetchTask)
             {
-                return new Template.Core.RemoteConfig.RemoteConfigFetchResult(
-                    Template.Core.RemoteConfig.RemoteConfigStatus.Timeout);
+                return new BlindDelivery.Core.RemoteConfig.RemoteConfigFetchResult(
+                    BlindDelivery.Core.RemoteConfig.RemoteConfigStatus.Timeout);
             }
 
-            Template.Core.RemoteConfig.RemoteConfigFetchResult result = await fetchTask
+            BlindDelivery.Core.RemoteConfig.RemoteConfigFetchResult result = await fetchTask
                 .ConfigureAwait(false);
 
-            if (result.Status == Template.Core.RemoteConfig.RemoteConfigStatus.Fetched)
+            if (result.Status == BlindDelivery.Core.RemoteConfig.RemoteConfigStatus.Fetched)
             {
                 Serve(Parse(document), document.version);
                 hasRemoteValues = true;
@@ -187,7 +187,7 @@ namespace Template.Services.RemoteConfig
             version = defaultsVersion;
         }
 
-        void Cache(Template.Core.RemoteConfig.RemoteConfigDocument document)
+        void Cache(BlindDelivery.Core.RemoteConfig.RemoteConfigDocument document)
         {
             if (prefs == null)
             {
@@ -198,7 +198,7 @@ namespace Template.Services.RemoteConfig
             prefs.Save();
         }
 
-        static Dictionary<string, string> Parse(Template.Core.RemoteConfig.RemoteConfigDocument document)
+        static Dictionary<string, string> Parse(BlindDelivery.Core.RemoteConfig.RemoteConfigDocument document)
         {
             Dictionary<string, string> parsed =
                 new Dictionary<string, string>(StringComparer.Ordinal);
@@ -206,7 +206,7 @@ namespace Template.Services.RemoteConfig
             {
                 for (int i = 0; i < document.values.Length; i++)
                 {
-                    Template.Core.RemoteConfig.RemoteConfigValue entry = document.values[i];
+                    BlindDelivery.Core.RemoteConfig.RemoteConfigValue entry = document.values[i];
                     if (!string.IsNullOrEmpty(entry?.key))
                     {
                         parsed[entry.key] = entry.value ?? string.Empty;
@@ -219,7 +219,7 @@ namespace Template.Services.RemoteConfig
 
         /// <summary>JsonUtility lives in the engine, so serialization is isolated to the Services
         /// assembly; a null round-trip means the cache was corrupt and defaults take over.</summary>
-        static string JsonSafe(Template.Core.RemoteConfig.RemoteConfigDocument document)
+        static string JsonSafe(BlindDelivery.Core.RemoteConfig.RemoteConfigDocument document)
         {
             try
             {
@@ -231,11 +231,11 @@ namespace Template.Services.RemoteConfig
             }
         }
 
-        static Template.Core.RemoteConfig.RemoteConfigDocument JsonSafe(string json)
+        static BlindDelivery.Core.RemoteConfig.RemoteConfigDocument JsonSafe(string json)
         {
             try
             {
-                return UnityEngine.JsonUtility.FromJson<Template.Core.RemoteConfig.RemoteConfigDocument>(json);
+                return UnityEngine.JsonUtility.FromJson<BlindDelivery.Core.RemoteConfig.RemoteConfigDocument>(json);
             }
             catch (Exception)
             {
@@ -244,3 +244,5 @@ namespace Template.Services.RemoteConfig
         }
     }
 }
+
+

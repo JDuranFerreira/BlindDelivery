@@ -1,7 +1,7 @@
-using Template.Core.Settings;
+﻿using BlindDelivery.Core.Settings;
 using UnityEngine;
 
-namespace Template.Services.Settings
+namespace BlindDelivery.Services.Settings
 {
     /// <summary>
     /// The real settings persistence: Unity PlayerPrefs. Mechanical on purpose - every decision

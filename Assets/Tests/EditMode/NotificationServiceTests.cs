@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using NUnit.Framework;
-using Template.Core.Events;
-using Template.Core.Notifications;
-using Template.Core.Save;
-using Template.Services.Events;
-using Template.Services.Notifications;
-using Template.Services.Save;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Notifications;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Notifications;
+using BlindDelivery.Services.Save;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The M8 acceptance gates for notifications: the OS prompt is never fired by the boot or by
-    /// scheduling — only the single explicit ask; scheduling while denied is rejected; the pending
+    /// scheduling â€” only the single explicit ask; scheduling while denied is rejected; the pending
     /// list survives a simulated app restart (a fresh service over the same store reschedules it);
     /// entries that expired while the app was closed are pruned, not resurrected.
     /// </summary>
@@ -202,7 +202,7 @@ namespace Template.Tests.EditMode
         public void RequestAuthorization_AnswerChange_FiresThePermissionFact()
         {
             // The OS had never been asked, so the boot read answers NotRequested; the explicit
-            // ask is what grants — the state change is the fact.
+            // ask is what grants â€” the state change is the fact.
             provider.NextPermission = NotificationPermission.NotRequested;
             NotificationService service = Build();
 
@@ -242,3 +242,4 @@ namespace Template.Tests.EditMode
         }
     }
 }
+

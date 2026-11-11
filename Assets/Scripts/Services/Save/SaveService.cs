@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Events;
-using Template.Core.Save;
-using Template.Core.Services;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Core.Save;
+using BlindDelivery.Core.Services;
 using UnityEngine;
 
-namespace Template.Services.Save
+namespace BlindDelivery.Services.Save
 {
     /// <summary>
     /// The real save service over any <see cref="ISaveFileStore"/>: a versioned JSON envelope

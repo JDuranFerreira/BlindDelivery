@@ -1,7 +1,7 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.UI
+namespace BlindDelivery.Core.UI
 {
     /// <summary>
     /// What a popup is to say and do. Modest by design: title, body and two action labels - the

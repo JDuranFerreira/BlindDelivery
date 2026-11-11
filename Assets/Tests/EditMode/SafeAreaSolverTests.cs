@@ -1,7 +1,7 @@
-using NUnit.Framework;
-using Template.Core.UI;
+﻿using NUnit.Framework;
+using BlindDelivery.Core.UI;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>Notch math. A pixel off here is a notch touching a button in the wild.</summary>
     public class SafeAreaSolverTests

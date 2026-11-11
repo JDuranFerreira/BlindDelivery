@@ -1,7 +1,7 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Save
+namespace BlindDelivery.Core.Save
 {
     /// <summary>
     /// Durable storage for the game's own data (progress, currency, unlocks), versioned and
@@ -14,7 +14,7 @@ namespace Template.Core.Save
     /// and the previous content is kept as a backup, so a kill during a write degrades to
     /// "either the new data or the old data", never a half-written file.
     ///
-    /// Settings are NOT saved here — they go through <see cref="Template.Core.Settings.ISettingsService"/>
+    /// Settings are NOT saved here â€” they go through <see cref="BlindDelivery.Core.Settings.ISettingsService"/>
     /// (PlayerPrefs, see the architecture note). This store is for data that must survive
     /// app updates as a coherent document.
     /// </summary>
@@ -43,7 +43,7 @@ namespace Template.Core.Save
         /// Loads the document for this key: fresh defaults when nothing was ever saved, migrated
         /// forward when the stored version is older than the current one, an exception when it is
         /// newer than the game knows. A main file that fails to parse falls back to the backup;
-        /// both failing is raised as <see cref="Template.Core.Save.SaveCorruptException"/>.
+        /// both failing is raised as <see cref="BlindDelivery.Core.Save.SaveCorruptException"/>.
         /// </summary>
         Task<TData> LoadAsync<TData>(string key, CancellationToken token = default) where TData : class, new();
 
@@ -55,3 +55,4 @@ namespace Template.Core.Save
         Task FlushAsync(CancellationToken token = default);
     }
 }
+

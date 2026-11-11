@@ -1,7 +1,7 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Core.Scenes
+namespace BlindDelivery.Core.Scenes
 {
     /// <summary>
     /// The presentation side of a scene transition: fade to a cover, display progress, fade back.

@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Template.Core.Consent;
-using Template.Core.Events;
-using Template.Services.Consent;
-using Template.Services.Events;
-using Template.Tests.EditMode.Fakes;
+using BlindDelivery.Core.Consent;
+using BlindDelivery.Core.Events;
+using BlindDelivery.Services.Consent;
+using BlindDelivery.Services.Events;
+using BlindDelivery.Tests.EditMode.Fakes;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// The decision persists across launches, every real change raises exactly one event on both
@@ -86,3 +86,4 @@ namespace Template.Tests.EditMode
         }
     }
 }
+

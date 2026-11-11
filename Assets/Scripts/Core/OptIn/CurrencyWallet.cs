@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Template.Core.OptIn
+namespace BlindDelivery.Core.OptIn
 {
     /// <summary>What one grant or spend did to one currency. Past-tense fact shape.</summary>
     public struct CurrencyChange
@@ -18,7 +18,7 @@ namespace Template.Core.OptIn
 
     /// <summary>
     /// Bonus system 1 (opt-in file, not base wiring): soft/hard currency wallet. Currencies are
-    /// plain string ids ("coins", "gems") — the wallet does not know which is which, so the same
+    /// plain string ids ("coins", "gems") â€” the wallet does not know which is which, so the same
     /// code backs any economy. Every mutation goes through <see cref="Grant"/> or
     /// <see cref="TrySpend"/> (one way to change state; never negative, insufficient funds
     /// refused); listeners hear the <see cref="Changed"/> fact, not commands.
@@ -38,7 +38,7 @@ namespace Template.Core.OptIn
             return balances.TryGetValue(Normalize(currency), out int balance) ? balance : 0;
         }
 
-        /// <summary>Adds currency. Rejects non-positive amounts — a grant of zero is a bug upstream.</summary>
+        /// <summary>Adds currency. Rejects non-positive amounts â€” a grant of zero is a bug upstream.</summary>
         public void Grant(string currency, int amount)
         {
             RequireCurrency(currency);
@@ -103,3 +103,4 @@ namespace Template.Core.OptIn
         }
     }
 }
+

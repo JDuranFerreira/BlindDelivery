@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Template.Core.Save;
+using BlindDelivery.Core.Save;
 
-namespace Template.Tests.EditMode.Fakes
+namespace BlindDelivery.Tests.EditMode.Fakes
 {
     /// <summary>
     /// Memory double of the document store. Purpose-built knobs: backing file corruption is

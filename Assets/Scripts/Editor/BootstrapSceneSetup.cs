@@ -1,20 +1,20 @@
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using Template.Gameplay;
+using BlindDelivery.Gameplay;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Template.Editor
+namespace BlindDelivery.Editor
 {
     /// <summary>
-    /// Creates the two scenes the boot contract needs — Bootstrap at build index 0 and a MainMenu
-    /// placeholder the boot loads — and puts them in Build Settings. Idempotent: existing scenes
+    /// Creates the two scenes the boot contract needs â€” Bootstrap at build index 0 and a MainMenu
+    /// placeholder the boot loads â€” and puts them in Build Settings. Idempotent: existing scenes
     /// are left alone, only the build list is repaired.
     ///
     /// Also callable headless:
-    /// Unity.exe -batchmode -quit -projectPath &lt;project&gt; -executeMethod Template.Editor.BootstrapSceneSetup.CreateBootScenes
+    /// Unity.exe -batchmode -quit -projectPath &lt;project&gt; -executeMethod BlindDelivery.Editor.BootstrapSceneSetup.CreateBootScenes
     /// </summary>
     public static class BootstrapSceneSetup
     {
@@ -22,7 +22,7 @@ namespace Template.Editor
         const string BootstrapScenePath = ScenesFolder + "/Bootstrap.unity";
         const string MainMenuScenePath = ScenesFolder + "/MainMenu.unity";
 
-        [MenuItem("Template/Setup/Create Boot Scenes")]
+        [MenuItem("BlindDelivery/Setup/Create Boot Scenes")]
         public static void CreateBootScenes()
         {
             Directory.CreateDirectory(ScenesFolder);
@@ -73,3 +73,5 @@ namespace Template.Editor
         }
     }
 }
+
+

@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Template.Core.Localization;
-using Template.Core.Services;
+using BlindDelivery.Core.Localization;
+using BlindDelivery.Core.Services;
 
-namespace Template.Tests.EditMode
+namespace BlindDelivery.Tests.EditMode
 {
     /// <summary>
     /// Tests the localization contracts: key lookup, plural forms, locale switching, fallback behavior.

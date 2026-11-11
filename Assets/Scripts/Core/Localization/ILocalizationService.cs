@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Template.Core.Services;
+using BlindDelivery.Core.Services;
 
-namespace Template.Core.Localization
+namespace BlindDelivery.Core.Localization
 {
     /// <summary>
-    /// Localization seam — all text goes through keys, never hard-coded strings.
+    /// Localization seam â€” all text goes through keys, never hard-coded strings.
     /// Implementation wraps Unity Localization package (or a CSV/JSON fallback).
     /// </summary>
     public interface ILocalizationService : IAppService
