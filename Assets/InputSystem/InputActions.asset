@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<InputActionAsset xmlns="http://schemas.unity3d.com/2020/01/UnityEngine.InputSystem">
+    <InputActionMap name="Gameplay">
+        <InputAction name="Move" type="Value" binding="<Keyboard>/wasd"/>
+        <InputAction name="Jump" type="Button" binding="<Keyboard>/space"/>
+        <InputAction name="Fire" type="Button" binding="<Mouse>/leftButton"/>
+        <InputAction name="Look" type="Value" binding="<Mouse>/delta"/>
+        <InputAction name="Pause" type="Button" binding="<Keyboard>/escape"/>
+    </InputActionMap>
+    <InputActionMap name="UI">
+        <InputAction name="Navigate" type="Value" binding="<Keyboard>/arrowKeys"/>
+        <InputAction name="Submit" type="Button" binding="<Keyboard>/enter"/>
+        <InputAction name="Cancel" type="Button" binding="<Keyboard>/escape"/>
+    </InputActionMap>
+</InputActionAsset>

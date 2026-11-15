@@ -4,6 +4,7 @@
     "references": [
         "BlindDelivery.Core",
         "BlindDelivery.Services",
+        "BlindDelivery.Gameplay",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
