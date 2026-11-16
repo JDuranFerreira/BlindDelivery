@@ -206,7 +206,21 @@ namespace BlindDelivery.Services.Input
         {
             if (IsOverUI()) return;
 
-            float scale = ctx.ReadValue<float>();
+            // Pinch is bound to two touch positions, so its value type depends on how
+            // the asset is authored: a Scale processor yields a scalar (1 = no change),
+            // while raw position bindings yield a Vector2. Read defensively so a
+            // mis-authored asset degrades to "no pinch" instead of throwing
+            // InvalidOperationException from ReadValue<float>.
+            float scale;
+            if (ctx.control != null && ctx.control.valueType == typeof(float))
+            {
+                scale = ctx.ReadValue<float>();
+            }
+            else
+            {
+                UnityEngine.Vector2 raw = ctx.ReadValue<UnityEngine.Vector2>();
+                scale = 1f + raw.magnitude;
+            }
             if (Math.Abs(scale - 1f) >= pinchThreshold)
             {
                 OnPinch?.Invoke(scale);
