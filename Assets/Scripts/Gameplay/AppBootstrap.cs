@@ -34,8 +34,8 @@ namespace BlindDelivery.Gameplay
     [DefaultExecutionOrder(-1000)]
     public sealed class AppBootstrap : MonoBehaviour
     {
-        /// <summary>First real scene loaded once boot succeeds. Change it per game.</summary>
-        public const string DefaultFirstScene = "MainMenu";
+        /// <summary>First real scene loaded once boot succeeds. Level01 is the local test scene.</summary>
+        public const string DefaultFirstScene = "Level01";
 
         [SerializeField] string firstSceneName = DefaultFirstScene;
 

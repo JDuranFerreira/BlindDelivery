@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1183668403269636380}
   - component: {fileID: 8802284552715308202}
-  - component: {fileID: 4209171461907076660}
   m_Layer: 6
   m_Name: Door
   m_TagString: Untagged
@@ -93,19 +92,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &4209171461907076660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5255934537134200956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 570d2b7c48e5bc64aae0abbb71848754, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Physics.CoreBody2D
-  bodyType: 2
-  size: {x: 1, y: 1}
-  isTrigger: 0
-  showGizmo: 1

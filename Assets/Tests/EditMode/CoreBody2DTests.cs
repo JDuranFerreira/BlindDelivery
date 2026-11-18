@@ -11,8 +11,8 @@ namespace BlindDelivery.Tests.EditMode
         public void BodyIsCenteredOnSpriteBounds_WithBottomCenterPivot()
         {
             var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/Prefabs/Sprites/Door.prefab");
-            Assert.That(prefab, Is.Not.Null, "Door prefab is missing.");
+                "Assets/Prefabs/Sprites/sprite_jumppad.prefab");
+            Assert.That(prefab, Is.Not.Null, "Bottom-centre sprite prefab is missing.");
 
             GameObject instance = Object.Instantiate(prefab);
             try

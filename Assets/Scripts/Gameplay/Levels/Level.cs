@@ -6,6 +6,7 @@ namespace BlindDelivery.Gameplay.Levels
     /// Root component of a level prefab. Every level has a Start point (A) and an End point (B);
     /// the deliveryman is spawned on A when the level starts.
     /// </summary>
+    [DefaultExecutionOrder(-100)]
     public sealed class Level : MonoBehaviour
     {
         [SerializeField] Transform startPoint;

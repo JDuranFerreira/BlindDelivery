@@ -22,6 +22,8 @@ namespace BlindDelivery.Gameplay.Balance
         [Header("Simulation")]
         [Tooltip("Fixed simulation step in seconds (0.02s = 50 steps per second).")]
         [SerializeField] float fixedStepSeconds = 0.02f;
+        [Tooltip("Forward walking speed in metres per second (GDD range 1.5–3.5).")]
+        [SerializeField] float deliverymanSpeed = 2.5f;
 
         [Header("Crates")]
         [Tooltip("Base number of crates the deliveryman starts each run with.")]
@@ -55,6 +57,7 @@ namespace BlindDelivery.Gameplay.Balance
             {
                 SafeFallHeightCells = safeFallHeightCells,
                 FixedStepSeconds = fixedStepSeconds,
+                DeliverymanSpeed = deliverymanSpeed,
                 BaseCrateCount = baseCrateCount,
                 MaxCrateCount = maxCrateCount,
                 ItemMoveCosts = moveCosts,

@@ -40,6 +40,16 @@ namespace BlindDelivery.Gameplay.Physics
             ownerKey = body.SetOwner(this);
 
             var shapeDefinition = new PhysicsShapeDefinition { isTrigger = isTrigger };
+            if (bodyType == PhysicsBody.BodyType.Dynamic)
+            {
+                // The walking controller sets velocity every fixed step; ground friction would
+                // otherwise cancel it. Frictionless + locked rotation gives constant sliding.
+                PhysicsShape.SurfaceMaterial surface = shapeDefinition.surfaceMaterial;
+                surface.friction = 0f;
+                surface.frictionMixing = PhysicsShape.SurfaceMaterial.MixingMode.Minimum;
+                surface.frictionPriority = ushort.MaxValue;
+                shapeDefinition.surfaceMaterial = surface;
+            }
             body.CreateShape(PolygonGeometry.CreateBox(boxSize), shapeDefinition);
             created = true;
         }

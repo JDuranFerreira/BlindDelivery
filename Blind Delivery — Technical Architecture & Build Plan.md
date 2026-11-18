@@ -132,6 +132,8 @@ Each phase ends with a test. Do not start the next phase until the done-when tes
 | 11. Accessibility pass | Screen reader, haptic-only mode, contrast and colour palettes, assist mode. | A full level is completable with haptic-only mode and with a screen reader. |
 | 12. Monetization and polish | Rewarded retry, credit boost, IAP, battle pass, consent flow, performance pass. | No forced ads appear. A mid-range phone holds a steady frame rate with all systems on. |
 
+**Implementation status:** Phase 0 is in place. The walking half of Phase 3 (Idle/Walking/Turning/Falling/Delivered, gravity, wall turns, A→B) is implemented in `Level01` via `Core/Movement` + `Gameplay/Movement`; the crate-loss acceptance criterion waits for the CrateStack. Phase 2's tilemap loader/fall-height query is currently approximated by `RectLevelGeometry` over the platform prefabs. See `AGENTS.md` for the current file map.
+
 ## 6. Folder and Naming Convention
 
 - Assets/BlindDelivery/Core, Services, Gameplay, Editor, Tests, one folder per assembly.

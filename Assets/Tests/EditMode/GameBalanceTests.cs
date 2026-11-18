@@ -24,6 +24,13 @@ namespace BlindDelivery.Tests.EditMode
         }
 
         [Test]
+        public void DeliverymanSpeed_DefaultsTo2_5MetresPerSecond()
+        {
+            var balance = new GameBalance();
+            Assert.That(balance.DeliverymanSpeed, Is.EqualTo(2.5f));
+        }
+
+        [Test]
         public void BaseCrateCount_IsThree()
         {
             var balance = new GameBalance();

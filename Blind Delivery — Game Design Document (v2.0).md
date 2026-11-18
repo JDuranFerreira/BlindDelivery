@@ -37,6 +37,8 @@
 - Cliff behaviour: he walks off ledges and falls under gravity.
 - Levels run top to bottom, or in some levels bottom to top. Wind and springs are the main tools for going up.
 
+**Implementation status:** the flat A→B walk, wall turns, ledge falls and delivery state work in `Level01`. Speed currently comes from `GameBalance.DeliverymanSpeed` (2.5 m/s) and will move to per-level `LevelData` when that asset exists. Crate loss on long falls is not wired yet.
+
 ### Crates
 
 - Every run starts with 3 crates. The Box Capacity upgrade raises this to up to 5.

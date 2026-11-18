@@ -200,15 +200,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 618788506662395944, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 618788506662395944, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: -5.5
       objectReference: {fileID: 0}
     - target: {fileID: 1900757202469426164, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
       propertyPath: m_Name
       value: Level01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2279036485646150356, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 2413828769962696146, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
       propertyPath: isTrigger
@@ -260,7 +264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6909791889030068733, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 7210501296899743654, guid: 1346ff5df46d47a468c8665d2a140c9c, type: 3}
       propertyPath: m_Icon
@@ -332,8 +336,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
   m_ComponentVersion: 1
   m_AssetsPPU: 32
-  m_RefResolutionX: 320
-  m_RefResolutionY: 480
+  m_RefResolutionX: 414
+  m_RefResolutionY: 896
   m_CropFrame: 3
   m_GridSnapping: 1
   m_FilterMode: 0
@@ -369,15 +373,15 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
+    x: 0.06875
+    y: 0.045945946
+    width: 0.8625
+    height: 0.9081081
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 14
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -470,7 +474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7175718458323500995, guid: c420d92e642269d47be1c5a442bd43ef, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.06049
+      value: -3.93951
       objectReference: {fileID: 0}
     - target: {fileID: 7175718458323500995, guid: c420d92e642269d47be1c5a442bd43ef, type: 3}
       propertyPath: m_LocalPosition.z

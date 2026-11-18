@@ -19,6 +19,9 @@ namespace BlindDelivery.Core.Balance
         /// <summary>Fixed simulation step in seconds (0.02s = 50 steps per second).</summary>
         public float FixedStepSeconds { get; set; } = 0.02f;
 
+        /// <summary>Forward walking speed in metres per second (GDD range: 1.5–3.5).</summary>
+        public float DeliverymanSpeed { get; set; } = 2.5f;
+
         /// <summary>Base number of crates the deliveryman starts each run with.</summary>
         public int BaseCrateCount { get; set; } = 3;
 
