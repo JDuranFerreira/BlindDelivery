@@ -1,5 +1,7 @@
 # Unity Project Migration - Execution Guide
 
+> **Historical document — physics sections superseded.** Any `Rigidbody2D`/`Collider2D`/`Physics2D` snippets below are legacy and must not be used. The game uses the new 2D Physics Core (`Unity.U2D.Physics`); see `AGENTS.md` → "Physics system".
+
 ## Project Status Overview
 
 This project (`Blind Delivery`) needs migration from deprecated Unity technologies to modern alternatives:
@@ -218,13 +220,13 @@ public class InputService : MonoBehaviour, IInputService
 
 #### Step 4: Update Gameplay Components
 
-Update `BlindDelivery.Gameplay.BoyController.cs`:
+Update `BlindDelivery.Gameplay.DeliverymanController.cs`:
 
 ```csharp
 using UnityEngine;
 using BlindDelivery.Core.Services;
 
-public class BoyController : MonoBehaviour
+public class DeliverymanController : MonoBehaviour
 {
     private IInputService inputService;
     private Rigidbody2D rb;
@@ -565,11 +567,11 @@ public static class InputActions
     {
         Debug.Log("Updating gameplay components...");
         
-        // Update BoyController.cs
-        string boyControllerPath = "Assets/Scripts/Gameplay/BoyController.cs";
-        if (System.IO.File.Exists(boyControllerPath))
+        // Update DeliverymanController.cs
+        string deliverymanControllerPath = "Assets/Scripts/Gameplay/DeliverymanController.cs";
+        if (System.IO.File.Exists(deliverymanControllerPath))
         {
-            var content = System.IO.File.ReadAllText(boyControllerPath);
+            var content = System.IO.File.ReadAllText(deliverymanControllerPath);
             
             // Add InputActions usage
             if (!content.Contains("InputActions.GetMoveInput"))
@@ -585,10 +587,10 @@ public static class InputActions
                 );
             }
             
-            System.IO.File.WriteAllText(boyControllerPath, content);
+            System.IO.File.WriteAllText(deliverymanControllerPath, content);
             AssetDatabase.Refresh();
             
-            Debug.Log("Updated BoyController.cs");
+            Debug.Log("Updated DeliverymanController.cs");
         }
     }
     
@@ -748,18 +750,18 @@ public static class InputActions
     {
         Debug.Log("\n--- Gameplay Components Validation ---");
         
-        string boyControllerPath = "Assets/Scripts/Gameplay/BoyController.cs";
-        if (System.IO.File.Exists(boyControllerPath))
+        string deliverymanControllerPath = "Assets/Scripts/Gameplay/DeliverymanController.cs";
+        if (System.IO.File.Exists(deliverymanControllerPath))
         {
-            var content = System.IO.File.ReadAllText(boyControllerPath);
+            var content = System.IO.File.ReadAllText(deliverymanControllerPath);
             if (content.Contains("InputActions.GetMoveInput") && 
                 content.Contains("InputActions.GetJumpInputDown"))
             {
-                Debug.Log("✅ BoyController uses InputActions");
+                Debug.Log("✅ DeliverymanController uses InputActions");
             }
             else
             {
-                Debug.Log("❌ BoyController may need updates");
+                Debug.Log("❌ DeliverymanController may need updates");
             }
         }
     }
@@ -896,19 +898,19 @@ public static class ValidationScript
     {
         Debug.Log("\n--- Gameplay Components Validation ---");
         
-        // Check BoyController
-        string boyControllerPath = "Assets/Scripts/Gameplay/BoyController.cs";
-        if (System.IO.File.Exists(boyControllerPath))
+        // Check DeliverymanController
+        string deliverymanControllerPath = "Assets/Scripts/Gameplay/DeliverymanController.cs";
+        if (System.IO.File.Exists(deliverymanControllerPath))
         {
-            var content = System.IO.File.ReadAllText(boyControllerPath);
+            var content = System.IO.File.ReadAllText(deliverymanControllerPath);
             if (content.Contains("InputActions.GetMoveInput") && 
                 content.Contains("InputActions.GetJumpInputDown"))
             {
-                Debug.Log("✅ BoyController uses InputActions");
+                Debug.Log("✅ DeliverymanController uses InputActions");
             }
             else
             {
-                Debug.Log("❌ BoyController may need updates");
+                Debug.Log("❌ DeliverymanController may need updates");
             }
         }
     }
@@ -1039,7 +1041,7 @@ Tools > Validation > Validate Migration
    - Check Graphics Settings configuration
 
 3. **Gameplay components not updated**
-   - Update `BoyController.cs` and other gameplay scripts
+   - Update `DeliverymanController.cs` and other gameplay scripts
    - Ensure they use the new Input Actions
 
 4. **Performance issues**

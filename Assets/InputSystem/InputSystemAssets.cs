@@ -1,19 +1,23 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Legacy template input helper (Move/Jump/Fire). Blind Delivery has no player-controlled
+/// movement and uses InputService instead, so this is deliberately NOT auto-initialized.
+/// </summary>
 public class InputSystemAssets
 {
     public static InputActionAsset InputActions { get; private set; }
     private static InputActionMap gameplayMap;
-    
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+
+    // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Initialize()
     {
         // Load or create Input Actions
         InputActions = Resources.Load<InputActionAsset>("InputSystem/InputActions");
         if (InputActions == null)
         {
-            Debug.LogError("Input Actions Asset not found! Please create it in Assets/InputSystem/");
+            Debug.LogWarning("Input Actions Asset not found; legacy InputSystemAssets is unused.");
             return;
         }
         

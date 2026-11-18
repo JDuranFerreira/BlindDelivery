@@ -1,5 +1,7 @@
 # Unity Project Migration Plan
 
+> **Historical document — physics sections superseded.** Any `Rigidbody2D`/`Collider2D`/`Physics2D` snippets below are legacy and must not be used. The game uses the new 2D Physics Core (`Unity.U2D.Physics`); see `AGENTS.md` → "Physics system".
+
 ## Project Overview
 **Blind Delivery** is a Unity 2D mobile game project that needs migration from deprecated Unity technologies:
 1. **Input Manager** → **Input System**
@@ -380,14 +382,14 @@ public class InputService : IInputService
 
 ### Step 5: Update Gameplay Components
 
-Update `BlindDelivery.Gameplay.BoyController.cs`:
+Update `BlindDelivery.Gameplay.DeliverymanController.cs`:
 
 ```csharp
 using UnityEngine;
 using UnityEngine.InputSystem;
 using BlindDelivery.Core.Services;
 
-public class BoyController : MonoBehaviour
+public class DeliverymanController : MonoBehaviour
 {
     private IInputService _inputService;
     private Rigidbody2D _rb;

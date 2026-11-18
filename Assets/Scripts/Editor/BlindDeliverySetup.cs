@@ -15,16 +15,19 @@ namespace BlindDelivery.Editor
         const string DataFolder = "Assets/Data";
         const string BalanceAssetPath = DataFolder + "/GameBalance.asset";
 
-        static readonly string[] GameLayers = { "Tiles", "Items", "Boy", "Hazards", "WindZones", "Sensors" };
+        static readonly string[] GameLayers = { "Tiles", "Items", "Deliveryman", "Hazards", "WindZones", "Sensors" };
+
+        // Render order: first entry is drawn first (furthest back).
+        static readonly string[] GameSortingLayers = { "Background", "Middleground", "Foreground" };
 
         // Symmetric pairs that collide physically. Sensors collide with nothing: scans are raycasts,
-        // which ignore the collision matrix. Hazards and wind zones are triggers, so they only pair with the boy.
+        // which ignore the collision matrix. Hazards and wind zones are triggers, so they only pair with the deliveryman.
         static readonly (string, string)[] CollidingPairs =
         {
-            ("Boy", "Tiles"),
-            ("Boy", "Items"),
-            ("Boy", "Hazards"),
-            ("Boy", "WindZones"),
+            ("Deliveryman", "Tiles"),
+            ("Deliveryman", "Items"),
+            ("Deliveryman", "Hazards"),
+            ("Deliveryman", "WindZones"),
             ("Items", "Tiles"),
             ("Items", "Items"),
         };
@@ -33,6 +36,7 @@ namespace BlindDelivery.Editor
         public static void RunPhase0()
         {
             EnsureLayers();
+            EnsureSortingLayers();
             EnsureCollisionMatrix();
             EnsureGameBalanceAsset();
             AssetDatabase.SaveAssets();
@@ -57,6 +61,52 @@ namespace BlindDelivery.Editor
                 {
                     Debug.LogWarning($"[BlindDeliverySetup] Layer {index} is '{slot.stringValue}', expected '{GameLayers[i]}'. Left unchanged.");
                 }
+            }
+
+            tagManager.ApplyModifiedProperties();
+        }
+
+        /// <summary>Adds the game's sorting layers in render order without disturbing existing ones.</summary>
+        public static void EnsureSortingLayers()
+        {
+            Object tagManagerAsset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0];
+            SerializedObject tagManager = new SerializedObject(tagManagerAsset);
+            SerializedProperty sortingLayers = tagManager.FindProperty("m_SortingLayers");
+            if (sortingLayers == null)
+            {
+                Debug.LogError("[BlindDeliverySetup] Sorting layers property not found in TagManager.asset.");
+                return;
+            }
+
+            int nextId = 0;
+            for (int i = 0; i < sortingLayers.arraySize; i++)
+            {
+                SerializedProperty layer = sortingLayers.GetArrayElementAtIndex(i);
+                string name = layer.FindPropertyRelative("name").stringValue;
+                int id = layer.FindPropertyRelative("uniqueID").intValue;
+                if (id >= nextId) nextId = id + 1;
+            }
+
+            foreach (string wanted in GameSortingLayers)
+            {
+                bool exists = false;
+                for (int i = 0; i < sortingLayers.arraySize; i++)
+                {
+                    if (sortingLayers.GetArrayElementAtIndex(i).FindPropertyRelative("name").stringValue == wanted)
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (exists) continue;
+
+                int index = sortingLayers.arraySize;
+                sortingLayers.InsertArrayElementAtIndex(index);
+                SerializedProperty layer = sortingLayers.GetArrayElementAtIndex(index);
+                layer.FindPropertyRelative("name").stringValue = wanted;
+                layer.FindPropertyRelative("uniqueID").intValue = nextId++;
+                layer.FindPropertyRelative("locked").boolValue = false;
             }
 
             tagManager.ApplyModifiedProperties();

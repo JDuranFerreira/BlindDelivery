@@ -18,17 +18,17 @@
 ## 2. Core Loop
 
 1. **Level start:** the whole level is shown on one portrait screen. A prep countdown begins.
-2. **Prep phase:** the player can already place items while the countdown runs. When it ends, the boy starts walking from point A.
-3. **Run:** the boy walks automatically. The player places, grabs and moves items to guide him toward point B.
+2. **Prep phase:** the player can already place items while the countdown runs. When it ends, the deliveryman starts walking from point A.
+3. **Run:** the deliveryman walks automatically. The player places, grabs and moves items to guide him toward point B.
 4. **Hazards and crates:** gaps, spikes, wind and traffic threaten the crates he carries.
 5. **Arrival:** reaching point B ends the run. Stars are awarded for crates delivered, and a points score is recorded for the leaderboard.
 6. **Meta:** stars unlock upgrade tiers, credits buy them, then the next level or the daily route.
 
-**Win condition:** reach point B with at least 1 crate. **Fail condition:** all crates are lost, or the boy is destroyed by a hazard.
+**Win condition:** reach point B with at least 1 crate. **Fail condition:** all crates are lost, or the deliveryman is destroyed by a hazard.
 
 **Timer:** there is no fail timer. The only timer is the prep countdown at the start of the level, which gives the player time to read the map and place the first items. Its length is set per level.
 
-## 3. The Boy (AI Character)
+## 3. The Deliveryman (AI Character)
 
 ### Movement
 
@@ -46,10 +46,10 @@
 
 | State | Behaviour | Visual |
 | --- | --- | --- |
-| Carried | Stacked on head, moves with boy | Stacked crates |
+| Carried | Stacked on head, moves with deliveryman | Stacked crates |
 | Dropped | Falls with physics, can be picked up | On ground, pulsing |
 | Lost | Falls off-screen or destroyed | Poof + sound |
-| Delivered | Reaches point B with the boy | Confetti + score |
+| Delivered | Reaches point B with the deliveryman | Confetti + score |
 
 ### Sensory Model (the "blind" mechanic)
 
@@ -62,7 +62,7 @@
 ### Ledge Slow-Down (unlockable)
 
 - Not active at the start of the game. **Level 1 of the Echolocation Slow-Down upgrade unlocks it**, and levels 2 and 3 make it stronger.
-- When the scan detects a ledge within range, the boy automatically slows for a short time.
+- When the scan detects a ledge within range, the deliveryman automatically slows for a short time.
 - Feedback: a brief focus vignette, a low hum, and a steady slow haptic pulse while slowed.
 - Early levels must be forgiving without this ability, since players won't have it yet.
 - Stacks with the Haptic Sensitivity upgrade for earlier detection.
@@ -73,17 +73,19 @@
 
 - **One-handed flow:** tap an item in the toolbar, then tap the map to place it anywhere. No dragging from the toolbar is needed.
 - Items can be placed anywhere on the map as long as the spot is valid. Green ghost means valid. Red ghost means invalid (overlapping the floor, a wall or another object).
-- **Move at any time:** the player can press and hold a placed item and drag it to a new spot, including while the boy is walking. This keeps the player constantly engaged.
-- **Item cooldown:** after an item is placed or moved, a small cooldown ring shows under the item. It cannot be moved again until the cooldown ends. This stops last-instant teleporting of a ramp under the boy.
+- **Move at any time:** the player can press and hold a placed item and drag it to a new spot, including while the deliveryman is walking. This keeps the player constantly engaged.
+- **Item cooldown:** after an item is placed or moved, a small cooldown ring shows under the item. It cannot be moved again until the cooldown ends. This stops last-instant teleporting of a ramp under the deliveryman.
 - **Tool set per level:** each level grants a fixed set of tools (for example, 3 items) that the player moves around.
 - Cancel a placement with a long press on the ghost or by tapping outside the map.
+
+**Implementation note:** all world physics uses the new 2D Physics Core (`Unity.U2D.Physics`), never legacy `Rigidbody2D`/`Collider2D`/`Physics2D`. The toolbar item icons (`sprite_crate*`) are UI-only and have no physics bodies.
 
 ### Object types
 
 | Object | Effect | Physics |
 | --- | --- | --- |
 | Ramp | Bridges a 1-cell height gap | Static, friction 0.8 |
-| Spring | Launches the boy 3 cells up or forward | Impulse force, 0.3s cooldown |
+| Spring | Launches the deliveryman 3 cells up or forward | Impulse force, 0.3s cooldown |
 | Tactile Tile | Forces turn, stop or speed change | Trigger zone |
 | Audio Beacon | Emits a directional ping (5s) | Audio only |
 | Wind Break | Blocks horizontal wind in a 3-cell radius | Static |
@@ -95,7 +97,7 @@
 
 - Every level has a target of 3 crates.
 - 3 crates delivered = 3 stars. 2 crates = 2 stars. 1 crate = 1 star. 0 crates = fail.
-- **Bonus stars:** with the Box Capacity upgrade the boy can start with up to 5 crates. Delivering 4 gives a bonus star, and delivering all 5 gives the top **"3 stars plus plus"** rating.
+- **Bonus stars:** with the Box Capacity upgrade the deliveryman can start with up to 5 crates. Delivering 4 gives a bonus star, and delivering all 5 gives the top **"3 stars plus plus"** rating.
 - Bonus stars are shown in gold, separate from the normal three, so players without the upgrade never feel punished.
 - Stars come only from crates. Nothing else affects them.
 
@@ -105,13 +107,13 @@
 - Moving or placing an item drains a small fixed amount from the pool. The first placement of each item is free, and only moving it costs points.
 - Costs are fixed per item type so players can learn them.
 - Points floor at zero. They never cause a fail, and nothing adds points back.
-- The final score is whatever is left when the boy reaches point B. Crates do not add points.
+- The final score is whatever is left when the deliveryman reaches point B. Crates do not add points.
 - The pool is shown as a visible meter on the HUD.
 - Points feed the leaderboard and the daily route ranking.
 
 ## 6. Level Structure
 
-Every level fits on one portrait screen. The grid is narrow and tall, roughly 8–10 cells wide and 14–20 cells tall, so the boy zigzags between platforms like a pinball. Most levels run from A at the top to B at the bottom. Some run from the bottom up, using wind and springs.
+Every level fits on one portrait screen. The grid is narrow and tall, roughly 8–10 cells wide and 14–20 cells tall, so the deliveryman zigzags between platforms like a pinball. Most levels run from A at the top to B at the bottom. Some run from the bottom up, using wind and springs.
 
 **Level data (per level):**
 
@@ -122,7 +124,7 @@ Every level fits on one portrait screen. The grid is narrow and tall, roughly 8�
 - prep countdown length (seconds)
 - tool set: the items granted for this level
 - point pool: the fixed starting points for this level
-- boy speed
+- deliveryman speed
 - hazards and wind configuration
 
 **Game data (global, not per level):**
@@ -188,7 +190,7 @@ The whole level is always visible in portrait. There is no pan and no zoom. Ever
 **HUD (top):**
 
 - Crate counter (icons: carried, lost)
-- Prep countdown, shown only before the boy starts
+- Prep countdown, shown only before the deliveryman starts
 - Point pool meter, draining as items are moved
 - Echolocation status (sweep indicator showing the refresh rate)
 

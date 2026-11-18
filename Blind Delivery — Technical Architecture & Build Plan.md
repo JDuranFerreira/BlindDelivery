@@ -11,7 +11,7 @@ The template already provides pooling, input, audio, save, settings, scene loadi
 - **Tile layer (static):** level geometry only, such as floors, walls, hazards and point A and B. Stored as a tilemap. It is the source of truth for the Safe Fall Height, measured in cells.
 - **Free-form layer (dynamic):** player items are placed at any world position using real 2D colliders. Validation uses overlap checks against the tile layer and other items, not grid cells.
 
-**Decision 2: the boy runs on a fixed-step simulation of 0.02 seconds.** Physics2D is stepped manually with a constant fixed step. This makes the level validator, ghost replays and the daily leaderboard possible. Unity physics is not guaranteed identical across devices, so the leaderboard trusts the final score, which is the points left, but replays are treated as visual only and are recorded as player inputs plus the result, not as a proof.
+**Decision 2: the deliveryman runs on a fixed-step simulation of 0.02 seconds.** The new 2D Physics Core world is stepped manually with a constant fixed step. This makes the level validator, ghost replays and the daily leaderboard possible. Unity physics is not guaranteed identical across devices, so the leaderboard trusts the final score, which is the points left, but replays are treated as visual only and are recorded as player inputs plus the result, not as a proof.
 
 **Decision 3: pure logic stays in Core.** Rules such as stars, points, fall damage and upgrade gating live in plain C# with no Unity types, so they can be unit tested without a scene.
 
@@ -23,7 +23,7 @@ The template already provides pooling, input, audio, save, settings, scene loadi
 | --- | --- | --- |
 | BlindDelivery.Core | Pure logic: scoring, points pool, upgrade gating, crate rules, level data types, simulation interfaces | Extend template |
 | BlindDelivery.Services | Audio, Input, Save, Settings, Pooling, Ads, IAP, Haptics | Reuse, add Haptics |
-| BlindDelivery.Gameplay | Boy, crates, items, hazards, wind, sensory system, level runtime, HUD | New |
+| BlindDelivery.Gameplay | Deliveryman, crates, items, hazards, wind, sensory system, level runtime, HUD | New |
 | BlindDelivery.Editor | Level authoring, validator, balance tools | Extend template |
 | BlindDelivery.Tests | Edit mode tests for Core, play mode tests for simulation | New |
 
@@ -42,23 +42,23 @@ Dependency rule: Gameplay depends on Core and Services. Core depends on nothing.
 | Localization | Reuse | UI text and audio descriptions |
 | Ads / IAP | Reuse | Rewarded retry, credit boost, credit bundles |
 | Grid service | Replace | Becomes a small tile query service used only for static geometry and fall height |
-| Boy controller | New | State machine, see section 4 |
+| Deliveryman controller | New | State machine, see section 4 |
 | Crate stack | New | Stack, wobble, loss rules |
 | Sensory system | New | Echolocation scan, edge detection, audio and haptic output |
 | Item placement | New | Ghost, validation, drag, cooldowns |
 | Points pool | New | Per-level pool, drain, floor at zero |
 | Star and upgrade gating | New | Best stars per level summed, tier requirements |
 | Hazards and wind | New | Gaps, spikes, wind zones, wind break interaction |
-| Level validator | New | Simulates the boy to prove solvability |
+| Level validator | New | Simulates the deliveryman to prove solvability |
 | Haptics service | New | Wraps iOS Taptic and Android VibrationEffect patterns |
 
 ## 4. New Systems in Detail
 
 ### 4.1 Simulation loop
 
-A single SimulationRunner owns time. Each fixed step it runs in this order: update item cooldowns, update the sensory scan, tick the boy state machine, apply wind and hazard forces, call Physics2D.Simulate with the constant step, then resolve crate and delivery events. Physics2D simulation mode is set to Script so nothing else advances physics. The fixed step value lives in GameBalance.
+A single SimulationRunner owns time. Each fixed step it runs in this order: update item cooldowns, update the sensory scan, tick the deliveryman state machine, apply wind and hazard forces, call `Unity.U2D.Physics.PhysicsWorld.defaultWorld.Simulate(fixedStep)` (the new 2D Physics Core), then resolve crate and delivery events. The world's `simulationType` is `PhysicsWorld.SimulationType.Script` so nothing else advances physics. The fixed step value lives in GameBalance. Legacy 2D (`Rigidbody2D`, `Collider2D`, `Physics2D`) is not used.
 
-### 4.2 Boy controller
+### 4.2 Deliveryman controller
 
 A state machine with these states: Idle (prep phase), Walking, Turning, Falling, Launched (spring or wind), Slowed, Delivered and Dead. Transitions are driven by sensor results, not by scene scripting.
 
@@ -68,17 +68,17 @@ A state machine with these states: Idle (prep phase), Walking, Turning, Falling,
 
 ### 4.3 Crate stack
 
-A plain C# class in Core holding the crate count and capacity (3 base, up to 5). It raises events for lost, dropped and delivered. A separate view component in Gameplay renders the stack and the wobble, which grows with stack height and boy speed. Wobble is visual only and never changes the rules.
+A plain C# class in Core holding the crate count and capacity (3 base, up to 5). It raises events for lost, dropped and delivered. A separate view component in Gameplay renders the stack and the wobble, which grows with stack height and deliveryman speed. Wobble is visual only and never changes the rules.
 
 ### 4.4 Sensory system
 
-Two parts. The scan itself is a set of short 2D raycasts and overlap checks ahead of the boy, run at the refresh rate interval. It returns a result struct: ledge distance, wall distance, beacon direction. Output channels subscribe to that result: an audio channel (hum pitch, edge warning tone, beacon ping), a haptic channel, and the slow-down trigger. Keeping the scan result as data means the validator and tests can read it without audio.
+Two parts. The scan itself is a set of short 2D raycasts and overlap checks ahead of the deliveryman, run at the refresh rate interval. It returns a result struct: ledge distance, wall distance, beacon direction. Output channels subscribe to that result: an audio channel (hum pitch, edge warning tone, beacon ping), a haptic channel, and the slow-down trigger. Keeping the scan result as data means the validator and tests can read it without audio.
 
 ### 4.5 Item placement
 
 - **ItemDefinition** (ScriptableObject): prefab, footprint size, point move cost, cooldown, placement rules.
 - **PlacementController**: tap an item in the toolbar to select it, a ghost follows the touch, tapping the map confirms.
-- **Validation**: Physics2D.OverlapBox at the ghost position, using a layer mask for the tile layer and other items. Green when clear, red when overlapping or blocked. A short snap tolerance helps thumbs.
+- **Validation**: a 2D Physics Core overlap query at the ghost position, using Core contact filtering for the tile layer and other items. Green when clear, red when overlapping or blocked. A short snap tolerance helps thumbs.
 - **Move**: press and hold on a placed item picks it up, drag moves its ghost, release re-validates and drops it. If invalid, it snaps back to its previous position at no cost.
 - **Cooldown**: each placed item has a timer. While it runs, the item cannot be picked up and shows a ring under it.
 
@@ -104,12 +104,12 @@ A thin interface, IHapticsService, with one method per pattern from the design d
 
 All levels are hand-made, so the priority is a fast authoring workflow inside the Unity editor. There is no procedural generator. The pieces are listed below.
 
-- **LevelData (ScriptableObject):** one asset per level holding the tilemap prefab, point A and B, prep countdown, tool set, point pool, boy speed and hazard and wind references.
+- **LevelData (ScriptableObject):** one asset per level holding the tilemap prefab, point A and B, prep countdown, tool set, point pool, deliveryman speed and hazard and wind references.
 - **WorldData (ScriptableObject):** an ordered list of levels per world, with the mechanics introduced and the star totals the world awards.
 - **ItemDefinition (ScriptableObject):** one per tool, with prefab, footprint, move cost and cooldown.
-- **Level prefab template:** a ready tilemap, boy start marker, goal marker, hazard and wind zone prefabs, so a new level is duplicated and edited, not built from scratch.
-- **Level editor window:** a custom editor window to create a level from the template, preview point A, B and the safe fall height as a line on platform edges, and run the level in play mode with one click.
-- **Validator:** a menu command that runs the simulation headless with the level's stored reference solution and checks that the boy reaches B with all 3 crates. It runs on every level in CI, and a failing level fails the build.
+- **Level prefab template:** a ready tilemap, deliveryman start marker, goal marker, hazard and wind zone prefabs, so a new level is duplicated and edited, not built from scratch.
+- **Level editor window:** a custom editor window to create a level from the template, preview point A, B and the safe fall height as a line on platform edges, and run the level in play mode with one click. The platform builder (`PlatformBuilder` + `PlatformBuilderEditor`) already lets designers place Start/End markers, pick a platform type (Ground), and generate left/middle/right sprite prefabs between them.
+- **Validator:** a menu command that runs the simulation headless with the level's stored reference solution and checks that the deliveryman reaches B with all 3 crates. It runs on every level in CI, and a failing level fails the build.
 - **Level of the Day:** a hand-picked rotation from a curated list of levels, using the same leaderboard. Which level is shown today is chosen from the date, with no generator involved.
 
 ## 5. Build Plan
@@ -120,10 +120,10 @@ Each phase ends with a test. Do not start the next phase until the done-when tes
 | --- | --- | --- |
 | 0. Foundation | Create the new assemblies and the test assembly. Add GameBalance asset with Safe Fall Height 3, fixed step, item costs. Strip the tower defense grid out of the gameplay path. | Project compiles. An edit mode test reads Safe Fall Height 3 from GameBalance. |
 | 1. Core rules | CrateStack, PointsPool, StarCalculator, UpgradeService gating, LevelData types, all as plain C#. | Unit tests pass: 2 crates gives 2 stars, 5 crates gives plus-plus rating, points floor at zero and never fail, a tier will not buy without enough stars, and stars are never deducted. |
-| 2. Simulation and tile layer | SimulationRunner with manual Physics2D stepping. Tilemap level loader. Tile query for fall height in cells. | A test level loads and the same inputs give the same final boy position on two runs in the editor. |
-| 3. Boy walks | Boy controller states Idle, Walking, Turning, Falling, Delivered. Gravity, wall turns, A to B. | In a flat test level, the boy walks from A to B and turns at walls. A fall of 4 cells loses 1 crate, a fall of 3 does not. |
+| 2. Simulation and tile layer | SimulationRunner with manual 2D Physics Core stepping (`PhysicsWorld.Simulate`, `SimulationType.Script`). Tilemap level loader. Tile query for fall height in cells. | A test level loads and the same inputs give the same final deliveryman position on two runs in the editor. |
+| 3. Deliveryman walks | Deliveryman controller states Idle, Walking, Turning, Falling, Delivered. Gravity, wall turns, A to B. | In a flat test level, the deliveryman walks from A to B and turns at walls. A fall of 4 cells loses 1 crate, a fall of 3 does not. |
 | 4. Item placement | ItemDefinition assets, PlacementController, ghost validation with OverlapBox, move by hold and drag, cooldown ring. Ramp and tactile tile first. | You can place a ramp with one thumb, it rejects overlapping spots, you can move it, and it cannot be moved again until the cooldown ends. |
-| 5. Full toolkit | Spring, cushion, wind break, beacon. Hazards and wind zones. | Each item has a test level proving its effect: spring launches up, cushion absorbs a long drop, wind lifts the boy, wind break stops it. |
+| 5. Full toolkit | Spring, cushion, wind break, beacon. Hazards and wind zones. | Each item has a test level proving its effect: spring launches up, cushion absorbs a long drop, wind lifts the deliveryman, wind break stops it. |
 | 6. Vertical slice | One complete level with HUD, points meter, prep countdown, stars result screen. Placeholder art and audio. | A tester who has not seen the game finishes the level, gets stars and a score, and replays it without help. |
 | 7. Blind systems | Sensory scan, echolocation hum, edge warning tone, haptics service, ledge slow-down behind the upgrade. | With headphones and eyes closed on the test level, a tester can tell when a ledge is near. The slow-down only works when the upgrade is owned. |
 | 8. Progression | Save of best stars per level, total stars, upgrade shop with star gates, credits, tutorial levels 1 to 5. | A fresh save plays the tutorial, earns stars, and the shop locks and unlocks tiers correctly. Replaying a level never double counts stars. |
@@ -136,7 +136,7 @@ Each phase ends with a test. Do not start the next phase until the done-when tes
 
 - Assets/BlindDelivery/Core, Services, Gameplay, Editor, Tests, one folder per assembly.
 - Data assets in Assets/BlindDelivery/Data: GameBalance, ItemDefinitions, Levels, Worlds.
-- Physics layers: Tiles, Items, Boy, Hazards, WindZones, Sensors. Set up the collision matrix in Phase 0.
+- Authoring layers (Tiles, Items, Deliveryman, Hazards, WindZones, Sensors) are labels only. Collision filtering is done with 2D Physics Core contact filters (64-bit masks), configured in code — not with the legacy `Physics2D` collision matrix.
 - One level equals one LevelData asset plus one tilemap prefab.
 
 ## 7. Key Technical Risks

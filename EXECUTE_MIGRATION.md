@@ -1,5 +1,7 @@
 # Unity Project Migration - Executable Guide
 
+> **Historical document — physics sections superseded.** Any `Rigidbody2D`/`Collider2D`/`Physics2D` snippets below are legacy and must not be used. The game uses the new 2D Physics Core (`Unity.U2D.Physics`); see `AGENTS.md` → "Physics system".
+
 ## Overview
 This project needs migration from deprecated Unity technologies:
 1. **Input Manager** → **Input System** 
@@ -317,15 +319,15 @@ Update `ProjectSettings/GraphicsSettings.asset`:
 
 ### Step 4: Update Existing Gameplay Components
 
-#### Update BoyController
+#### Update DeliverymanController
 
-Update `BlindDelivery.Gameplay.BoyController.cs` to use the new Input Service:
+Update `BlindDelivery.Gameplay.DeliverymanController.cs` to use the new Input Service:
 
 ```csharp
 using UnityEngine;
 using BlindDelivery.Core.Services;
 
-public class BoyController : MonoBehaviour
+public class DeliverymanController : MonoBehaviour
 {
     private IInputService inputService;
     private Rigidbody2D rb;
@@ -519,24 +521,24 @@ public static class ValidationScript
     {
         Debug.Log("\n--- Gameplay Components Status ---");
         
-        // Check if BoyController is updated
-        string boyControllerPath = "Assets/Scripts/Gameplay/BoyController.cs";
-        if (System.IO.File.Exists(boyControllerPath))
+        // Check if DeliverymanController is updated
+        string deliverymanControllerPath = "Assets/Scripts/Gameplay/DeliverymanController.cs";
+        if (System.IO.File.Exists(deliverymanControllerPath))
         {
-            var content = System.IO.File.ReadAllText(boyControllerPath);
+            var content = System.IO.File.ReadAllText(deliverymanControllerPath);
             if (content.Contains("InputActions.GetMoveInput") && 
                 content.Contains("InputActions.GetJumpInputDown"))
             {
-                Debug.Log("✅ BoyController uses new Input System");
+                Debug.Log("✅ DeliverymanController uses new Input System");
             }
             else
             {
-                Debug.Log("⚠️  BoyController may need Input System updates");
+                Debug.Log("⚠️  DeliverymanController may need Input System updates");
             }
         }
         else
         {
-            Debug.Log("❌ BoyController not found");
+            Debug.Log("❌ DeliverymanController not found");
         }
         
         // Check if InputService is updated
@@ -663,7 +665,7 @@ Tools > Validation > Check Migration Status
    - Check Graphics Settings configuration
 
 3. **Gameplay components not updated**
-   - Update `BoyController.cs` and other gameplay scripts
+   - Update `DeliverymanController.cs` and other gameplay scripts
    - Ensure they use the new Input Actions
 
 4. **Performance issues**

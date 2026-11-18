@@ -24,9 +24,9 @@ namespace BlindDelivery.Gameplay.Balance
         [SerializeField] float fixedStepSeconds = 0.02f;
 
         [Header("Crates")]
-        [Tooltip("Base number of crates the boy starts each run with.")]
+        [Tooltip("Base number of crates the deliveryman starts each run with.")]
         [SerializeField] int baseCrateCount = 3;
-        [Tooltip("Maximum number of crates the boy can carry (Box Capacity raises to this).")]
+        [Tooltip("Maximum number of crates the deliveryman can carry (Box Capacity raises to this).")]
         [SerializeField] int maxCrateCount = 5;
 
         [Header("Items")]

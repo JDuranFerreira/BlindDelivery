@@ -19,10 +19,10 @@ namespace BlindDelivery.Core.Balance
         /// <summary>Fixed simulation step in seconds (0.02s = 50 steps per second).</summary>
         public float FixedStepSeconds { get; set; } = 0.02f;
 
-        /// <summary>Base number of crates the boy starts each run with.</summary>
+        /// <summary>Base number of crates the deliveryman starts each run with.</summary>
         public int BaseCrateCount { get; set; } = 3;
 
-        /// <summary>Maximum number of crates the boy can carry (Box Capacity raises to this).</summary>
+        /// <summary>Maximum number of crates the deliveryman can carry (Box Capacity raises to this).</summary>
         public int MaxCrateCount { get; set; } = 5;
 
         /// <summary>Point move cost per item type. Keyed by item type.</summary>
