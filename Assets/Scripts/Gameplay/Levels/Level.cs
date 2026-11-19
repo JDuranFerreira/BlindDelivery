@@ -12,6 +12,7 @@ namespace BlindDelivery.Gameplay.Levels
         [SerializeField] Transform startPoint;
         [SerializeField] Transform endPoint;
         [SerializeField] GameObject deliverymanPrefab;
+        [SerializeField] LevelData data;
 
         GameObject deliveryman;
 
@@ -20,6 +21,9 @@ namespace BlindDelivery.Gameplay.Levels
         public Transform EndPoint => endPoint;
 
         public GameObject Deliveryman => deliveryman;
+
+        /// <summary>Per-level tuning asset; may be absent on legacy scenes (code defaults apply).</summary>
+        public LevelData Data => data;
 
         void Awake()
         {

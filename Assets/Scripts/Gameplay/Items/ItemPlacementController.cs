@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using BlindDelivery.Core.Balance;
+using BlindDelivery.Core.Levels;
 using BlindDelivery.Core.Items;
 using BlindDelivery.Core.UI;
 using BlindDelivery.Gameplay.Balance;
+using BlindDelivery.Gameplay.Levels;
 using BlindDelivery.Gameplay.Movement;
 using UnityEngine;
 using CoreVector2 = BlindDelivery.Core.Input.Vector2;
@@ -19,6 +22,8 @@ namespace BlindDelivery.Gameplay.Items
     public sealed class ItemPlacementController : MonoBehaviour
     {
         [SerializeField] GameBalanceAsset balance;
+        [SerializeField] LevelData levelData;
+        [SerializeField] Level level;
         [SerializeField] RectLevelGeometry geometry;
         [SerializeField] UnityEngine.Object pointerBlockerSource;
         [SerializeField] GameObject jumppadPrefab;
@@ -29,10 +34,15 @@ namespace BlindDelivery.Gameplay.Items
         readonly List<GuidanceItem> placedItems = new List<GuidanceItem>();
         readonly ItemCooldownTracker cooldowns = new ItemCooldownTracker();
 
+        ItemFactory factory;
+
+        const float GroundProbeOffset = 0.08f;
+
         BlindDelivery.Core.Input.IInputService input;
         ItemBudget budget;
         IPointerBlocker pointerBlocker;
         GameBalance data;
+        LevelConfig levelConfig;
         GuidanceItem ghost;
         GuidanceItem dragged;
         Vector3 dragOrigin;
@@ -46,6 +56,25 @@ namespace BlindDelivery.Gameplay.Items
 
         public ItemBudget Budget => budget;
 
+        /// <summary>Tool slots the factory can actually build — never a hardcoded list.</summary>
+        public IReadOnlyList<ItemType> SupportedTypes => factory != null ? factory.SupportedTypes : Array.Empty<ItemType>();
+
+        public bool IsToolSupported(ItemType type) => factory != null && factory.CanCreate(type);
+
+        public float CooldownSeconds(ItemType type) => CooldownFor(type);
+
+        /// <summary>First step of every fixed step, before the sensory scan (Tech Plan §4.1).</summary>
+        public void TickCooldowns(float deltaTime)
+        {
+            cooldowns.Tick(deltaTime);
+            foreach (GuidanceItem item in placedItems)
+            {
+                float duration = CooldownFor(item.Type);
+                float ratio = duration > 0f ? Mathf.Clamp01(cooldowns.Remaining(item.InstanceId) / duration) : 0f;
+                item.SetCooldown(ratio);
+            }
+        }
+
         public ItemType? SelectedType { get; private set; }
 
         void Start()
@@ -53,7 +82,22 @@ namespace BlindDelivery.Gameplay.Items
             if (balance == null) balance = FindAnyObjectByType<GameBalanceAsset>();
             if (geometry == null) geometry = FindAnyObjectByType<RectLevelGeometry>();
             data = balance != null ? balance.ToGameBalance() : new GameBalance();
-            budget = new ItemBudget(startingPoints);
+            levelConfig = levelData != null ? levelData.ToLevelConfig() : null;
+            if (levelConfig == null)
+            {
+                if (level == null) level = FindAnyObjectByType<Level>();
+                if (level != null && level.Data != null) levelConfig = level.Data.ToLevelConfig();
+            }
+
+            budget = new ItemBudget(levelConfig != null ? levelConfig.StartingPoints : startingPoints);
+            factory = levelData != null && levelData.Tools.Count > 0
+                ? CreateFactory(levelData)
+                : new ItemFactory(new[]
+                {
+                    new ItemFactoryEntry(ItemType.Spring, jumppadPrefab),
+                    new ItemFactoryEntry(ItemType.Cushion, cardboxPrefab),
+                    new ItemFactoryEntry(ItemType.Ramp, bridgePrefab),
+                });
             pointerBlocker = pointerBlockerSource as IPointerBlocker;
             if (pointerBlocker == null)
             {
@@ -85,11 +129,23 @@ namespace BlindDelivery.Gameplay.Items
             }
         }
 
+        /// <summary>Builds the factory from authored item definitions — no type switch in code.</summary>
+        static ItemFactory CreateFactory(LevelData data)
+        {
+            var entries = new List<ItemFactoryEntry>();
+            foreach (ItemDefinitionAsset tool in data.Tools)
+            {
+                // Level fixtures (wind zones etc.) are not player tools and never enter the factory.
+                if (tool != null && tool.Prefab != null && tool.Usage == ItemUsage.PlayerTool)
+                    entries.Add(new ItemFactoryEntry(tool.Type, tool.Prefab));
+            }
+
+            return new ItemFactory(entries);
+        }
+
         void Update()
         {
             if (budget == null) return;
-            cooldowns.Tick(Time.deltaTime);
-
             bool pointerDown = input != null && input.IsPointerDown;
             if (wasPointerDown && !pointerDown && dragged != null) EndDrag();
             wasPointerDown = pointerDown;
@@ -124,7 +180,7 @@ namespace BlindDelivery.Gameplay.Items
         {
             if (item == null) return;
             Bounds bounds = item.WorldBounds;
-            bool onFloor = geometry != null && geometry.Contains(bounds.center.x, bounds.min.y - 0.08f);
+            bool onFloor = geometry != null && geometry.Contains(bounds.center.x, bounds.min.y - GroundProbeOffset);
             if (onFloor)
             {
                 item.MarkSettled();
@@ -152,7 +208,7 @@ namespace BlindDelivery.Gameplay.Items
                 }
 
                 Bounds bounds = item.WorldBounds;
-                bool landed = geometry != null && geometry.Contains(bounds.center.x, bounds.min.y - 0.08f);
+                bool landed = geometry != null && geometry.Contains(bounds.center.x, bounds.min.y - GroundProbeOffset);
                 bool belowLevel = geometry != null && bounds.max.y < geometry.LevelBounds.min.y - 3f;
                 if (landed || belowLevel)
                 {
@@ -183,19 +239,9 @@ namespace BlindDelivery.Gameplay.Items
             if (sceneItems.Length > 0) geometry?.Rebuild();
         }
 
-        /// <summary>Toolbar entry point. Selecting the active tool again cancels the ghost.</summary>
-        public void SelectType(int index)
-        {
-            ItemType type = index == 0 ? ItemType.Spring
-                : index == 1 ? ItemType.Cushion
-                : index == 2 ? ItemType.Ramp
-                : ItemType.Ramp;
-            SelectType(type);
-        }
-
         public void SelectType(ItemType type)
         {
-            if (type != ItemType.Spring && type != ItemType.Cushion && type != ItemType.Ramp) return;
+            if (!IsToolSupported(type)) return;
             if (SelectedType == type)
             {
                 CancelSelection();
@@ -204,27 +250,40 @@ namespace BlindDelivery.Gameplay.Items
 
             CancelSelection();
             SelectedType = type;
-            GameObject prefab = PrefabFor(type);
-            if (prefab == null)
+            Vector3 position = input != null && input.PointerPosition.HasValue
+                ? PointerWorld(input.PointerPosition.Value)
+                : transform.position;
+            try
             {
-                Debug.LogError($"[Items] No prefab assigned for {type}.", this);
+                ghost = factory.Create(type, position, transform, ++nextInstanceId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.LogError("[Items] " + ex.Message, this);
                 SelectedType = null;
                 return;
             }
 
-            Vector3 position = input != null && input.PointerPosition.HasValue
-                ? PointerWorld(input.PointerPosition.Value)
-                : transform.position;
-            ghost = CreateItem(prefab, position);
             ghost.SetGhost(IsValidPlacement(ghost, position));
         }
 
         void HandleTap(CoreVector2 screen)
         {
             if (pointerBlocker != null && pointerBlocker.BlocksWorldInput) return;
-            if (ghost == null) return;
+            if (ghost == null)
+            {
+                if (SelectedType.HasValue) CancelSelection();
+                return;
+            }
 
             Vector3 position = PointerWorld(screen);
+            if (IsOutsideLevel(position))
+            {
+                // GDD §4: tapping outside the map cancels the pending placement.
+                CancelSelection();
+                return;
+            }
+
             ghost.transform.position = position;
             if (!IsValidPlacement(ghost, position))
             {
@@ -235,6 +294,7 @@ namespace BlindDelivery.Gameplay.Items
             ghost.Commit();
             placedItems.Add(ghost);
             cooldowns.Start(ghost.InstanceId, CooldownFor(ghost.Type));
+            ghost.SetCooldown(1f);
             SettleOrDrop(ghost);
             ghost = null;
             SelectedType = null;
@@ -280,7 +340,11 @@ namespace BlindDelivery.Gameplay.Items
 
             if (!valid) dragged.transform.position = dragOrigin;
             dragged.Commit();
-            if (valid) cooldowns.Start(dragged.InstanceId, CooldownFor(dragged.Type));
+            if (valid)
+            {
+                cooldowns.Start(dragged.InstanceId, CooldownFor(dragged.Type));
+                dragged.SetCooldown(1f);
+            }
             SettleOrDrop(dragged);
             dragged = null;
         }
@@ -296,20 +360,20 @@ namespace BlindDelivery.Gameplay.Items
             SelectedType = null;
         }
 
-        GuidanceItem CreateItem(GameObject prefab, Vector3 position)
+        /// <summary>Used when an item is consumed (e.g. a cardbox squashed on landing).</summary>
+        public void RemoveItem(GuidanceItem item)
         {
-            GameObject instance = Instantiate(prefab, position, Quaternion.identity, transform);
-            instance.name = prefab.name + " (Placed)";
-            GuidanceItem item = instance.GetComponent<GuidanceItem>();
-            if (item == null)
-            {
-                Debug.LogError($"[Items] Prefab '{prefab.name}' has no GuidanceItem component.", this);
-                Destroy(instance);
-                return null;
-            }
+            if (item == null || !placedItems.Remove(item)) return;
+            cooldowns.Clear(item.InstanceId);
+            geometry?.Rebuild();
+        }
 
-            item.AssignId(++nextInstanceId);
-            return item;
+        /// <summary>A tap outside the level bounds cancels the pending placement (GDD §4).</summary>
+        bool IsOutsideLevel(Vector3 position)
+        {
+            Bounds level = geometry != null ? geometry.LevelBounds : RectLevelGeometry.DefaultLevelBounds;
+            return position.x < level.min.x || position.x > level.max.x ||
+                   position.y < level.min.y || position.y > level.max.y;
         }
 
         bool IsValidPlacement(GuidanceItem item, Vector3 position)
@@ -318,7 +382,7 @@ namespace BlindDelivery.Gameplay.Items
             item.transform.position = position;
 
             Bounds bounds = item.WorldBounds;
-            Bounds level = geometry != null ? geometry.LevelBounds : new Bounds(Vector3.zero, new Vector3(20f, 20f, 1f));
+            Bounds level = geometry != null ? geometry.LevelBounds : RectLevelGeometry.DefaultLevelBounds;
             // Item pivots are bottom-centre, so the transform is not the item's centre. Compare the
             // sprite bounds instead, allowing items to rest on (or stack above) the level surface.
             if (bounds.center.x < level.min.x + 0.1f || bounds.center.x > level.max.x - 0.1f ||
@@ -360,19 +424,29 @@ namespace BlindDelivery.Gameplay.Items
 
         Camera worldCamera;
 
-        GameObject PrefabFor(ItemType type)
+        ItemDefinitionData DefinitionFor(ItemType type)
         {
-            switch (type)
+            if (levelConfig == null) return null;
+            foreach (ItemDefinitionData tool in levelConfig.PlayerTools)
             {
-                case ItemType.Spring: return jumppadPrefab;
-                case ItemType.Cushion: return cardboxPrefab;
-                case ItemType.Ramp: return bridgePrefab;
-                default: return null;
+                if (tool != null && tool.Type == type) return tool;
             }
+
+            return null;
         }
 
-        int CostFor(ItemType type) => data != null && data.ItemMoveCosts.TryGetValue(type, out int cost) ? cost : 0;
+        int CostFor(ItemType type)
+        {
+            ItemDefinitionData definition = DefinitionFor(type);
+            if (definition != null) return definition.MoveCost;
+            return data != null && data.ItemMoveCosts.TryGetValue(type, out int cost) ? cost : 0;
+        }
 
-        float CooldownFor(ItemType type) => data != null && data.ItemCooldownSeconds.TryGetValue(type, out float seconds) ? seconds : 0f;
+        float CooldownFor(ItemType type)
+        {
+            ItemDefinitionData definition = DefinitionFor(type);
+            if (definition != null) return definition.CooldownSeconds;
+            return data != null && data.ItemCooldownSeconds.TryGetValue(type, out float seconds) ? seconds : 0f;
+        }
     }
 }

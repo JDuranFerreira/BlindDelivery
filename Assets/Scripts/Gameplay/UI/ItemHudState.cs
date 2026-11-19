@@ -22,12 +22,35 @@ namespace BlindDelivery.Gameplay.UI
 
         public IReadOnlyList<ItemType> Tools => AllTools;
 
-        public bool IsToolAvailable(ItemType type)
-            => type == ItemType.Ramp || type == ItemType.Spring || type == ItemType.Cushion;
+        // Availability comes from the factory, so adding a tool never edits this adapter.
+        public bool IsToolAvailable(ItemType type) => items != null && items.IsToolSupported(type);
+
+        public float ToolCooldownRatio => SelectedTool.HasValue ? CooldownRatioFor(SelectedTool.Value) : 0f;
+
+        public float CooldownRatioFor(ItemType type)
+        {
+            if (items == null || items.Cooldowns == null) return 0f;
+            float duration = items.CooldownSeconds(type);
+            if (duration <= 0f) return 0f;
+
+            float remaining = 0f;
+            foreach (GuidanceItem item in items.PlacedItems)
+            {
+                if (item.Type == type) remaining = Mathf.Max(remaining, items.Cooldowns.Remaining(item.InstanceId));
+            }
+
+            return Mathf.Clamp01(remaining / duration);
+        }
 
         public int Crates => runner != null && runner.Crates != null ? runner.Crates.Count : 0;
 
         public int Points => items != null && items.Budget != null ? items.Budget.Points : 0;
+
+        public int MaxPoints => items != null && items.Budget != null ? items.Budget.StartingPoints : 0;
+
+        public bool IsPreparing => runner != null && runner.IsPreparing;
+
+        public float PrepRemainingSeconds => runner != null ? runner.PrepRemaining : 0f;
 
         public ItemType? SelectedTool => items != null ? items.SelectedType : null;
 

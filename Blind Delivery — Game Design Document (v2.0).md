@@ -87,7 +87,7 @@
 | Object | Effect | Physics |
 | --- | --- | --- |
 | Ramp | Bridges a 1-cell height gap | Static, friction 0.8 |
-| Spring | Launches the deliveryman 3 cells up or forward | Impulse force, 0.3s cooldown |
+| Spring | Launches the deliveryman 5 cells up or forward | Impulse force, 0.3s cooldown |
 | Tactile Tile | Forces turn, stop or speed change | Trigger zone |
 | Audio Beacon | Emits a directional ping (5s) | Audio only |
 | Wind Break | Blocks horizontal wind in a 3-cell radius | Static |

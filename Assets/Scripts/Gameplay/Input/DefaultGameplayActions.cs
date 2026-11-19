@@ -4,8 +4,8 @@ namespace BlindDelivery.Gameplay.Input
 {
     /// <summary>
     /// Fallback action set for the InputService seam until a level authors its own InputActionAsset.
-    /// Mirrors the action names InputService looks up; Tap and Hold use Input System interactions
-    /// so a long press no longer races a tap on the same pointer press.
+    /// InputService derives Tap, DoubleTap, Hold, Drag and Swipe from PointerPress + PointerPosition
+    /// in Update, so mouse and touch behave identically; no Tap/Hold actions are needed.
     /// </summary>
     public static class DefaultGameplayActions
     {
@@ -16,15 +16,11 @@ namespace BlindDelivery.Gameplay.Input
       ""name"": ""Gameplay"",
       ""actions"": [
         { ""name"": ""PointerPosition"", ""type"": ""Value"", ""expectedControlType"": ""Vector2"" },
-        { ""name"": ""PointerPress"", ""type"": ""Button"" },
-        { ""name"": ""Tap"", ""type"": ""Button"" },
-        { ""name"": ""Hold"", ""type"": ""Button"" }
+        { ""name"": ""PointerPress"", ""type"": ""Button"" }
       ],
       ""bindings"": [
         { ""path"": ""<Pointer>/position"", ""action"": ""PointerPosition"" },
-        { ""path"": ""<Pointer>/press"", ""action"": ""PointerPress"" },
-        { ""path"": ""<Pointer>/press"", ""action"": ""Tap"", ""interactions"": ""Tap"" },
-        { ""path"": ""<Pointer>/press"", ""action"": ""Hold"", ""interactions"": ""Hold(duration=0.5)"" }
+        { ""path"": ""<Pointer>/press"", ""action"": ""PointerPress"" }
       ]
     }
   ]

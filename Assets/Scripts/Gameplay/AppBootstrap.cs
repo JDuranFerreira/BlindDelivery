@@ -16,6 +16,7 @@ using BlindDelivery.Core.Settings;
 using BlindDelivery.Gameplay.Input;
 using BlindDelivery.Services.Audio;
 using BlindDelivery.Services.Events;
+using BlindDelivery.Services.Haptics;
 using BlindDelivery.Services.Input;
 using BlindDelivery.Services.Localization;
 using BlindDelivery.Services.Pooling;
@@ -169,6 +170,11 @@ namespace BlindDelivery.Gameplay
             registry.Register(new SaveService(new FileSaveStore(), Bus));
 
             registry.Register(new SettingsService(Bus, new PlayerPrefsStore()));
+
+            // Blind systems: haptics and upgrade ownership are engine-free seams registered here
+            // so gameplay only receives them; early levels have every upgrade at level 0.
+            registry.Register(new HapticsService(Services.Get<ISettingsService>()));
+            registry.Register(new BlindDelivery.Services.Upgrades.UpgradeService());
 
             AudioHost audio = gameObject.AddComponent<AudioHost>();
             audio.Library = audioLibrary;

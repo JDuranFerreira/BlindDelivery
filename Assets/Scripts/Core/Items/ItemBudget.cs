@@ -17,10 +17,14 @@ namespace BlindDelivery.Core.Items
 
         public int Points => points;
 
+        /// <summary>Full pool for this level; the HUD meter scales remaining points against it.</summary>
+        public int StartingPoints { get; private set; }
+
         public void Reset(int startingPoints)
         {
             if (startingPoints < 0) throw new ArgumentOutOfRangeException(nameof(startingPoints));
             points = startingPoints;
+            StartingPoints = startingPoints;
         }
 
         public bool CanAfford(int cost) => cost >= 0 && points >= cost;

@@ -74,6 +74,17 @@ namespace BlindDelivery.Services.UI
             return true;
         }
 
+        /// <summary>
+        /// Drops every registered view and the navigation history. Scene-local views die on a
+        /// scene reload while this service survives, so the new scene must start from an empty
+        /// registry rather than hold references to destroyed views (GDD §2 replay).
+        /// </summary>
+        public void ResetScreens()
+        {
+            screens.Clear();
+            screensById.Clear();
+        }
+
         /// <summary>Sets the root of the region and drops the whole history. Bottom of the stack.</summary>
         public async Task SetRootAsync(string screenId, CancellationToken token = default)
         {

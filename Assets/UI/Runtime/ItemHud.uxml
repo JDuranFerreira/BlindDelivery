@@ -3,10 +3,14 @@
         <ui:VisualElement name="SafeArea" class="safe-area">
             <ui:VisualElement name="StatusPanel" class="status-panel hud-panel">
                 <ui:Label name="Title" text="BLIND DELIVERY" class="hud-title" />
+                <ui:Label name="Phase" text="PREP 3" class="hud-phase" />
                 <ui:VisualElement class="stats-row">
                     <ui:Label name="Crates" text="Crates 3" class="hud-stat" />
                     <ui:Label name="Points" text="Points 100" class="hud-stat" />
                     <ui:Label name="Tool" text="Tool: none" class="hud-stat tool-stat" />
+                </ui:VisualElement>
+                <ui:VisualElement name="PointsTrack" class="hud-meter points-track">
+                    <ui:VisualElement name="PointsFill" class="hud-meter-fill points-fill" />
                 </ui:VisualElement>
                 <ui:VisualElement name="CooldownTrack" class="hud-meter cooldown-track">
                     <ui:VisualElement name="CooldownFill" class="hud-meter-fill" />
@@ -14,13 +18,13 @@
                 <ui:Label name="Cooldown" text="Select a tool" class="hud-caption cooldown-label" />
             </ui:VisualElement>
             <ui:VisualElement name="Toolbar" class="toolbar">
-                <ui:Button name="Tool0" class="hud-button tool-button"><ui:Image name="ToolIcon0" class="tool-icon" /></ui:Button>
-                <ui:Button name="Tool1" class="hud-button tool-button"><ui:Image name="ToolIcon1" class="tool-icon" /></ui:Button>
-                <ui:Button name="Tool2" class="hud-button tool-button"><ui:Image name="ToolIcon2" class="tool-icon" /></ui:Button>
-                <ui:Button name="Tool3" class="hud-button tool-button"><ui:Image name="ToolIcon3" class="tool-icon" /></ui:Button>
-                <ui:Button name="Tool4" class="hud-button tool-button"><ui:Image name="ToolIcon4" class="tool-icon" /></ui:Button>
-                <ui:Button name="Tool5" class="hud-button tool-button"><ui:Image name="ToolIcon5" class="tool-icon" /></ui:Button>
-                <ui:Label name="Hint" text="Tap map to place  -  Hold to cancel  -  Drag to move" class="hud-caption hint" />
+                <ui:Button name="Tool0" class="hud-button tool-button"><ui:Image name="ToolIcon0" class="tool-icon" /><ui:VisualElement name="ToolCooldown0" class="tool-cooldown" /></ui:Button>
+                <ui:Button name="Tool1" class="hud-button tool-button"><ui:Image name="ToolIcon1" class="tool-icon" /><ui:VisualElement name="ToolCooldown1" class="tool-cooldown" /></ui:Button>
+                <ui:Button name="Tool2" class="hud-button tool-button"><ui:Image name="ToolIcon2" class="tool-icon" /><ui:VisualElement name="ToolCooldown2" class="tool-cooldown" /></ui:Button>
+                <ui:Button name="Tool3" class="hud-button tool-button"><ui:Image name="ToolIcon3" class="tool-icon" /><ui:VisualElement name="ToolCooldown3" class="tool-cooldown" /></ui:Button>
+                <ui:Button name="Tool4" class="hud-button tool-button"><ui:Image name="ToolIcon4" class="tool-icon" /><ui:VisualElement name="ToolCooldown4" class="tool-cooldown" /></ui:Button>
+                <ui:Button name="Tool5" class="hud-button tool-button"><ui:Image name="ToolIcon5" class="tool-icon" /><ui:VisualElement name="ToolCooldown5" class="tool-cooldown" /></ui:Button>
+                <ui:Label name="Hint" text="Tap a tool, then the map. Drag to move. Reach the door." class="hud-caption hint" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

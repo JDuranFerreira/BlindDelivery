@@ -1,5 +1,7 @@
+using System;
 using BlindDelivery.Core.Balance;
 using BlindDelivery.Core.Crates;
+using BlindDelivery.Core.Levels;
 using BlindDelivery.Core.Movement;
 using BlindDelivery.Gameplay.Balance;
 using BlindDelivery.Gameplay.Items;
@@ -35,8 +37,30 @@ namespace BlindDelivery.Gameplay.Movement
         float accumulator;
         bool worldReady;
         int safeFallHeightCells;
+        float prepRemaining;
+        float prepDuration;
+        bool runEnded;
+
+        /// <summary>Raised once when the courier reaches point B with at least one crate.</summary>
+        public event Action RunDelivered;
+
+        /// <summary>Raised once when the last crate is lost.</summary>
+        public event Action RunFailed;
+
+        /// <summary>Raised each active fixed step before the movement state machine ticks.</summary>
+        public event Action<float> Stepped;
 
         public DeliverymanStateMachine Machine => machine;
+
+        /// <summary>True while the prep countdown is running; the courier waits at A and the player may place items.</summary>
+        public bool IsPreparing => prepRemaining > 0f;
+
+        public float PrepRemaining => prepRemaining;
+
+        public float PrepDuration => prepDuration;
+
+        /// <summary>Walking speed from this level's data (or GameBalance on legacy scenes).</summary>
+        public float LevelSpeed { get; private set; }
 
         /// <summary>Crate state for this run; item interactions consume it on unsafe landings.</summary>
         public CrateStack Crates { get; private set; }
@@ -63,10 +87,16 @@ namespace BlindDelivery.Gameplay.Movement
             }
 
             GameBalance data = balance.ToGameBalance();
+            LevelConfig levelConfig = level != null && level.Data != null ? level.Data.ToLevelConfig() : null;
+            LevelSpeed = levelConfig != null ? levelConfig.DeliverymanSpeed : data.DeliverymanSpeed;
             fixedStep = data.FixedStepSeconds;
             safeFallHeightCells = data.SafeFallHeightCells;
+            // Legacy scenes without LevelData keep the old immediate-walk behaviour.
+            prepDuration = levelConfig != null ? levelConfig.PrepCountdownSeconds : 0f;
+            prepRemaining = prepDuration;
+            runEnded = false;
             geometry.Rebuild();
-            machine = new DeliverymanStateMachine(data.DeliverymanSpeed);
+            machine = new DeliverymanStateMachine(LevelSpeed);
             machine.FallLanded += OnFallLanded;
             Crates = new CrateStack(data.BaseCrateCount);
 
@@ -95,33 +125,74 @@ namespace BlindDelivery.Gameplay.Movement
 
         void Step(float deltaTime)
         {
+            // Tech Plan §4.1: cooldowns tick first, on the same deterministic fixed step.
+            itemController?.TickCooldowns(deltaTime);
+
             deliverymanMotor.ReadPosition(out float x, out float y);
+
+            if (!runEnded && prepRemaining > 0f)
+            {
+                // GDD §2: the player may place items during prep, but the courier waits at A.
+                // Holding zero velocity every step also stops the Core body drifting under gravity.
+                prepRemaining = Mathf.Max(0f, prepRemaining - deltaTime);
+                deliverymanMotor.SetVelocity(0f, 0f);
+                world.Simulate(deltaTime);
+                itemController?.StepItems(deltaTime);
+                deliverymanMotor.StabilizeRotation();
+                SyncTransform();
+                return;
+            }
+
+            if (runEnded)
+            {
+                // The result screen is up: let placed items settle but freeze the courier.
+                world.Simulate(deltaTime);
+                itemController?.StepItems(deltaTime);
+                return;
+            }
+
             interactions?.BeforeTick(deltaTime, x, y);
+            Stepped?.Invoke(deltaTime);
             MovementSensorResult reading = sensor.Scan(x, y, machine.Facing);
             machine.Tick(deltaTime, reading, deliverymanMotor);
 
             world.Simulate(deltaTime);
             itemController?.StepItems(deltaTime);
             deliverymanMotor.StabilizeRotation();
+            SyncTransform();
 
-            // The Core body moves in the physics world; copy its pose to the Transform so the
-            // SpriteRenderer (and any child anchors) follow it.
             deliverymanMotor.ReadPosition(out x, out y);
-            deliverymanMotor.transform.position = new Vector3(x, y, deliverymanMotor.transform.position.z);
-
             Vector2 end = level.EndPoint != null
                 ? (Vector2)level.EndPoint.position
                 : new Vector2(x, y);
             if (Vector2.Distance(new Vector2(x, y), end) <= deliveryRadius)
             {
                 machine.Deliver(deliverymanMotor);
+                EndRun(delivered: true);
             }
+        }
+
+        void SyncTransform()
+        {
+            deliverymanMotor.ReadPosition(out float x, out float y);
+            deliverymanMotor.transform.position = new Vector3(x, y, deliverymanMotor.transform.position.z);
+        }
+
+        void EndRun(bool delivered)
+        {
+            if (runEnded) return;
+            runEnded = true;
+            if (delivered) RunDelivered?.Invoke();
+            else RunFailed?.Invoke();
         }
 
         void OnFallLanded(float fallCells)
         {
-            bool cushioned = interactions != null && interactions.IsCushionedLanding();
+            GuidanceItem cushion = null;
+            bool cushioned = interactions != null && interactions.IsCushionedLanding(out cushion);
             Crates?.ApplyFall(fallCells, safeFallHeightCells, cushioned);
+            if (cushioned && cushion != null) cushion.GetComponent<CardboxDestroyEffect>()?.Play();
+            if (Crates != null && Crates.Count == 0) EndRun(delivered: false);
         }
 
         void OnDisable()

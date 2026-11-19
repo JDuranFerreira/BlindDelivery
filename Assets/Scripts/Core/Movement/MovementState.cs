@@ -9,5 +9,6 @@ namespace BlindDelivery.Core.Movement
         Falling,
         Launched,
         Delivered,
+        Slowed,
     }
 }

@@ -1,4 +1,5 @@
 using BlindDelivery.Core.Balance;
+using BlindDelivery.Core.Items;
 using BlindDelivery.Gameplay.Movement;
 using UnityEngine;
 
@@ -31,14 +32,14 @@ namespace BlindDelivery.Gameplay.Items
         {
             balance = data;
             runner = simulationRunner;
+            // Resolve scene collaborators once, at the composition root, not on every step.
+            if (items == null) items = FindAnyObjectByType<ItemPlacementController>();
+            if (deliveryman == null) deliveryman = FindAnyObjectByType<CoreMotor>();
         }
 
         /// <summary>Called by SimulationRunner each fixed step, before the walking controller ticks.</summary>
         public void BeforeTick(float deltaTime, float x, float y)
         {
-            if (items == null) items = FindAnyObjectByType<ItemPlacementController>();
-            if (deliveryman == null) deliveryman = FindAnyObjectByType<CoreMotor>();
-            if (runner == null) runner = FindAnyObjectByType<SimulationRunner>();
             if (balance == null || items == null || deliveryman == null || runner == null || runner.Machine == null)
             {
                 return;
@@ -49,7 +50,9 @@ namespace BlindDelivery.Gameplay.Items
             {
                 if (!item.IsPlaced || !item.IsSettled || item.Type != ItemType.Spring) continue;
 
-                bool touching = ReachedSpringCenter(item, x, y);
+                Bounds pad = item.WorldBounds;
+                bool touching = ItemInteractionRules.ReachedSpringCenter(
+                    pad.center.x, pad.min.y, pad.max.y, x, y - halfHeight, centerReach, topBand);
                 if (item.InstanceId == latchedPadId)
                 {
                     // Clear the latch only once the deliveryman steps off this pad.
@@ -59,49 +62,45 @@ namespace BlindDelivery.Gameplay.Items
 
                 if (!touching || springCooldown > 0f) continue;
 
-                float height = balance.JumppadLaunchHeightCells; // one cell == one world unit
-                float vertical = Mathf.Sqrt(2f * balance.Gravity * height);
-                float horizontal = balance.DeliverymanSpeed * balance.JumppadForwardSpeedFactor * runner.Machine.Facing;
+                float vertical = ItemInteractionRules.LaunchVerticalSpeed(balance);
+                float horizontal = ItemInteractionRules.LaunchHorizontalSpeed(balance, runner.Machine.Facing, runner.LevelSpeed);
                 runner.Machine.Launch(deliveryman, horizontal, vertical);
                 latchedPadId = item.InstanceId;
                 springCooldown = SpringImpulseCooldown;
                 break;
             }
+
+            // A cardbox is consumed when the deliveryman reaches its top. This runs on the
+            // fixed step regardless of whether the fall was long enough to lose a crate.
+            if (IsCushionedLanding(out GuidanceItem cushion))
+                cushion.GetComponent<CardboxDestroyEffect>()?.Play();
         }
 
         /// <summary>True when the deliveryman came down on a cardbox, so the drop costs no crate.</summary>
-        public bool IsCushionedLanding()
+        public bool IsCushionedLanding() => IsCushionedLanding(out _);
+
+        /// <summary>Also returns the cardbox that absorbed the landing, so it can play its destroy effect.</summary>
+        public bool IsCushionedLanding(out GuidanceItem cushion)
         {
-            if (items == null) items = FindAnyObjectByType<ItemPlacementController>();
-            if (deliveryman == null) deliveryman = FindAnyObjectByType<CoreMotor>();
+            cushion = null;
             if (items == null || deliveryman == null) return false;
 
             deliveryman.ReadPosition(out float x, out float y);
             foreach (GuidanceItem item in items.PlacedItems)
             {
-                if (item.IsPlaced && item.IsSettled && item.Type == ItemType.Cushion && TouchesTop(item, x, y)) return true;
+                if (item.IsPlaced && item.IsSettled && item.Type == ItemType.Cushion)
+                {
+                    Bounds box = item.WorldBounds;
+                    if (ItemInteractionRules.TouchesTop(box.center.x, box.extents.x, box.max.y, x, y - halfHeight, horizontalReach, topBand))
+                    {
+                        cushion = item;
+                        return true;
+                    }
+                }
             }
 
             return false;
         }
 
-        /// <summary>The thin pad does not block walking; it fires when he reaches its centre.</summary>
-        bool ReachedSpringCenter(GuidanceItem item, float x, float y)
-        {
-            Bounds bounds = item.WorldBounds;
-            if (Mathf.Abs(x - bounds.center.x) > centerReach) return false;
-
-            float feetY = y - halfHeight;
-            return feetY <= bounds.max.y + topBand && feetY >= bounds.min.y - topBand * 2f;
-        }
-
-        bool TouchesTop(GuidanceItem item, float x, float y)
-        {
-            Bounds bounds = item.WorldBounds;
-            if (Mathf.Abs(x - bounds.center.x) > bounds.extents.x + horizontalReach) return false;
-
-            float feetY = y - halfHeight;
-            return feetY <= bounds.max.y + topBand && feetY >= bounds.max.y - topBand * 2f;
-        }
     }
 }

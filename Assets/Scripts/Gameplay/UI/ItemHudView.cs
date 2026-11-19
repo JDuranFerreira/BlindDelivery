@@ -19,8 +19,11 @@ namespace BlindDelivery.Gameplay.UI
         Label crates;
         Label points;
         Label tool;
+        Label phase;
         Label cooldown;
         VisualElement cooldownFill;
+        VisualElement pointsFill;
+        readonly VisualElement[] toolCooldownFills = new VisualElement[6];
         IItemHudState state;
         bool pointerOverToolbar;
         float lastUiClick;
@@ -45,13 +48,16 @@ namespace BlindDelivery.Gameplay.UI
             crates = Find<Label>("Crates");
             points = Find<Label>("Points");
             tool = Find<Label>("Tool");
+            phase = Find<Label>("Phase");
             cooldown = Find<Label>("Cooldown");
             cooldownFill = Find<VisualElement>("CooldownFill");
+            pointsFill = Find<VisualElement>("PointsFill");
             for (int i = 0; i < toolButtons.Length; i++)
             {
                 int index = i;
                 toolButtons[i] = Find<Button>("Tool" + i);
                 toolImages[i] = Find<Image>("ToolIcon" + i);
+                toolCooldownFills[i] = Find<VisualElement>("ToolCooldown" + i);
                 if (toolButtons[i] == null) continue;
 
                 if (toolImages[i] != null && i < toolIcons.Length) toolImages[i].sprite = toolIcons[i];
@@ -79,6 +85,26 @@ namespace BlindDelivery.Gameplay.UI
 
             SetText(crates, "Crates " + state.Crates);
             SetText(points, "Points " + state.Points);
+
+            if (pointsFill != null)
+            {
+                float pool = state.MaxPoints > 0 ? Mathf.Clamp01((float)state.Points / state.MaxPoints) : 0f;
+                pointsFill.style.width = new StyleLength(Length.Percent(pool * 100f));
+            }
+            if (phase != null)
+            {
+                if (state.IsPreparing)
+                {
+                    phase.text = "PREP " + Mathf.CeilToInt(state.PrepRemainingSeconds);
+                    phase.AddToClassList("preparing");
+                }
+                else
+                {
+                    phase.text = "GO!";
+                    phase.RemoveFromClassList("preparing");
+                }
+            }
+
             SetText(tool, "Tool: " + (state.SelectedTool.HasValue ? state.SelectedTool.Value.ToString() : "none"));
 
             float remaining = state.ToolCooldownSeconds;
@@ -88,7 +114,7 @@ namespace BlindDelivery.Gameplay.UI
 
             if (cooldownFill != null)
             {
-                float ratio = remaining > 0f ? Mathf.Clamp01(remaining / 2f) : 1f;
+                float ratio = state.ToolCooldownRatio;
                 cooldownFill.style.width = new StyleLength(Length.Percent(ratio * 100f));
                 if (remaining > 0f) cooldownFill.AddToClassList("cooling");
                 else cooldownFill.RemoveFromClassList("cooling");
@@ -99,6 +125,12 @@ namespace BlindDelivery.Gameplay.UI
                 if (toolButtons[i] == null || i >= state.Tools.Count) continue;
                 if (state.SelectedTool == state.Tools[i]) toolButtons[i].AddToClassList("selected");
                 else toolButtons[i].RemoveFromClassList("selected");
+
+                if (toolCooldownFills[i] != null)
+                {
+                    float fill = state.CooldownRatioFor(state.Tools[i]);
+                    toolCooldownFills[i].style.width = new StyleLength(Length.Percent(fill * 100f));
+                }
             }
         }
 

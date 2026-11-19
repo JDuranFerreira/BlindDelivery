@@ -19,6 +19,8 @@ namespace BlindDelivery.Gameplay.Items
         [SerializeField] bool startsInLevel;
 
         SpriteRenderer spriteRenderer;
+        SpriteRenderer cooldownRing;
+        static Sprite ringSprite;
         CoreBody2D body;
         Color originalColor = Color.white;
         int instanceId = -1;
@@ -50,6 +52,55 @@ namespace BlindDelivery.Gameplay.Items
             spriteRenderer = GetComponent<SpriteRenderer>();
             body = GetComponent<CoreBody2D>();
             if (spriteRenderer != null) originalColor = spriteRenderer.color;
+
+            // GDD §4: a small ring under the item shows its move cooldown. The ring is generated
+            // once and shared; it is invisible until SetCooldown is called with a positive ratio.
+            GameObject ringObject = new GameObject("CooldownRing");
+            ringObject.transform.SetParent(transform, false);
+            ringObject.transform.localPosition = new Vector3(0f, -0.55f, 0f);
+            cooldownRing = ringObject.AddComponent<SpriteRenderer>();
+            cooldownRing.sprite = GetRingSprite();
+            cooldownRing.sortingLayerName = spriteRenderer != null ? spriteRenderer.sortingLayerName : "Foreground";
+            cooldownRing.sortingOrder = spriteRenderer != null ? spriteRenderer.sortingOrder : 0;
+            cooldownRing.color = new Color(1f, 0.84f, 0.35f, 0f);
+        }
+
+        /// <summary>Sets the visible cooldown ring; 0 hides it, 1 is a fresh cooldown.</summary>
+        public void SetCooldown(float ratio)
+        {
+            if (cooldownRing == null) return;
+            float value = Mathf.Clamp01(ratio);
+            Color color = cooldownRing.color;
+            color.a = value * 0.9f;
+            cooldownRing.color = color;
+            cooldownRing.transform.localScale = Vector3.one * Mathf.Lerp(1.15f, 0.6f, value);
+        }
+
+        static Sprite GetRingSprite()
+        {
+            if (ringSprite != null) return ringSprite;
+
+            const int size = 64;
+            const float radius = 24f;
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = "ItemCooldownRing" };
+            Color32[] pixels = new Color32[size * size];
+            float center = (size - 1) * 0.5f;
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = x - center;
+                    float dy = y - center;
+                    float distance = Mathf.Sqrt(dx * dx + dy * dy);
+                    float alpha = Mathf.Clamp01((4f - Mathf.Abs(distance - radius)) / 4f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            ringSprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            return ringSprite;
         }
 
         public void AssignId(int id) => instanceId = id;

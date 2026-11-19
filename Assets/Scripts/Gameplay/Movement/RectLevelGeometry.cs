@@ -17,6 +17,9 @@ namespace BlindDelivery.Gameplay.Movement
     {
         readonly List<Bounds> solids = new List<Bounds>();
 
+        /// <summary>Shared fallback until a level has been rebuilt (placement + geometry agree).</summary>
+        public static Bounds DefaultLevelBounds => new Bounds(Vector3.zero, new Vector3(20f, 20f, 1f));
+
         /// <summary>Union of all static solids; used to reject placements outside the level.</summary>
         public Bounds LevelBounds { get; private set; }
 
@@ -37,22 +40,23 @@ namespace BlindDelivery.Gameplay.Movement
                 GuidanceItem item = body.GetComponent<GuidanceItem>();
                 if (item != null && (!item.IsPlaced || !item.IsSettled)) continue;
 
-                SpriteRenderer renderer = body.GetComponent<SpriteRenderer>();
-                if (renderer == null) continue;
-                solids.Add(renderer.bounds);
+                if (body.IsTrigger) continue;
+
+                Bounds shape = body.WorldShapeBounds;
+                solids.Add(shape);
 
                 if (!haveBounds)
                 {
-                    bounds = renderer.bounds;
+                    bounds = shape;
                     haveBounds = true;
                 }
                 else
                 {
-                    bounds.Encapsulate(renderer.bounds);
+                    bounds.Encapsulate(shape);
                 }
             }
 
-            LevelBounds = haveBounds ? bounds : new Bounds(Vector3.zero, new Vector3(20f, 20f, 1f));
+            LevelBounds = haveBounds ? bounds : DefaultLevelBounds;
         }
 
         public bool Contains(float x, float y)

@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5162732287744712857}
   - component: {fileID: 5831324494467155806}
   - component: {fileID: 5326301395167500657}
+  - component: {fileID: -7629839543710189668}
+  - component: {fileID: -2543544263804901688}
   m_Layer: 7
   m_Name: sprite_cardbox
   m_TagString: Untagged
@@ -110,6 +112,9 @@ MonoBehaviour:
   size: {x: 1, y: 1}
   isTrigger: 0
   showGizmo: 1
+  useCustomShape: 0
+  customCenter: {x: 0, y: 0}
+  customSize: {x: 1, y: 1}
 --- !u!114 &5326301395167500657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,3 +128,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Items.GuidanceItem
   type: 5
+  startsInLevel: 0
+--- !u!95 &-7629839543710189668
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088343055525738716}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d4ec562f83f0c2649ab9c73961999897, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-2543544263804901688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088343055525738716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f95f9887d272b04c8897f34f843ef05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Items.CardboxDestroyEffect
+  animator: {fileID: -7629839543710189668}
+  spriteRenderer: {fileID: 5162732287744712857}
+  body: {fileID: 5831324494467155806}
+  duration: 0.5
+  fullSize: {x: 1, y: 1}

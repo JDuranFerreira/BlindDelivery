@@ -9,7 +9,7 @@ namespace BlindDelivery.Gameplay.Physics
     /// The com.unity.2d.physics components are unavailable on Unity 6000.6.3f1, so bodies are
     /// created through the engine API instead.
     /// </summary>
-    public sealed class CoreBody2D : MonoBehaviour
+    public sealed partial class CoreBody2D : MonoBehaviour
     {
         [SerializeField] PhysicsBody.BodyType bodyType = PhysicsBody.BodyType.Static;
         [SerializeField] Vector2 size = Vector2.one;
@@ -26,6 +26,28 @@ namespace BlindDelivery.Gameplay.Physics
         Vector2 localCenter;
 
         public PhysicsBody Body => body;
+
+        /// <summary>Triggers (e.g. the thin jumppad pad) never block walking or count as solids.</summary>
+        public bool IsTrigger => isTrigger;
+
+        /// <summary>World-space bounds of the actual physics shape, not the sprite's visual bounds.</summary>
+        public Bounds WorldShapeBounds
+        {
+            get
+            {
+                if (shapeSizeOverride.HasValue)
+                {
+                    Vector2 resized = shapeSizeOverride.Value;
+                    return new Bounds(
+                        new Vector2(transform.position.x, transform.position.y + resized.y * 0.5f),
+                        new Vector3(resized.x, resized.y, 0.1f));
+                }
+
+                if (TryGetShape(out Vector2 center, out Vector2 size))
+                    return new Bounds(center, new Vector3(size.x, size.y, 0.1f));
+                return new Bounds(transform.position, Vector3.one);
+            }
+        }
 
         /// <summary>Shape centre in the Transform's local space; used to sync pose when the body falls.</summary>
         public Vector2 LocalCenter => localCenter;

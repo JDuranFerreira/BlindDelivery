@@ -39,5 +39,20 @@ namespace BlindDelivery.Tests.EditMode
             Assert.That(manager.TryRegisterScreen(null), Is.False);
             Assert.That(manager.TryRegisterScreen(new FakeView("")), Is.False);
         }
+
+        [Test]
+        public async Task ResetScreens_ClearsHistory_AndAllowsFreshViews()
+        {
+            var manager = new UIManager();
+            var oldView = new FakeView("Hud");
+            manager.TryRegisterScreen(oldView);
+            await manager.PushAsync("Hud");
+
+            manager.ResetScreens();
+
+            Assert.That(manager.Stack.Count, Is.Zero);
+            var freshView = new FakeView("Hud");
+            Assert.That(manager.TryRegisterScreen(freshView), Is.True, "a scene reload must replace stale views");
+        }
     }
 }

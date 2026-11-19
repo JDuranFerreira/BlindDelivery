@@ -1,0 +1,59 @@
+/* Result screen layout. Look-and-feel lives in UI/Theme/Common.uss. */
+
+.result-root {
+    flex-grow: 1;
+    pointer-events: auto;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(4, 7, 12, 0.82);
+}
+
+.result-safe-area {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-panel {
+    width: 86%;
+    min-height: 220px;
+    padding: 18px 14px;
+    border-radius: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-title {
+    font-size: 18px;
+    -unity-text-align: middle-center;
+}
+
+.result-stars {
+    margin-top: 14px;
+    font-size: 22px;
+    color: rgb(226, 234, 244);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.result-bonus {
+    min-height: 18px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgb(255, 205, 90);
+    -unity-text-align: middle-center;
+}
+
+.result-score {
+    margin-top: 16px;
+    font-size: 14px;
+    color: rgb(150, 200, 235);
+    -unity-text-align: middle-center;
+}
+
+.result-button {
+    margin-top: 20px;
+    width: 140px;
+    height: 40px;
+    font-size: 14px;
+}

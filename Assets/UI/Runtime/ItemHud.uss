@@ -10,8 +10,20 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 88px;
+    height: 108px;
     padding: 8px 10px;
+}
+
+.hud-phase {
+    font-size: 11px;
+    min-height: 14px;
+    color: rgb(240, 198, 116);
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+.hud-phase.preparing {
+    color: rgb(120, 220, 160);
 }
 
 .stats-row {
@@ -31,6 +43,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.points-track {
+    margin-top: 6px;
+}
+
+.points-fill {
+    background-color: rgb(240, 198, 116);
 }
 
 .cooldown-track {
@@ -69,6 +89,15 @@
     height: 100%;
 }
 
+.tool-cooldown {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background-color: rgb(240, 140, 80);
+}
+
 .tool-button.unavailable {
     background-color: rgb(20, 24, 31);
 }
@@ -82,7 +111,9 @@
     bottom: 62px;
     left: 0;
     right: 0;
+    padding: 0 6px;
     font-size: 9px;
+    white-space: normal;
     color: rgb(170, 185, 200);
     -unity-text-align: middle-center;
 }

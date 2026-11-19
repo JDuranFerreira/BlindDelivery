@@ -25,6 +25,10 @@ namespace BlindDelivery.Gameplay.UI
                 return;
             }
 
+            // This service survives scene reloads; its views do not. Drop stale registrations
+            // before wiring this scene's screens so replay never shows a destroyed view.
+            manager.ResetScreens();
+
             foreach (ToolkitScreenView view in FindObjectsByType<ToolkitScreenView>())
             {
                 manager.TryRegisterScreen(view);

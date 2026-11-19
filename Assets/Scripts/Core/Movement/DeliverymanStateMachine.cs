@@ -16,6 +16,8 @@ namespace BlindDelivery.Core.Movement
         float turnRemaining;
         float fallStartY;
         float launchVx;
+        float slowRemaining;
+        float slowFactor = 1f;
         MovementState state = MovementState.Idle;
         int facing = 1;
 
@@ -43,6 +45,18 @@ namespace BlindDelivery.Core.Movement
             motor.ReadPosition(out float x, out float y);
             motor.ReadVelocity(out float vx, out float vy);
 
+            if (slowRemaining > 0f)
+            {
+                slowRemaining = Math.Max(0f, slowRemaining - deltaTime);
+                if (slowRemaining == 0f)
+                {
+                    slowFactor = 1f;
+                    if (state == MovementState.Slowed) state = MovementState.Walking;
+                }
+            }
+
+            float currentSpeed = speed * slowFactor;
+
             switch (state)
             {
                 case MovementState.Idle:
@@ -52,6 +66,7 @@ namespace BlindDelivery.Core.Movement
                     break;
 
                 case MovementState.Walking:
+                case MovementState.Slowed:
                     if (sensor.WallAhead)
                     {
                         state = MovementState.Turning;
@@ -62,11 +77,11 @@ namespace BlindDelivery.Core.Movement
                     {
                         state = MovementState.Falling;
                         fallStartY = y;
-                        motor.SetVelocity(facing * speed * 0.5f, vy);
+                        motor.SetVelocity(facing * currentSpeed * 0.5f, vy);
                     }
                     else
                     {
-                        motor.SetVelocity(facing * speed, 0f);
+                        motor.SetVelocity(facing * currentSpeed, 0f);
                     }
                     break;
 
@@ -110,6 +125,21 @@ namespace BlindDelivery.Core.Movement
         }
 
         /// <summary>
+        /// Echolocation slow-down. The caller gates this on upgrade ownership; the state machine
+        /// only knows it may slow while walking. Levels 2/3 pass a weaker (faster) factor.
+        /// </summary>
+        public void ApplySlow(float factor, float duration)
+        {
+            if (factor <= 0f || factor > 1f) throw new ArgumentOutOfRangeException(nameof(factor));
+            if (duration <= 0f) throw new ArgumentOutOfRangeException(nameof(duration));
+            if (state != MovementState.Walking) return;
+
+            slowFactor = factor;
+            slowRemaining = duration;
+            state = MovementState.Slowed;
+        }
+
+        /// <summary>
         /// Applies a one-shot launch (spring/jumppad). Horizontal speed is held for the whole arc;
         /// vertical speed stays under gravity until the deliveryman lands again.
         /// </summary>
@@ -129,6 +159,8 @@ namespace BlindDelivery.Core.Movement
         public void Deliver(IMotor motor)
         {
             if (motor == null) throw new ArgumentNullException(nameof(motor));
+            slowRemaining = 0f;
+            slowFactor = 1f;
             state = MovementState.Delivered;
             motor.SetVelocity(0f, 0f);
         }

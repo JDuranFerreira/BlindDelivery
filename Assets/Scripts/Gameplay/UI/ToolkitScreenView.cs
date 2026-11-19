@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using BlindDelivery.Core.UI;
@@ -67,12 +66,6 @@ namespace BlindDelivery.Gameplay.UI
 
         protected T Find<T>(string name) where T : VisualElement
             => Root == null ? null : UQueryExtensions.Query<T>(Root, name).First();
-
-        protected void BindButton(string name, Action onClick)
-        {
-            Button button = Find<Button>(name);
-            if (button != null) button.clicked += onClick;
-        }
 
         protected static void SetText(Label label, string value)
         {
