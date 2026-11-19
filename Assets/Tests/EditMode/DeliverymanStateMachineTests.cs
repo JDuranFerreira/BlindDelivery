@@ -76,6 +76,47 @@ namespace BlindDelivery.Tests.EditMode
         }
 
         [Test]
+        public void Launch_KeepsImpulseUntilLanding_ThenReturnsToWalking()
+        {
+            var machine = new DeliverymanStateMachine(2f, cellSize: 1f);
+            var motor = new FakeMotor { Y = 1f, Vy = 0f };
+            machine.Tick(0.02f, Grounded, motor);
+
+            machine.Launch(motor, 1f, 8f);
+            Assert.That(machine.State, Is.EqualTo(MovementState.Launched));
+            Assert.That(motor.Vy, Is.EqualTo(8f));
+
+            // Rising: the walking controller must not zero out the launch velocity.
+            motor.Y = 2f;
+            motor.Vy = 6f;
+            machine.Tick(0.02f, new MovementSensorResult(), motor);
+            Assert.That(motor.Vy, Is.EqualTo(6f));
+            Assert.That(motor.Vx, Is.EqualTo(1f));
+
+            float landed = -1f;
+            machine.FallLanded += distance => landed = distance;
+            motor.Y = -2f;
+            motor.Vy = -5f;
+            machine.Tick(0.02f, Grounded, motor);
+
+            Assert.That(machine.State, Is.EqualTo(MovementState.Walking));
+            Assert.That(landed, Is.EqualTo(3f).Within(0.001f));
+        }
+
+        [Test]
+        public void Launch_AfterDelivery_IsIgnored()
+        {
+            var machine = new DeliverymanStateMachine(2f);
+            var motor = new FakeMotor();
+            machine.Deliver(motor);
+
+            machine.Launch(motor, 0f, 8f);
+
+            Assert.That(machine.State, Is.EqualTo(MovementState.Delivered));
+            Assert.That(motor.Vy, Is.Zero);
+        }
+
+        [Test]
         public void Deliver_StopsTheController()
         {
             var machine = new DeliverymanStateMachine(2f);

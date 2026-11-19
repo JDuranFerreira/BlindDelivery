@@ -1,0 +1,63 @@
+/* Shared UI Toolkit look. Any screen can add this sheet via ToolkitScreenView.sharedStyle. */
+
+.screen-hidden {
+    display: none;
+}
+
+.hud-root {
+    flex-grow: 1;
+    pointer-events: none;
+}
+
+.hud-panel {
+    background-color: rgba(10, 13, 20, 0.85);
+    border-radius: 8px;
+}
+
+.hud-title {
+    font-size: 15px;
+    color: rgb(240, 198, 116);
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+.hud-stat {
+    font-size: 12px;
+    color: rgb(226, 234, 244);
+}
+
+.hud-button {
+    background-color: rgb(33, 41, 55);
+    color: rgb(220, 230, 242);
+    border-radius: 7px;
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.hud-button.selected {
+    background-color: rgb(47, 127, 191);
+    color: rgb(255, 255, 255);
+}
+
+.hud-meter {
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.14);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.hud-meter-fill {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(79, 195, 247);
+    border-radius: 3px;
+}
+
+.hud-meter-fill.cooling {
+    background-color: rgb(240, 140, 80);
+}
+
+.hud-caption {
+    font-size: 10px;
+    color: rgb(150, 180, 200);
+}

@@ -13,6 +13,7 @@ using BlindDelivery.Core.Consent;
 using BlindDelivery.Core.RemoteConfig;
 using BlindDelivery.Core.Services;
 using BlindDelivery.Core.Settings;
+using BlindDelivery.Gameplay.Input;
 using BlindDelivery.Services.Audio;
 using BlindDelivery.Services.Events;
 using BlindDelivery.Services.Input;
@@ -185,6 +186,10 @@ namespace BlindDelivery.Gameplay
 
             // M4: Input (needs InputActionAsset assigned in the scene or via Resources)
             InputService input = gameObject.AddComponent<InputService>();
+            if (input.inputActions == null)
+            {
+                input.inputActions = DefaultGameplayActions.Create();
+            }
             registry.Register(input);
 
             // M4: Pooling (needs PoolFactory on the same GameObject)

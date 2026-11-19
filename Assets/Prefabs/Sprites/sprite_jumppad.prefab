@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2178469649280672333}
   - component: {fileID: 7164037430352018585}
   - component: {fileID: 3214524669398078969}
+  - component: {fileID: 8807193414500741799}
   m_Layer: 7
   m_Name: sprite_jumppad
   m_TagString: Untagged
@@ -107,5 +108,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Physics.CoreBody2D
   bodyType: 2
   size: {x: 1, y: 1}
-  isTrigger: 0
+  isTrigger: 1
   showGizmo: 1
+  useCustomShape: 1
+  customCenter: {x: 0, y: 0.1}
+  customSize: {x: 1, y: 0.2}
+--- !u!114 &8807193414500741799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2813474919805953142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd59da3838b598846ac0e3a949c520af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Items.GuidanceItem
+  type: 1
+  startsInLevel: 0

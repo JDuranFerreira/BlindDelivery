@@ -31,10 +31,6 @@ namespace BlindDelivery.Services.Input
         [SerializeField, Min(0f)] float dragThresholdPixels = 10f;
         [SerializeField, Min(0f)] float pinchThreshold = 0.05f;
 
-        InputAction tapAction;
-        InputAction holdAction;
-        InputAction swipeAction;
-        InputAction dragAction;
         InputAction pinchAction;
         InputAction pointerPositionAction;
         InputAction pointerPressAction;
@@ -45,7 +41,11 @@ namespace BlindDelivery.Services.Input
         float lastTapTime;
         BlindDelivery.Core.Input.Vector2? lastTapPosition;
         bool isPointerDown;
+        bool wasPointerDown;
+        bool holdRaised;
+        BlindDelivery.Core.Input.Vector2? lastDragPosition;
         int touchCount;
+        bool overUiLastFrame;
 
         // DPI-scaled thresholds (set in InitializeAsync)
         float scaledSwipeMinDistance;
@@ -77,10 +77,6 @@ namespace BlindDelivery.Services.Input
             scaledDragThreshold = dragThresholdPixels * dpiScale;
 
             // Find actions by name (Input System convention)
-            tapAction = inputActions.FindAction("Tap");
-            holdAction = inputActions.FindAction("Hold");
-            swipeAction = inputActions.FindAction("Swipe");
-            dragAction = inputActions.FindAction("Drag");
             pinchAction = inputActions.FindAction("Pinch");
             pointerPositionAction = inputActions.FindAction("PointerPosition");
             pointerPressAction = inputActions.FindAction("PointerPress");
@@ -88,11 +84,9 @@ namespace BlindDelivery.Services.Input
             // Enable all
             inputActions.Enable();
 
-            // Subscribe
-            if (tapAction != null) tapAction.performed += OnTapPerformed;
-            if (holdAction != null) holdAction.performed += OnHoldPerformed;
-            if (swipeAction != null) swipeAction.performed += OnSwipePerformed;
-            if (dragAction != null) dragAction.performed += OnDragPerformed;
+            // Tap/Hold/Drag/Swipe are derived from press + position in Update. Interaction-based
+            // actions are device-sensitive (mouse vs. simulator touch), so the same gesture logic
+            // must run for every pointer device. Pinch still comes from its own action.
             if (pinchAction != null) pinchAction.performed += OnPinchPerformed;
             if (pointerPositionAction != null) pointerPositionAction.performed += OnPointerPosition;
             if (pointerPressAction != null)
@@ -108,10 +102,6 @@ namespace BlindDelivery.Services.Input
         {
             if (inputActions != null)
             {
-                if (tapAction != null) tapAction.performed -= OnTapPerformed;
-                if (holdAction != null) holdAction.performed -= OnHoldPerformed;
-                if (swipeAction != null) swipeAction.performed -= OnSwipePerformed;
-                if (dragAction != null) dragAction.performed -= OnDragPerformed;
                 if (pinchAction != null) pinchAction.performed -= OnPinchPerformed;
                 if (pointerPositionAction != null) pointerPositionAction.performed -= OnPointerPosition;
                 if (pointerPressAction != null)
@@ -127,6 +117,67 @@ namespace BlindDelivery.Services.Input
         {
             // Poll pinch (continuous) and touch count for multi-touch awareness
             touchCount = Touchscreen.current?.touches.Count ?? 0;
+
+            // EventSystem must be queried on the main frame, never from inside an InputAction
+            // callback (it would read stale UI state and spam a warning).
+            overUiLastFrame = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+
+            bool down = isPointerDown;
+            if (down && !wasPointerDown)
+            {
+                pressStartTime = Time.unscaledTime;
+                pressStartPosition = lastPointerPosition;
+                lastDragPosition = lastPointerPosition;
+                holdRaised = false;
+            }
+
+            if (down)
+            {
+                float held = Time.unscaledTime - pressStartTime;
+                BlindDelivery.Core.Input.Vector2 position = lastPointerPosition ?? BlindDelivery.Core.Input.Vector2.Zero;
+
+                if (!holdRaised && held >= holdThresholdSeconds && !IsOverUI())
+                {
+                    holdRaised = true;
+                    OnHold?.Invoke(position);
+                }
+
+                if (pressStartPosition.HasValue && lastPointerPosition.HasValue &&
+                    (position - pressStartPosition.Value).Magnitude >= scaledDragThreshold &&
+                    lastDragPosition.HasValue && !IsOverUI())
+                {
+                    BlindDelivery.Core.Input.Vector2 delta = position - lastDragPosition.Value;
+                    if (delta.Magnitude > 0f) OnDrag?.Invoke(delta);
+                }
+
+                lastDragPosition = lastPointerPosition;
+            }
+            else if (wasPointerDown)
+            {
+                float held = Time.unscaledTime - pressStartTime;
+                BlindDelivery.Core.Input.Vector2 position = lastPointerPosition ?? BlindDelivery.Core.Input.Vector2.Zero;
+
+                if (!IsOverUI())
+                {
+                    if (!holdRaised && held <= tapMaxDurationSeconds &&
+                        (!pressStartPosition.HasValue ||
+                         (position - pressStartPosition.Value).Magnitude <= scaledDragThreshold))
+                    {
+                        RaiseTap(position);
+                    }
+                    else if (pressStartPosition.HasValue &&
+                             (position - pressStartPosition.Value).Magnitude >= scaledSwipeMinDistance)
+                    {
+                        OnSwipe?.Invoke((position - pressStartPosition.Value).Normalized);
+                    }
+                }
+
+                holdRaised = false;
+                pressStartPosition = null;
+                lastDragPosition = null;
+            }
+
+            wasPointerDown = down;
         }
 
         void OnPointerPressStarted(InputAction.CallbackContext ctx)
@@ -148,11 +199,8 @@ namespace BlindDelivery.Services.Input
             lastPointerPosition = new BlindDelivery.Core.Input.Vector2(pos.x, pos.y);
         }
 
-        void OnTapPerformed(InputAction.CallbackContext ctx)
+        void RaiseTap(BlindDelivery.Core.Input.Vector2 pos)
         {
-            if (IsOverUI()) return;
-
-            BlindDelivery.Core.Input.Vector2 pos = lastPointerPosition ?? BlindDelivery.Core.Input.Vector2.Zero;
             float now = Time.unscaledTime;
 
             // Double-tap detection
@@ -169,37 +217,6 @@ namespace BlindDelivery.Services.Input
             lastTapTime = now;
             lastTapPosition = pos;
             OnTap?.Invoke(pos);
-        }
-
-        void OnHoldPerformed(InputAction.CallbackContext ctx)
-        {
-            if (IsOverUI()) return;
-            if (ctx.phase == InputActionPhase.Started)
-            {
-                OnHold?.Invoke(lastPointerPosition ?? BlindDelivery.Core.Input.Vector2.Zero);
-            }
-        }
-
-        void OnSwipePerformed(InputAction.CallbackContext ctx)
-        {
-            if (IsOverUI()) return;
-
-            UnityEngine.Vector2 delta = ctx.ReadValue<UnityEngine.Vector2>();
-            if (delta.magnitude >= scaledSwipeMinDistance)
-            {
-                OnSwipe?.Invoke(new BlindDelivery.Core.Input.Vector2(delta.x, delta.y).Normalized);
-            }
-        }
-
-        void OnDragPerformed(InputAction.CallbackContext ctx)
-        {
-            if (IsOverUI()) return;
-
-            UnityEngine.Vector2 delta = ctx.ReadValue<UnityEngine.Vector2>();
-            if (delta.magnitude >= scaledDragThreshold)
-            {
-                OnDrag?.Invoke(new BlindDelivery.Core.Input.Vector2(delta.x, delta.y));
-            }
         }
 
         void OnPinchPerformed(InputAction.CallbackContext ctx)
@@ -227,12 +244,7 @@ namespace BlindDelivery.Services.Input
             }
         }
 
-        bool IsOverUI()
-        {
-            // New Input System UI check
-            if (EventSystem.current == null) return false;
-            return EventSystem.current.IsPointerOverGameObject();
-        }
+        bool IsOverUI() => overUiLastFrame;
     }
 }
 

@@ -179,6 +179,9 @@ MonoBehaviour:
   size: {x: 1, y: 1}
   isTrigger: 0
   showGizmo: 1
+  useCustomShape: 0
+  customCenter: {x: 0, y: 0}
+  customSize: {x: 1, y: 1}
 --- !u!114 &4946350988137379092
 MonoBehaviour:
   m_ObjectHideFlags: 0

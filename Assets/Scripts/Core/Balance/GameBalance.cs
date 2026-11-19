@@ -22,6 +22,15 @@ namespace BlindDelivery.Core.Balance
         /// <summary>Forward walking speed in metres per second (GDD range: 1.5–3.5).</summary>
         public float DeliverymanSpeed { get; set; } = 2.5f;
 
+        /// <summary>Gravity magnitude used by both the world and jumppad launch math.</summary>
+        public float Gravity { get; set; } = 9.81f;
+
+        /// <summary>Spring launch height in level cells (tuned to 5 for this level).</summary>
+        public float JumppadLaunchHeightCells { get; set; } = 5f;
+
+        /// <summary>Forward speed of a jumppad launch, as a fraction of walking speed.</summary>
+        public float JumppadForwardSpeedFactor { get; set; } = 0.5f;
+
         /// <summary>Base number of crates the deliveryman starts each run with.</summary>
         public int BaseCrateCount { get; set; } = 3;
 

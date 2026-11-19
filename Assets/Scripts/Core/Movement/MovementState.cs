@@ -7,6 +7,7 @@ namespace BlindDelivery.Core.Movement
         Walking,
         Turning,
         Falling,
+        Launched,
         Delivered,
     }
 }

@@ -61,6 +61,19 @@ namespace BlindDelivery.Services.UI
             screensById[view.ScreenId] = view;
         }
 
+        /// <summary>
+        /// Idempotent registration for scene-local view registries: a view already registered (for
+        /// example after a scene reload) is left alone instead of throwing.
+        /// </summary>
+        public bool TryRegisterScreen(IScreenView view)
+        {
+            if (view == null || string.IsNullOrWhiteSpace(view.ScreenId)) return false;
+            if (screensById.ContainsKey(view.ScreenId)) return false;
+
+            RegisterScreen(view);
+            return true;
+        }
+
         /// <summary>Sets the root of the region and drops the whole history. Bottom of the stack.</summary>
         public async Task SetRootAsync(string screenId, CancellationToken token = default)
         {

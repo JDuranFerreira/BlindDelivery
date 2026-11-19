@@ -15,12 +15,20 @@ namespace BlindDelivery.Gameplay.Physics
         [SerializeField] Vector2 size = Vector2.one;
         [SerializeField] bool isTrigger;
         [SerializeField] bool showGizmo = true;
+        [Header("Optional explicit box (used by thin pads)")]
+        [SerializeField] bool useCustomShape;
+        [SerializeField] Vector2 customCenter;
+        [SerializeField] Vector2 customSize = Vector2.one;
 
         PhysicsBody body;
         int ownerKey;
         bool created;
+        Vector2 localCenter;
 
         public PhysicsBody Body => body;
+
+        /// <summary>Shape centre in the Transform's local space; used to sync pose when the body falls.</summary>
+        public Vector2 LocalCenter => localCenter;
 
         void OnEnable()
         {
@@ -61,20 +69,68 @@ namespace BlindDelivery.Gameplay.Physics
         /// </summary>
         bool TryGetShape(out Vector2 center, out Vector2 boxSize)
         {
+            Vector2 lossy = new Vector2(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));
+            if (useCustomShape)
+            {
+                localCenter = customCenter;
+                boxSize = Vector2.Scale(customSize, lossy);
+                center = transform.TransformPoint(customCenter);
+                return boxSize.x > 0f && boxSize.y > 0f;
+            }
+
             SpriteRenderer renderer = GetComponent<SpriteRenderer>();
             if (renderer != null && renderer.sprite != null)
             {
                 Bounds bounds = renderer.sprite.bounds;
+                localCenter = bounds.center;
                 Vector2 localSize = bounds.size;
-                Vector2 lossy = transform.lossyScale;
-                boxSize = Vector2.Scale(localSize, new Vector2(Mathf.Abs(lossy.x), Mathf.Abs(lossy.y)));
+                boxSize = Vector2.Scale(localSize, lossy);
                 center = transform.TransformPoint(bounds.center);
                 return boxSize.x > 0f && boxSize.y > 0f;
             }
 
-            boxSize = size;
+            localCenter = Vector2.zero;
+            boxSize = Vector2.Scale(size, lossy);
             center = transform.position;
-            return size.x > 0f && size.y > 0f;
+            return boxSize.x > 0f && boxSize.y > 0f;
+        }
+
+        /// <summary>Lets a placed item fall under world gravity until it lands.</summary>
+        public void SetDynamic()
+        {
+            if (!created || !body.isValid) return;
+            body.type = PhysicsBody.BodyType.Dynamic;
+            body.gravityScale = 1f;
+            body.linearDamping = 0.4f;
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+            body.awake = true;
+        }
+
+        /// <summary>Freezes a landed item as an immovable solid again.</summary>
+        public void SetStatic()
+        {
+            if (!created || !body.isValid) return;
+            body.type = PhysicsBody.BodyType.Static;
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+            body.rotation = PhysicsRotate.identity;
+        }
+
+        /// <summary>Items are kept upright; the walking controller does the same for the deliveryman.</summary>
+        public void StabilizeRotation()
+        {
+            if (!created || !body.isValid) return;
+            body.rotation = PhysicsRotate.identity;
+            body.angularVelocity = 0f;
+        }
+
+        /// <summary>Copies the simulated body pose back to the Transform (bottom-centre sprite pivots).</summary>
+        public void SyncTransform()
+        {
+            if (!created || !body.isValid) return;
+            Vector2 position = body.position - localCenter;
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
         }
 
         void OnDisable()

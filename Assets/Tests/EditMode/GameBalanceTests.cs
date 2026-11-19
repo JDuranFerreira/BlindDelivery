@@ -31,6 +31,13 @@ namespace BlindDelivery.Tests.EditMode
         }
 
         [Test]
+        public void JumppadLaunchHeight_IsFiveCells()
+        {
+            var balance = new GameBalance();
+            Assert.That(balance.JumppadLaunchHeightCells, Is.EqualTo(5f));
+        }
+
+        [Test]
         public void BaseCrateCount_IsThree()
         {
             var balance = new GameBalance();

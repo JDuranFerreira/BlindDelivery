@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Balance.GameBalanceAsset
   safeFallHeightCells: 3
   fixedStepSeconds: 0.02
+  deliverymanSpeed: 2.5
+  gravity: 9.81
+  jumppadLaunchHeightCells: 5
+  jumppadForwardSpeedFactor: 0.5
   baseCrateCount: 3
   maxCrateCount: 5
   items:

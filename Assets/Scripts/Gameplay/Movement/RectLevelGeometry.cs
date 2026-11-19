@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BlindDelivery.Core.Movement;
+using BlindDelivery.Gameplay.Items;
 using BlindDelivery.Gameplay.Levels;
 using BlindDelivery.Gameplay.Physics;
 using UnityEngine;
@@ -16,9 +17,14 @@ namespace BlindDelivery.Gameplay.Movement
     {
         readonly List<Bounds> solids = new List<Bounds>();
 
+        /// <summary>Union of all static solids; used to reject placements outside the level.</summary>
+        public Bounds LevelBounds { get; private set; }
+
         public void Rebuild()
         {
             solids.Clear();
+            bool haveBounds = false;
+            Bounds bounds = default;
             CoreBody2D[] bodies = FindObjectsByType<CoreBody2D>(FindObjectsInactive.Exclude);
             foreach (CoreBody2D body in bodies)
             {
@@ -26,10 +32,27 @@ namespace BlindDelivery.Gameplay.Movement
                 if (body.GetComponent<CoreMotor>() != null) continue;
                 if (body.GetComponent<Deliveryman>() != null) continue;
 
+                // Ghosts, dragged items and items still falling are not solids. Rebuild once an
+                // item settles so the sensor can use it as ground immediately.
+                GuidanceItem item = body.GetComponent<GuidanceItem>();
+                if (item != null && (!item.IsPlaced || !item.IsSettled)) continue;
+
                 SpriteRenderer renderer = body.GetComponent<SpriteRenderer>();
                 if (renderer == null) continue;
                 solids.Add(renderer.bounds);
+
+                if (!haveBounds)
+                {
+                    bounds = renderer.bounds;
+                    haveBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
             }
+
+            LevelBounds = haveBounds ? bounds : new Bounds(Vector3.zero, new Vector3(20f, 20f, 1f));
         }
 
         public bool Contains(float x, float y)

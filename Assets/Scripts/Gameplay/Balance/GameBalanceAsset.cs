@@ -24,6 +24,12 @@ namespace BlindDelivery.Gameplay.Balance
         [SerializeField] float fixedStepSeconds = 0.02f;
         [Tooltip("Forward walking speed in metres per second (GDD range 1.5–3.5).")]
         [SerializeField] float deliverymanSpeed = 2.5f;
+        [Tooltip("Gravity magnitude; the jumppad impulse is derived from this and the launch height.")]
+        [SerializeField] float gravity = 9.81f;
+        [Tooltip("Jumppad launch height in level cells.")]
+        [SerializeField] float jumppadLaunchHeightCells = 5f;
+        [Tooltip("Jumppad forward speed as a fraction of walking speed.")]
+        [SerializeField] float jumppadForwardSpeedFactor = 0.5f;
 
         [Header("Crates")]
         [Tooltip("Base number of crates the deliveryman starts each run with.")]
@@ -58,6 +64,9 @@ namespace BlindDelivery.Gameplay.Balance
                 SafeFallHeightCells = safeFallHeightCells,
                 FixedStepSeconds = fixedStepSeconds,
                 DeliverymanSpeed = deliverymanSpeed,
+                Gravity = gravity,
+                JumppadLaunchHeightCells = jumppadLaunchHeightCells,
+                JumppadForwardSpeedFactor = jumppadForwardSpeedFactor,
                 BaseCrateCount = baseCrateCount,
                 MaxCrateCount = maxCrateCount,
                 ItemMoveCosts = moveCosts,

@@ -1,6 +1,8 @@
 using BlindDelivery.Core.Balance;
+using BlindDelivery.Core.Crates;
 using BlindDelivery.Core.Movement;
 using BlindDelivery.Gameplay.Balance;
+using BlindDelivery.Gameplay.Items;
 using BlindDelivery.Gameplay.Levels;
 using Unity.U2D.Physics;
 using UnityEngine;
@@ -21,6 +23,8 @@ namespace BlindDelivery.Gameplay.Movement
         [SerializeField] CoreMotor deliverymanMotor;
         [SerializeField] ProbeMovementSensor sensor;
         [SerializeField] RectLevelGeometry geometry;
+        [SerializeField] ItemInteractionSystem interactions;
+        [SerializeField] ItemPlacementController itemController;
         [SerializeField, Min(0.1f)] float maxCatchUpSeconds = 0.25f;
         [SerializeField, Min(0.05f)] float deliveryRadius = 1.5f;
 
@@ -30,8 +34,12 @@ namespace BlindDelivery.Gameplay.Movement
         float fixedStep;
         float accumulator;
         bool worldReady;
+        int safeFallHeightCells;
 
         public DeliverymanStateMachine Machine => machine;
+
+        /// <summary>Crate state for this run; item interactions consume it on unsafe landings.</summary>
+        public CrateStack Crates { get; private set; }
 
         void OnEnable()
         {
@@ -56,13 +64,20 @@ namespace BlindDelivery.Gameplay.Movement
 
             GameBalance data = balance.ToGameBalance();
             fixedStep = data.FixedStepSeconds;
+            safeFallHeightCells = data.SafeFallHeightCells;
             geometry.Rebuild();
             machine = new DeliverymanStateMachine(data.DeliverymanSpeed);
+            machine.FallLanded += OnFallLanded;
+            Crates = new CrateStack(data.BaseCrateCount);
+
+            if (interactions == null) interactions = FindAnyObjectByType<ItemInteractionSystem>();
+            if (itemController == null) itemController = FindAnyObjectByType<ItemPlacementController>();
+            interactions?.Initialize(data, this);
 
             world = PhysicsWorld.defaultWorld;
             previousSimulationType = world.simulationType;
             world.simulationType = PhysicsWorld.SimulationType.Script;
-            world.gravity = new Vector2(0f, -9.81f);
+            world.gravity = new Vector2(0f, -data.Gravity);
             worldReady = true;
             return true;
         }
@@ -81,10 +96,12 @@ namespace BlindDelivery.Gameplay.Movement
         void Step(float deltaTime)
         {
             deliverymanMotor.ReadPosition(out float x, out float y);
+            interactions?.BeforeTick(deltaTime, x, y);
             MovementSensorResult reading = sensor.Scan(x, y, machine.Facing);
             machine.Tick(deltaTime, reading, deliverymanMotor);
 
             world.Simulate(deltaTime);
+            itemController?.StepItems(deltaTime);
             deliverymanMotor.StabilizeRotation();
 
             // The Core body moves in the physics world; copy its pose to the Transform so the
@@ -101,8 +118,15 @@ namespace BlindDelivery.Gameplay.Movement
             }
         }
 
+        void OnFallLanded(float fallCells)
+        {
+            bool cushioned = interactions != null && interactions.IsCushionedLanding();
+            Crates?.ApplyFall(fallCells, safeFallHeightCells, cushioned);
+        }
+
         void OnDisable()
         {
+            if (machine != null) machine.FallLanded -= OnFallLanded;
             if (worldReady)
             {
                 world.simulationType = previousSimulationType;

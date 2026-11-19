@@ -15,6 +15,7 @@ namespace BlindDelivery.Core.Movement
 
         float turnRemaining;
         float fallStartY;
+        float launchVx;
         MovementState state = MovementState.Idle;
         int facing = 1;
 
@@ -90,10 +91,38 @@ namespace BlindDelivery.Core.Movement
                     }
                     break;
 
+                case MovementState.Launched:
+                    // A spring owns vertical velocity until the launch lands. Walking must not
+                    // overwrite the impulse with its constant-speed ground velocity.
+                    motor.SetVelocity(launchVx, vy);
+                    if (sensor.GroundBelow && vy <= 0.01f && y < fallStartY - 0.05f)
+                    {
+                        float cells = (float)Math.Max(0d, (fallStartY - y) / cellSize);
+                        FallLanded?.Invoke(cells);
+                        state = MovementState.Walking;
+                    }
+                    break;
+
                 case MovementState.Delivered:
                     motor.SetVelocity(0f, 0f);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Applies a one-shot launch (spring/jumppad). Horizontal speed is held for the whole arc;
+        /// vertical speed stays under gravity until the deliveryman lands again.
+        /// </summary>
+        public void Launch(IMotor motor, float vx, float vy)
+        {
+            if (motor == null) throw new ArgumentNullException(nameof(motor));
+            if (state == MovementState.Delivered) return;
+
+            motor.ReadPosition(out float x, out float y);
+            fallStartY = y;
+            launchVx = vx;
+            state = MovementState.Launched;
+            motor.SetVelocity(vx, vy);
         }
 
         /// <summary>Stops the controller at the end point. The crate/delivery event follows elsewhere.</summary>

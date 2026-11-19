@@ -1,0 +1,88 @@
+/* Item HUD layout only. Look-and-feel lives in UI/Theme/Common.uss. */
+
+.safe-area {
+    flex-grow: 1;
+    pointer-events: none;
+}
+
+.status-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 88px;
+    padding: 8px 10px;
+}
+
+.stats-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.tool-stat {
+    color: rgb(120, 200, 245);
+}
+
+.hud-stat {
+    min-width: 0;
+    min-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cooldown-track {
+    margin-top: 6px;
+}
+
+.cooldown-label {
+    min-height: 16px;
+    margin-top: 2px;
+}
+
+.toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    flex-direction: row;
+    align-items: stretch;
+    pointer-events: auto;
+}
+
+.tool-button {
+    width: 36px;
+    height: 48px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-right: 3px;
+    margin-left: 3px;
+    padding: 3px;
+    overflow: hidden;
+}
+
+.tool-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.tool-button.unavailable {
+    background-color: rgb(20, 24, 31);
+}
+
+.tool-button.unavailable .tool-icon {
+    opacity: 0.3;
+}
+
+.hint {
+    position: absolute;
+    bottom: 62px;
+    left: 0;
+    right: 0;
+    font-size: 9px;
+    color: rgb(170, 185, 200);
+    -unity-text-align: middle-center;
+}

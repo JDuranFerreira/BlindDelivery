@@ -3,7 +3,8 @@
     "rootNamespace": "BlindDelivery.Gameplay",
     "references": [
         "BlindDelivery.Core",
-        "BlindDelivery.Services"
+        "BlindDelivery.Services",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
