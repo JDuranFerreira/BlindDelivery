@@ -51,6 +51,12 @@
     -unity-text-align: middle-center;
 }
 
+.result-time {
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgb(180, 205, 225);
+}
+
 .result-button {
     margin-top: 20px;
     width: 140px;

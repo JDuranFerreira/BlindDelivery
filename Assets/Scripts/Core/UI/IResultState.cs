@@ -15,6 +15,12 @@ namespace BlindDelivery.Core.UI
         /// <summary>Points left when the run ended; the efficiency score (GDD §5).</summary>
         int Score { get; }
 
+        /// <summary>Run time in seconds, recorded when the result was produced (GDD §5).</summary>
+        float ElapsedSeconds { get; }
+
+        /// <summary>Best recorded time for this level, or 0 when none is saved yet.</summary>
+        float BestSeconds { get; }
+
         void Replay();
     }
 }

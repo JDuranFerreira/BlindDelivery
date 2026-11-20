@@ -110,6 +110,9 @@ MonoBehaviour:
   size: {x: 2, y: 0.625}
   isTrigger: 0
   showGizmo: 1
+  useCustomShape: 1
+  customCenter: {x: 0, y: 0.06}
+  customSize: {x: 2, y: 0.12}
 --- !u!114 &3684889450684037826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,3 +126,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Items.GuidanceItem
   type: 0
+  startsInLevel: 0

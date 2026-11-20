@@ -31,6 +31,15 @@ namespace BlindDelivery.Core.Balance
         /// <summary>Forward speed of a jumppad launch, as a fraction of walking speed.</summary>
         public float JumppadForwardSpeedFactor { get; set; } = 0.5f;
 
+        /// <summary>Bubble Gum slows the courier to this fraction of walking speed.</summary>
+        public float BubbleGumSpeedFactor { get; set; } = 0.5f;
+
+        /// <summary>Oil speeds the courier up to this multiple of walking speed.</summary>
+        public float OilSpeedFactor { get; set; } = 1.5f;
+
+        /// <summary>How long a speed effect lasts after leaving the object.</summary>
+        public float SpeedEffectSeconds { get; set; } = 1f;
+
         /// <summary>Base number of crates the deliveryman starts each run with.</summary>
         public int BaseCrateCount { get; set; } = 3;
 
@@ -42,11 +51,16 @@ namespace BlindDelivery.Core.Balance
             new Dictionary<ItemType, int>
             {
                 [ItemType.Ramp] = 5,
-                [ItemType.Spring] = 10,
-                [ItemType.TactileTile] = 5,
+                [ItemType.JumpPad] = 10,
+                [ItemType.BubbleGum] = 5,
                 [ItemType.AudioBeacon] = 8,
                 [ItemType.WindBreak] = 8,
-                [ItemType.Cushion] = 10,
+                [ItemType.Cardbox] = 10,
+                [ItemType.Bridge] = 5,
+                [ItemType.Crate] = 2,
+                [ItemType.Oil] = 5,
+                [ItemType.Spikes] = 0,
+                [ItemType.FallingObject] = 0,
             };
 
         /// <summary>Cooldown length in seconds per item type. Keyed by item type.</summary>
@@ -54,22 +68,35 @@ namespace BlindDelivery.Core.Balance
             new Dictionary<ItemType, float>
             {
                 [ItemType.Ramp] = 1f,
-                [ItemType.Spring] = 2f,
-                [ItemType.TactileTile] = 0.5f,
+                [ItemType.JumpPad] = 2f,
+                [ItemType.BubbleGum] = 0.5f,
                 [ItemType.AudioBeacon] = 3f,
                 [ItemType.WindBreak] = 1f,
-                [ItemType.Cushion] = 2f,
+                [ItemType.Cardbox] = 2f,
+                [ItemType.Bridge] = 1f,
+                [ItemType.Crate] = 0.5f,
+                [ItemType.Oil] = 0.5f,
+                [ItemType.Spikes] = 0f,
+                [ItemType.FallingObject] = 0f,
             };
     }
 
-    /// <summary>Canonical item types shared between balance data and ItemDefinition assets.</summary>
+    /// <summary>
+    /// Canonical object types shared between balance data and definition assets (GDD §4).
+    /// Values 0–5 keep their serialized meaning; new objects are appended.
+    /// </summary>
     public enum ItemType
     {
-        Ramp,
-        Spring,
-        TactileTile,
-        AudioBeacon,
-        WindBreak,
-        Cushion,
+        Ramp,          // Guidance: 1-cell height gap
+        JumpPad,       // Guidance: launch 5 cells up
+        BubbleGum,     // Guidance: slow the courier
+        AudioBeacon,   // Level Object: 1s directional ping
+        WindBreak,     // Level Object: wind wall, launches 5 cells up
+        Cardbox,       // Guidance: cushions long drops
+        Bridge,        // Guidance: 1-cell width gap
+        Crate,         // Guidance: close a gap or block a path
+        Oil,           // Guidance: speed up the courier
+        Spikes,        // Level Object: kills the courier
+        FallingObject, // Level Object: falling trigger, loses a crate
     }
 }

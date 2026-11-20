@@ -70,8 +70,10 @@ namespace BlindDelivery.Tests.EditMode
         public void InvalidFactor_IsRejected()
         {
             var machine = new DeliverymanStateMachine(2f);
-            Assert.Throws<ArgumentOutOfRangeException>(() => machine.ApplySlow(1.2f, 1f));
+            Assert.Throws<ArgumentOutOfRangeException>(() => machine.ApplySlow(0f, 1f));
             Assert.Throws<ArgumentOutOfRangeException>(() => machine.ApplySlow(0.5f, 0f));
+            // Factors above 1 are valid speed-ups (Oil); they no longer throw.
+            Assert.DoesNotThrow(() => machine.ApplySlow(1.2f, 1f));
         }
     }
 }

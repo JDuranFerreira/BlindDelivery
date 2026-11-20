@@ -117,6 +117,18 @@ namespace BlindDelivery.Tests.EditMode
         }
 
         [Test]
+        public void ApplySpeed_AboveOne_SpeedsWalking()
+        {
+            var machine = new DeliverymanStateMachine(2f);
+            var motor = new FakeMotor();
+            machine.Tick(0.02f, Grounded, motor); // enter Walking
+            machine.ApplySpeed(1.5f, 1f);
+            machine.Tick(0.02f, Grounded, motor);
+            Assert.That(machine.State, Is.EqualTo(MovementState.Slowed));
+            Assert.That(motor.Vx, Is.EqualTo(3f).Within(0.0001f));
+        }
+
+        [Test]
         public void Deliver_StopsTheController()
         {
             var machine = new DeliverymanStateMachine(2f);

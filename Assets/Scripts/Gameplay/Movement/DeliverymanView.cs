@@ -13,10 +13,12 @@ namespace BlindDelivery.Gameplay.Movement
         [SerializeField] SpriteRenderer spriteRenderer;
 
         IMovementStateProvider stateProvider;
+        Animator animator;
 
         void Awake()
         {
             if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+            animator = GetComponent<Animator>();
 
             SimulationRunner runner = FindAnyObjectByType<SimulationRunner>();
             if (runner != null) stateProvider = runner.Machine;
@@ -34,6 +36,12 @@ namespace BlindDelivery.Gameplay.Movement
             if (stateProvider != null && spriteRenderer != null)
             {
                 spriteRenderer.flipX = stateProvider.Facing < 0;
+            }
+
+            // Idle is the default; only a walking courier plays the walk cycle.
+            if (animator != null && stateProvider != null)
+            {
+                animator.SetBool("Walking", stateProvider.State == MovementState.Walking);
             }
         }
     }

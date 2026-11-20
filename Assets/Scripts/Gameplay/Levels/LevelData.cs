@@ -22,8 +22,12 @@ namespace BlindDelivery.Gameplay.Levels
         [SerializeField, Min(0)] int prepCountdownSeconds = 3;
         [SerializeField, Min(0.1f)] float deliverymanSpeed = 2.5f;
         [SerializeField] ItemDefinitionAsset[] tools = Array.Empty<ItemDefinitionAsset>();
+        [SerializeField] ItemDefinitionAsset[] fixtures = Array.Empty<ItemDefinitionAsset>();
 
         public IReadOnlyList<ItemDefinitionAsset> Tools => tools;
+
+        /// <summary>Level-design-only items (wind zones, etc.). Never enter the factory or HUD.</summary>
+        public IReadOnlyList<ItemDefinitionAsset> Fixtures => fixtures;
 
         public LevelConfig ToLevelConfig()
         {
@@ -31,6 +35,14 @@ namespace BlindDelivery.Gameplay.Levels
             foreach (ItemDefinitionAsset tool in tools)
             {
                 if (tool != null) definitions.Add(tool.ToData());
+            }
+
+            foreach (ItemDefinitionAsset fixture in fixtures)
+            {
+                if (fixture == null) continue;
+                ItemDefinitionData data = fixture.ToData();
+                data.Usage = ItemUsage.LevelObject;
+                definitions.Add(data);
             }
 
             return new LevelConfig
@@ -47,6 +59,12 @@ namespace BlindDelivery.Gameplay.Levels
         /// <summary>Used by authoring/tests to build level data without a serialized scene.</summary>
         public static LevelData Create(
             string levelId, int points, int crates, int prep, float speed, params ItemDefinitionAsset[] grantedTools)
+            => Create(levelId, points, crates, prep, speed, grantedTools, Array.Empty<ItemDefinitionAsset>());
+
+        /// <summary>Used by authoring/tests to keep player tools and level fixtures separate.</summary>
+        public static LevelData Create(
+            string levelId, int points, int crates, int prep, float speed,
+            ItemDefinitionAsset[] grantedTools, ItemDefinitionAsset[] levelFixtures)
         {
             LevelData asset = CreateInstance<LevelData>();
             asset.id = levelId;
@@ -55,6 +73,7 @@ namespace BlindDelivery.Gameplay.Levels
             asset.prepCountdownSeconds = prep;
             asset.deliverymanSpeed = speed;
             asset.tools = grantedTools ?? Array.Empty<ItemDefinitionAsset>();
+            asset.fixtures = levelFixtures ?? Array.Empty<ItemDefinitionAsset>();
             return asset;
         }
     }

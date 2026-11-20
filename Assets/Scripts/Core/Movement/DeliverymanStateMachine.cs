@@ -125,19 +125,22 @@ namespace BlindDelivery.Core.Movement
         }
 
         /// <summary>
-        /// Echolocation slow-down. The caller gates this on upgrade ownership; the state machine
-        /// only knows it may slow while walking. Levels 2/3 pass a weaker (faster) factor.
+        /// Applies a timed speed multiplier. Below 1 is a slow (Bubble Gum), above 1 is a
+        /// speed-up (Oil). The caller owns the rule for when the effect is allowed.
         /// </summary>
-        public void ApplySlow(float factor, float duration)
+        public void ApplySpeed(float factor, float duration)
         {
-            if (factor <= 0f || factor > 1f) throw new ArgumentOutOfRangeException(nameof(factor));
+            if (factor <= 0f) throw new ArgumentOutOfRangeException(nameof(factor));
             if (duration <= 0f) throw new ArgumentOutOfRangeException(nameof(duration));
-            if (state != MovementState.Walking) return;
+            if (state != MovementState.Walking && state != MovementState.Slowed) return;
 
             slowFactor = factor;
             slowRemaining = duration;
             state = MovementState.Slowed;
         }
+
+        /// <summary>Echolocation slow-down; kept as the named wrapper over the speed rule.</summary>
+        public void ApplySlow(float factor, float duration) => ApplySpeed(factor, duration);
 
         /// <summary>
         /// Applies a one-shot launch (spring/jumppad). Horizontal speed is held for the whole arc;

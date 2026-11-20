@@ -11,7 +11,7 @@ namespace BlindDelivery.Core.Items
         public ItemType Type { get; set; }
 
         /// <summary>Player-draggable tool or level-design-only fixture.</summary>
-        public ItemUsage Usage { get; set; } = ItemUsage.PlayerTool;
+        public ItemUsage Usage { get; set; } = ItemUsage.Guidance;
 
         public int MoveCost { get; set; }
 

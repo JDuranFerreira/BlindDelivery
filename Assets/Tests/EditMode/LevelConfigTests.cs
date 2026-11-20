@@ -17,7 +17,7 @@ namespace BlindDelivery.Tests.EditMode
         {
             var tools = new List<ItemDefinitionData>
             {
-                new ItemDefinitionData { Type = ItemType.Spring, MoveCost = 10, CooldownSeconds = 2f },
+                new ItemDefinitionData { Type = ItemType.JumpPad, MoveCost = 10, CooldownSeconds = 2f },
                 new ItemDefinitionData { Type = ItemType.Ramp, MoveCost = 5, CooldownSeconds = 1f },
             };
             var config = new LevelConfig
@@ -35,15 +35,15 @@ namespace BlindDelivery.Tests.EditMode
             Assert.That(config.CrateTarget, Is.EqualTo(4));
             Assert.That(config.PrepCountdownSeconds, Is.EqualTo(5));
             Assert.That(config.DeliverymanSpeed, Is.EqualTo(3.1f));
-            Assert.That(config.Grants(ItemType.Spring), Is.True);
-            Assert.That(config.Grants(ItemType.Cushion), Is.False);
+            Assert.That(config.Grants(ItemType.JumpPad), Is.True);
+            Assert.That(config.Grants(ItemType.Cardbox), Is.False);
             Assert.That(config.Tools[1].MoveCost, Is.EqualTo(5));
         }
 
         [Test]
         public void LevelData_ToLevelConfig_CopiesValuesAndAuthoredToolsInOrder()
         {
-            ItemDefinitionAsset spring = ItemDefinitionAsset.Create(ItemType.Spring, null, 10, 2f);
+            ItemDefinitionAsset spring = ItemDefinitionAsset.Create(ItemType.JumpPad, null, 10, 2f);
             ItemDefinitionAsset ramp = ItemDefinitionAsset.Create(ItemType.Ramp, null, 5, 1f);
             LevelData data = LevelData.Create("Level02", 80, 3, 4, 2.9f, spring, ramp);
 
@@ -55,7 +55,7 @@ namespace BlindDelivery.Tests.EditMode
             Assert.That(config.PrepCountdownSeconds, Is.EqualTo(4));
             Assert.That(config.DeliverymanSpeed, Is.EqualTo(2.9f));
             Assert.That(config.Tools.Count, Is.EqualTo(2));
-            Assert.That(config.Tools[0].Type, Is.EqualTo(ItemType.Spring));
+            Assert.That(config.Tools[0].Type, Is.EqualTo(ItemType.JumpPad));
             Assert.That(config.Tools[1].Type, Is.EqualTo(ItemType.Ramp));
 
             Object.DestroyImmediate(spring);
@@ -67,21 +67,60 @@ namespace BlindDelivery.Tests.EditMode
         public void LevelConfig_SplitsPlayerToolsFromLevelFixtures()
         {
             ItemDefinitionAsset cardbox = ItemDefinitionAsset.Create(
-                BlindDelivery.Core.Balance.ItemType.Cushion, ItemUsage.PlayerTool, null, 10, 2f);
+                BlindDelivery.Core.Balance.ItemType.Cardbox, ItemUsage.Guidance, null, 10, 2f);
             ItemDefinitionAsset wind = ItemDefinitionAsset.Create(
-                BlindDelivery.Core.Balance.ItemType.WindBreak, ItemUsage.LevelFixture, null, 8, 1f);
+                BlindDelivery.Core.Balance.ItemType.WindBreak, ItemUsage.LevelObject, null, 8, 1f);
             LevelData data = LevelData.Create("Windy", 100, 3, 3, 2.5f, cardbox, wind);
 
             LevelConfig config = data.ToLevelConfig();
 
-            Assert.That(config.PlayerTools.Count, Is.EqualTo(1));
-            Assert.That(config.PlayerTools[0].Type, Is.EqualTo(BlindDelivery.Core.Balance.ItemType.Cushion));
-            Assert.That(config.Fixtures.Count, Is.EqualTo(1));
-            Assert.That(config.Fixtures[0].Usage, Is.EqualTo(ItemUsage.LevelFixture));
+            Assert.That(config.GuidanceObjects.Count, Is.EqualTo(1));
+            Assert.That(config.GuidanceObjects[0].Type, Is.EqualTo(BlindDelivery.Core.Balance.ItemType.Cardbox));
+            Assert.That(config.LevelObjects.Count, Is.EqualTo(1));
+            Assert.That(config.LevelObjects[0].Usage, Is.EqualTo(ItemUsage.LevelObject));
             Assert.That(config.Grants(BlindDelivery.Core.Balance.ItemType.WindBreak), Is.True);
 
             Object.DestroyImmediate(cardbox);
             Object.DestroyImmediate(wind);
+            Object.DestroyImmediate(data);
+        }
+
+        [Test]
+        public void LevelData_Fixtures_AreSeparateFromPlayerTools()
+        {
+            ItemDefinitionAsset bridge = ItemDefinitionAsset.Create(ItemType.Ramp, null, 5, 1f);
+            ItemDefinitionAsset wind = ItemDefinitionAsset.Create(
+                ItemType.WindBreak, ItemUsage.LevelObject, null, 8, 1f);
+            LevelData data = LevelData.Create(
+                "Windy", 100, 3, 3, 2.5f, new[] { bridge }, new[] { wind });
+
+            LevelConfig config = data.ToLevelConfig();
+
+            Assert.That(config.Tools.Count, Is.EqualTo(2));
+            Assert.That(config.GuidanceObjects.Count, Is.EqualTo(1));
+            Assert.That(config.GuidanceObjects[0].Type, Is.EqualTo(ItemType.Ramp));
+            Assert.That(config.LevelObjects.Count, Is.EqualTo(1));
+            Assert.That(config.LevelObjects[0].Type, Is.EqualTo(ItemType.WindBreak));
+
+            Object.DestroyImmediate(bridge);
+            Object.DestroyImmediate(wind);
+            Object.DestroyImmediate(data);
+        }
+
+        [Test]
+        public void LevelData_FixturesList_AlwaysMarksEntriesAsLevelFixtures()
+        {
+            ItemDefinitionAsset misplaced = ItemDefinitionAsset.Create(ItemType.Cardbox, null, 10, 2f);
+            LevelData data = LevelData.Create(
+                "Strict", 100, 3, 3, 2.5f, System.Array.Empty<ItemDefinitionAsset>(), new[] { misplaced });
+
+            LevelConfig config = data.ToLevelConfig();
+
+            Assert.That(config.GuidanceObjects, Is.Empty);
+            Assert.That(config.LevelObjects.Count, Is.EqualTo(1));
+            Assert.That(config.LevelObjects[0].Usage, Is.EqualTo(ItemUsage.LevelObject));
+
+            Object.DestroyImmediate(misplaced);
             Object.DestroyImmediate(data);
         }
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c252e12cd07ade45846913ad2bff1e4, type: 3}
   m_Name: Bridge
   m_EditorClassIdentifier: BlindDelivery.Gameplay::BlindDelivery.Gameplay.Items.ItemDefinitionAsset
-  type: 0
+  type: 6
   usage: 0
   prefab: {fileID: 6057829261237399835, guid: 59e3af07266bc054eb99244b690ae36e, type: 3}
   moveCost: 5

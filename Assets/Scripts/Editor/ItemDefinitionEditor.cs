@@ -7,8 +7,8 @@ namespace BlindDelivery.Editor
 {
     /// <summary>
     /// Inspector for one authored item: what it is, which prefab the factory instantiates and
-    /// how it is used in a level. Player tools must have a GuidanceItem prefab; level fixtures
-    /// may be config-only (e.g. a wind zone) and need no prefab.
+    /// how it is used in a level. Guidance Objects must have a prefab; Level Objects may be
+    /// config-only (e.g. a wind zone) and need no prefab.
     /// </summary>
     [CustomEditor(typeof(ItemDefinitionAsset))]
     public sealed class ItemDefinitionEditor : UnityEditor.Editor
@@ -33,11 +33,11 @@ namespace BlindDelivery.Editor
             DrawDefaultInspector();
             EditorGUILayout.Space();
 
-            if (definition.Usage == ItemUsage.PlayerTool)
+            if (definition.Usage == ItemUsage.Guidance)
             {
                 if (definition.Prefab == null)
                 {
-                    EditorGUILayout.HelpBox("A player tool needs a prefab with a GuidanceItem component.", MessageType.Warning);
+                    EditorGUILayout.HelpBox("A Guidance Object needs a prefab with a GuidanceItem component.", MessageType.Warning);
                 }
                 else if (definition.Prefab.GetComponent<GuidanceItem>() == null)
                 {

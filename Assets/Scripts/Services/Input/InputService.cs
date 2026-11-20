@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 using BlindDelivery.Core.Input;
 using BlindDelivery.Core.Services;
 
@@ -46,6 +47,7 @@ namespace BlindDelivery.Services.Input
         BlindDelivery.Core.Input.Vector2? lastDragPosition;
         int touchCount;
         bool overUiLastFrame;
+        readonly List<RaycastResult> uiHits = new List<RaycastResult>();
 
         // DPI-scaled thresholds (set in InitializeAsync)
         float scaledSwipeMinDistance;
@@ -120,7 +122,7 @@ namespace BlindDelivery.Services.Input
 
             // EventSystem must be queried on the main frame, never from inside an InputAction
             // callback (it would read stale UI state and spam a warning).
-            overUiLastFrame = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            overUiLastFrame = ComputeOverUi();
 
             bool down = isPointerDown;
             if (down && !wasPointerDown)
@@ -242,6 +244,44 @@ namespace BlindDelivery.Services.Input
             {
                 OnPinch?.Invoke(scale);
             }
+        }
+
+        /// <summary>
+        /// A UI Toolkit document covers the whole screen, so EventSystem reports a UI hit even
+        /// where its root has pointer-events:none. Only real interactive UI should swallow a
+        /// world tap; otherwise nothing in the level can ever be placed.
+        /// </summary>
+        bool ComputeOverUi()
+        {
+            if (EventSystem.current == null) return false;
+
+            UnityEngine.Vector2 screen = Mouse.current != null
+                ? Mouse.current.position.ReadValue()
+                : UnityEngine.Vector2.zero;
+            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+                screen = Touchscreen.current.primaryTouch.position.ReadValue();
+
+            PointerEventData pointer = new PointerEventData(EventSystem.current) { position = screen };
+            uiHits.Clear();
+            EventSystem.current.RaycastAll(pointer, uiHits);
+            foreach (RaycastResult hit in uiHits)
+            {
+                if (hit.gameObject == null) continue;
+                UIDocument document = hit.gameObject.GetComponent<UIDocument>();
+                if (document != null && document.rootVisualElement != null &&
+                    document.rootVisualElement.panel != null)
+                {
+                    // A full-screen document is a hit even when its root ignores pointer events.
+                    // Only an actual control under the pointer should swallow a world tap.
+                    VisualElement picked = document.rootVisualElement.panel.Pick(screen);
+                    if (picked is Button) return true;
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         bool IsOverUI() => overUiLastFrame;

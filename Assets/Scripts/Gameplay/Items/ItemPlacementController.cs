@@ -94,9 +94,9 @@ namespace BlindDelivery.Gameplay.Items
                 ? CreateFactory(levelData)
                 : new ItemFactory(new[]
                 {
-                    new ItemFactoryEntry(ItemType.Spring, jumppadPrefab),
-                    new ItemFactoryEntry(ItemType.Cushion, cardboxPrefab),
-                    new ItemFactoryEntry(ItemType.Ramp, bridgePrefab),
+                    new ItemFactoryEntry(ItemType.JumpPad, jumppadPrefab),
+                    new ItemFactoryEntry(ItemType.Cardbox, cardboxPrefab),
+                    new ItemFactoryEntry(ItemType.Bridge, bridgePrefab),
                 });
             pointerBlocker = pointerBlockerSource as IPointerBlocker;
             if (pointerBlocker == null)
@@ -136,7 +136,7 @@ namespace BlindDelivery.Gameplay.Items
             foreach (ItemDefinitionAsset tool in data.Tools)
             {
                 // Level fixtures (wind zones etc.) are not player tools and never enter the factory.
-                if (tool != null && tool.Prefab != null && tool.Usage == ItemUsage.PlayerTool)
+                if (tool != null && tool.Prefab != null && tool.Usage == ItemUsage.Guidance)
                     entries.Add(new ItemFactoryEntry(tool.Type, tool.Prefab));
             }
 
@@ -368,12 +368,16 @@ namespace BlindDelivery.Gameplay.Items
             geometry?.Rebuild();
         }
 
-        /// <summary>A tap outside the level bounds cancels the pending placement (GDD §4).</summary>
+        /// <summary>
+        /// A tap outside the map cancels placement. LevelBounds is only the union of solid floor
+        /// shapes, so use the same padding as the placement validity check — otherwise every
+        /// mid-air placement is treated as off-map and silently cancelled.
+        /// </summary>
         bool IsOutsideLevel(Vector3 position)
         {
             Bounds level = geometry != null ? geometry.LevelBounds : RectLevelGeometry.DefaultLevelBounds;
             return position.x < level.min.x || position.x > level.max.x ||
-                   position.y < level.min.y || position.y > level.max.y;
+                   position.y < level.min.y - 2f || position.y > level.max.y + 3f;
         }
 
         bool IsValidPlacement(GuidanceItem item, Vector3 position)
@@ -427,7 +431,7 @@ namespace BlindDelivery.Gameplay.Items
         ItemDefinitionData DefinitionFor(ItemType type)
         {
             if (levelConfig == null) return null;
-            foreach (ItemDefinitionData tool in levelConfig.PlayerTools)
+            foreach (ItemDefinitionData tool in levelConfig.GuidanceObjects)
             {
                 if (tool != null && tool.Type == type) return tool;
             }

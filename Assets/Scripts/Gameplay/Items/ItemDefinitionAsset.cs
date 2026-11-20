@@ -13,7 +13,7 @@ namespace BlindDelivery.Gameplay.Items
     public sealed class ItemDefinitionAsset : ScriptableObject
     {
         [SerializeField] ItemType type;
-        [SerializeField] ItemUsage usage = ItemUsage.PlayerTool;
+        [SerializeField] ItemUsage usage = ItemUsage.Guidance;
         [SerializeField] GameObject prefab;
         [SerializeField, Min(0)] int moveCost;
         [SerializeField, Min(0)] float cooldownSeconds;
@@ -37,7 +37,7 @@ namespace BlindDelivery.Gameplay.Items
 
         /// <summary>Used by authoring/tests to build a definition without a serialized scene.</summary>
         public static ItemDefinitionAsset Create(ItemType itemType, GameObject itemPrefab, int cost, float cooldown)
-            => Create(itemType, ItemUsage.PlayerTool, itemPrefab, cost, cooldown);
+            => Create(itemType, ItemUsage.Guidance, itemPrefab, cost, cooldown);
 
         public static ItemDefinitionAsset Create(
             ItemType itemType, ItemUsage itemUsage, GameObject itemPrefab, int cost, float cooldown)

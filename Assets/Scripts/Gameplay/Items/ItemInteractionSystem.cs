@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using BlindDelivery.Core.Audio;
 using BlindDelivery.Core.Balance;
 using BlindDelivery.Core.Items;
 using BlindDelivery.Gameplay.Movement;
@@ -25,13 +27,21 @@ namespace BlindDelivery.Gameplay.Items
 
         GameBalance balance;
         SimulationRunner runner;
+        IAudioService audio;
         int latchedPadId = -1;
         float springCooldown;
+        readonly HashSet<int> latchedSpeed = new HashSet<int>();
+        readonly HashSet<int> latchedHazard = new HashSet<int>();
+        readonly HashSet<int> latchedWind = new HashSet<int>();
 
         public void Initialize(GameBalance data, SimulationRunner simulationRunner)
         {
             balance = data;
             runner = simulationRunner;
+            if (BlindDelivery.Gameplay.AppBootstrap.Instance != null)
+            {
+                BlindDelivery.Gameplay.AppBootstrap.Instance.Services.TryGet<IAudioService>(out audio);
+            }
             // Resolve scene collaborators once, at the composition root, not on every step.
             if (items == null) items = FindAnyObjectByType<ItemPlacementController>();
             if (deliveryman == null) deliveryman = FindAnyObjectByType<CoreMotor>();
@@ -48,26 +58,73 @@ namespace BlindDelivery.Gameplay.Items
             springCooldown = Mathf.Max(0f, springCooldown - deltaTime);
             foreach (GuidanceItem item in items.PlacedItems)
             {
-                if (!item.IsPlaced || !item.IsSettled || item.Type != ItemType.Spring) continue;
-
+                if (!item.IsPlaced || !item.IsSettled) continue;
+                int id = item.InstanceId;
                 Bounds pad = item.WorldBounds;
-                bool touching = ItemInteractionRules.ReachedSpringCenter(
-                    pad.center.x, pad.min.y, pad.max.y, x, y - halfHeight, centerReach, topBand);
-                if (item.InstanceId == latchedPadId)
+
+                if (item.Type == ItemType.JumpPad)
                 {
-                    // Clear the latch only once the deliveryman steps off this pad.
-                    if (!touching) latchedPadId = -1;
+                    bool onPad = ItemInteractionRules.ReachedSpringCenter(
+                        pad.center.x, pad.min.y, pad.max.y, x, y - halfHeight, centerReach, topBand);
+                    if (id == latchedPadId)
+                    {
+                        if (!onPad) latchedPadId = -1;
+                        continue;
+                    }
+                    if (!onPad || springCooldown > 0f) continue;
+
+                    float vertical = ItemInteractionRules.LaunchVerticalSpeed(balance);
+                    float horizontal = ItemInteractionRules.LaunchHorizontalSpeed(balance, runner.Machine.Facing, runner.LevelSpeed);
+                    runner.Machine.Launch(deliveryman, horizontal, vertical);
+                    latchedPadId = id;
+                    springCooldown = SpringImpulseCooldown;
                     continue;
                 }
 
-                if (!touching || springCooldown > 0f) continue;
+                bool touching = ItemInteractionRules.TouchesTop(
+                    pad.center.x, pad.extents.x, pad.max.y, x, y - halfHeight, horizontalReach, topBand);
+                if (!touching)
+                {
+                    latchedHazard.Remove(id);
+                    latchedWind.Remove(id);
+                    break;
+                }
 
-                float vertical = ItemInteractionRules.LaunchVerticalSpeed(balance);
-                float horizontal = ItemInteractionRules.LaunchHorizontalSpeed(balance, runner.Machine.Facing, runner.LevelSpeed);
-                runner.Machine.Launch(deliveryman, horizontal, vertical);
-                latchedPadId = item.InstanceId;
-                springCooldown = SpringImpulseCooldown;
-                break;
+                switch (item.Type)
+                {
+                    case ItemType.BubbleGum:
+                    case ItemType.Oil:
+                        if (!touching)
+                        {
+                            latchedSpeed.Remove(id);
+                            break;
+                        }
+                        if (!latchedSpeed.Add(id)) break;
+                        runner.Machine.ApplySpeed(
+                            ItemInteractionRules.SpeedFactor(balance, item.Type),
+                            balance.SpeedEffectSeconds);
+                        break;
+
+                    case ItemType.Spikes:
+                        if (touching && latchedHazard.Add(id)) runner.FailRun();
+                        break;
+
+                    case ItemType.FallingObject:
+                        if (latchedHazard.Add(id)) runner.LoseCrateFromHazard();
+                        break;
+
+                    case ItemType.WindBreak:
+                        if (latchedWind.Add(id))
+                        {
+                            runner.Machine.Launch(deliveryman, 0f,
+                                ItemInteractionRules.WindLaunchVerticalSpeed(balance));
+                        }
+                        break;
+
+                    case ItemType.AudioBeacon:
+                        if (latchedHazard.Add(id)) audio?.PlaySfx("beacon_ping", 1f);
+                        break;
+                }
             }
 
             // A cardbox is consumed when the deliveryman reaches its top. This runs on the
@@ -88,7 +145,7 @@ namespace BlindDelivery.Gameplay.Items
             deliveryman.ReadPosition(out float x, out float y);
             foreach (GuidanceItem item in items.PlacedItems)
             {
-                if (item.IsPlaced && item.IsSettled && item.Type == ItemType.Cushion)
+                if (item.IsPlaced && item.IsSettled && item.Type == ItemType.Cardbox)
                 {
                     Bounds box = item.WorldBounds;
                     if (ItemInteractionRules.TouchesTop(box.center.x, box.extents.x, box.max.y, x, y - halfHeight, horizontalReach, topBand))

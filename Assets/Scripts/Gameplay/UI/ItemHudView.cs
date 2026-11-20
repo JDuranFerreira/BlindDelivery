@@ -60,15 +60,7 @@ namespace BlindDelivery.Gameplay.UI
                 toolCooldownFills[i] = Find<VisualElement>("ToolCooldown" + i);
                 if (toolButtons[i] == null) continue;
 
-                if (toolImages[i] != null && i < toolIcons.Length) toolImages[i].sprite = toolIcons[i];
                 toolButtons[i].clicked += () => OnToolClicked(index);
-
-                if (state != null && index < state.Tools.Count)
-                {
-                    bool available = state.IsToolAvailable(state.Tools[index]);
-                    toolButtons[i].SetEnabled(available);
-                    if (!available) toolButtons[i].AddToClassList("unavailable");
-                }
             }
 
             VisualElement toolbar = UQueryExtensions.Query(root, "Toolbar").First();
@@ -122,16 +114,45 @@ namespace BlindDelivery.Gameplay.UI
 
             for (int i = 0; i < toolButtons.Length; i++)
             {
-                if (toolButtons[i] == null || i >= state.Tools.Count) continue;
-                if (state.SelectedTool == state.Tools[i]) toolButtons[i].AddToClassList("selected");
+                if (toolButtons[i] == null) continue;
+
+                if (i >= state.Tools.Count)
+                {
+                    // This level does not grant this slot — hide it instead of showing a dimmed
+                    // icon for an item the player can never use.
+                    toolButtons[i].style.display = DisplayStyle.None;
+                    if (toolCooldownFills[i] != null)
+                        toolCooldownFills[i].style.width = new StyleLength(Length.Percent(0f));
+                    continue;
+                }
+
+                toolButtons[i].style.display = DisplayStyle.Flex;
+                ItemType slotType = state.Tools[i];
+                if (toolImages[i] != null) toolImages[i].sprite = IconFor(slotType);
+
+                // Availability comes from the factory built in ItemPlacementController.Start(),
+                // which runs AFTER this view's OnEnable binds the buttons. Refresh every frame so
+                // buttons unlock as soon as the tools exist instead of staying disabled forever.
+                bool available = state.IsToolAvailable(slotType);
+                toolButtons[i].SetEnabled(available);
+                if (available) toolButtons[i].RemoveFromClassList("unavailable");
+                else toolButtons[i].AddToClassList("unavailable");
+
+                if (state.SelectedTool == slotType) toolButtons[i].AddToClassList("selected");
                 else toolButtons[i].RemoveFromClassList("selected");
 
                 if (toolCooldownFills[i] != null)
                 {
-                    float fill = state.CooldownRatioFor(state.Tools[i]);
+                    float fill = state.CooldownRatioFor(slotType);
                     toolCooldownFills[i].style.width = new StyleLength(Length.Percent(fill * 100f));
                 }
             }
+        }
+
+        Sprite IconFor(ItemType type)
+        {
+            int index = (int)type;
+            return index >= 0 && index < toolIcons.Length ? toolIcons[index] : null;
         }
 
         void OnToolClicked(int index)

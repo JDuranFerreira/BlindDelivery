@@ -17,6 +17,10 @@ namespace BlindDelivery.Core.Items
             return (float)Math.Sqrt(2d * balance.Gravity * balance.JumppadLaunchHeightCells);
         }
 
+        /// <summary>Wind Break: a vertical-only gust of the same tuned 5-cell height.</summary>
+        public static float WindLaunchVerticalSpeed(GameBalance balance)
+            => LaunchVerticalSpeed(balance);
+
         /// <summary>Forward impulse as a fraction of walking speed, signed by facing direction.</summary>
         public static float LaunchHorizontalSpeed(GameBalance balance, float facing)
             => LaunchHorizontalSpeed(balance, facing, balance == null ? 0f : balance.DeliverymanSpeed);
@@ -28,6 +32,18 @@ namespace BlindDelivery.Core.Items
             return walkingSpeed * balance.JumppadForwardSpeedFactor * facing;
         }
 
+        /// <summary>Speed multiplier for Bubble Gum (slow) and Oil (speed-up); 1 for other objects.</summary>
+        public static float SpeedFactor(GameBalance balance, ItemType type)
+        {
+            if (balance == null) throw new ArgumentNullException(nameof(balance));
+            switch (type)
+            {
+                case ItemType.BubbleGum: return balance.BubbleGumSpeedFactor;
+                case ItemType.Oil: return balance.OilSpeedFactor;
+                default: return 1f;
+            }
+        }
+
         /// <summary>True when the deliveryman's feet reach the thin spring pad's centre.</summary>
         public static bool ReachedSpringCenter(
             float itemCenterX, float itemMinY, float itemMaxY,
@@ -37,7 +53,7 @@ namespace BlindDelivery.Core.Items
             return feetY <= itemMaxY + topBand && feetY >= itemMinY - topBand * 2f;
         }
 
-        /// <summary>True when the deliveryman came down on a cardbox's top surface.</summary>
+        /// <summary>True when the deliveryman's feet are on top of a guidance object.</summary>
         public static bool TouchesTop(
             float itemCenterX, float itemHalfWidth, float itemMaxY,
             float feetX, float feetY, float horizontalReach, float topBand)

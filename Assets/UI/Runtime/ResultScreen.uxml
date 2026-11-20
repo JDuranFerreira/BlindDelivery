@@ -6,6 +6,8 @@
                 <ui:Label name="Stars" text="3 / 3 STARS" class="result-stars" />
                 <ui:Label name="Bonus" text="" class="result-bonus" />
                 <ui:Label name="Score" text="Score  0" class="result-score" />
+                <ui:Label name="Time" text="Time  0.0s" class="result-score result-time" />
+                <ui:Label name="Best" text="Best  0.0s" class="result-score result-time" />
                 <ui:Button name="Replay" text="REPLAY" class="hud-button result-button" />
             </ui:VisualElement>
         </ui:VisualElement>

@@ -31,6 +31,11 @@ namespace BlindDelivery.Gameplay.Balance
         [Tooltip("Jumppad forward speed as a fraction of walking speed.")]
         [SerializeField] float jumppadForwardSpeedFactor = 0.5f;
 
+        [Header("Speed objects")]
+        [SerializeField] float bubbleGumSpeedFactor = 0.5f;
+        [SerializeField] float oilSpeedFactor = 1.5f;
+        [SerializeField] float speedEffectSeconds = 1f;
+
         [Header("Crates")]
         [Tooltip("Base number of crates the deliveryman starts each run with.")]
         [SerializeField] int baseCrateCount = 3;
@@ -41,11 +46,16 @@ namespace BlindDelivery.Gameplay.Balance
         [SerializeField] ItemTuning[] items =
         {
             new ItemTuning { type = ItemType.Ramp, moveCost = 5, cooldownSeconds = 1f },
-            new ItemTuning { type = ItemType.Spring, moveCost = 10, cooldownSeconds = 2f },
-            new ItemTuning { type = ItemType.TactileTile, moveCost = 5, cooldownSeconds = 0.5f },
+            new ItemTuning { type = ItemType.JumpPad, moveCost = 10, cooldownSeconds = 2f },
+            new ItemTuning { type = ItemType.BubbleGum, moveCost = 5, cooldownSeconds = 0.5f },
             new ItemTuning { type = ItemType.AudioBeacon, moveCost = 8, cooldownSeconds = 3f },
             new ItemTuning { type = ItemType.WindBreak, moveCost = 8, cooldownSeconds = 1f },
-            new ItemTuning { type = ItemType.Cushion, moveCost = 10, cooldownSeconds = 2f },
+            new ItemTuning { type = ItemType.Cardbox, moveCost = 10, cooldownSeconds = 2f },
+            new ItemTuning { type = ItemType.Bridge, moveCost = 5, cooldownSeconds = 1f },
+            new ItemTuning { type = ItemType.Crate, moveCost = 2, cooldownSeconds = 0.5f },
+            new ItemTuning { type = ItemType.Oil, moveCost = 5, cooldownSeconds = 0.5f },
+            new ItemTuning { type = ItemType.Spikes, moveCost = 0, cooldownSeconds = 0f },
+            new ItemTuning { type = ItemType.FallingObject, moveCost = 0, cooldownSeconds = 0f },
         };
 
         /// <summary>Builds the pure-C# <see cref="GameBalance"/> from this asset's fields.</summary>
@@ -67,6 +77,9 @@ namespace BlindDelivery.Gameplay.Balance
                 Gravity = gravity,
                 JumppadLaunchHeightCells = jumppadLaunchHeightCells,
                 JumppadForwardSpeedFactor = jumppadForwardSpeedFactor,
+                BubbleGumSpeedFactor = bubbleGumSpeedFactor,
+                OilSpeedFactor = oilSpeedFactor,
+                SpeedEffectSeconds = speedEffectSeconds,
                 BaseCrateCount = baseCrateCount,
                 MaxCrateCount = maxCrateCount,
                 ItemMoveCosts = moveCosts,

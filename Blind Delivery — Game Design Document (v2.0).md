@@ -6,7 +6,7 @@
 
 **Genre:** 2D vertical puzzle-platformer with indirect control (Lemmings-inspired) **Platform:** Mobile (iOS/Android), portrait orientation, one-handed play **Session Length:** 2–5 minutes per run **Target Audience:** Casual/puzzle players, accessibility-conscious gamers
 
-**Elevator Pitch:** A blindfolded courier walks automatically from point A to point B, carrying crates on his head. You can't control him. Instead, you place and move guidance objects (ramps, springs, beacons, tactile tiles, wind breaks, cushions) to build his route. Every crate that survives the trip earns you stars.
+**Elevator Pitch:** A blindfolded courier walks automatically from point A to point B, carrying crates on his head. You can't control him. Instead, you place and move Guidance Objects (ramps, bridges, jump pads, cardboxes, crates, bubble gum, oil) to build his route, while Level Objects (audio beacons, wind breaks, spikes, falling objects) are authored into the level. Every crate that survives the trip earns you stars.
 
 **Key design pillars:**
 
@@ -21,7 +21,7 @@
 2. **Prep phase:** the player can already place items while the countdown runs. When it ends, the deliveryman starts walking from point A.
 3. **Run:** the deliveryman walks automatically. The player places, grabs and moves items to guide him toward point B.
 4. **Hazards and crates:** gaps, spikes, wind and traffic threaten the crates he carries.
-5. **Arrival:** reaching point B ends the run. Stars are awarded for crates delivered, and a points score is recorded for the leaderboard.
+5. **Arrival:** reaching point B ends the run. Stars are awarded for crates delivered, a points score and the run time are recorded for the leaderboard.
 6. **Meta:** stars unlock upgrade tiers, credits buy them, then the next level or the daily route.
 
 **Win condition:** reach point B with at least 1 crate. **Fail condition:** all crates are lost, or the deliveryman is destroyed by a hazard.
@@ -35,15 +35,15 @@
 - Constant forward velocity, configurable per level (1.5–3.5 m/s).
 - Turns around 180° when he bumps into a wall or a blocking object.
 - Cliff behaviour: he walks off ledges and falls under gravity.
-- Levels run top to bottom, or in some levels bottom to top. Wind and springs are the main tools for going up.
+- Levels run top to bottom, or in some levels bottom to top. Jump pads and Wind Breaks are the main tools for going up.
 
-**Implementation status:** the flat A→B walk, wall turns, ledge falls and delivery state work in `Level01`. Speed currently comes from `GameBalance.DeliverymanSpeed` (2.5 m/s) and will move to per-level `LevelData` when that asset exists. Crate loss on long falls is not wired yet.
+**Implementation status:** the flat A→B walk, wall turns, ledge falls and delivery state work in `Level01`. Speed lives in per-level `LevelData`. Crate loss on long falls is wired through the fixed-step simulation.
 
 ### Crates
 
 - Every run starts with 3 crates. The Box Capacity upgrade raises this to up to 5.
 - Crates are stacked on his head. Stack height equals the number of crates he carries (max 5), and a taller stack wobbles more, so carrying more feels like a real risk.
-- **Fall rule:** a fall longer than the Safe Fall Height loses 1 crate from the top of the stack. Safe Fall Height is a single global value stored in the game data, currently 3 cells. It is the same for every level and can be changed to 2 later as a balance decision. Cushions and ramps are the designed way to survive longer drops.
+- **Fall rule:** a fall longer than the Safe Fall Height loses 1 crate from the top of the stack. Safe Fall Height is a single global value stored in the game data, currently 3 cells. It is the same for every level and can be changed to 2 later as a balance decision. Cardboxes and ramps are the designed way to survive longer drops.
 - The safe fall height is shown in-game with a faint marker at platform edges so players can read it at a glance.
 
 | State | Behaviour | Visual |
@@ -51,14 +51,14 @@
 | Carried | Stacked on head, moves with deliveryman | Stacked crates |
 | Dropped | Falls with physics, can be picked up | On ground, pulsing |
 | Lost | Falls off-screen or destroyed | Poof + sound |
-| Delivered | Reaches point B with the deliveryman | Confetti + score |
+| Delivered | Reaches point B with the deliveryman | Confetti + score + run time |
 
 ### Sensory Model (the "blind" mechanic)
 
 - **Passive echolocation (always on):** a continuous forward scan cone that updates at the refresh rate.
 - **Footstep rhythm:** audio pitch changes with surface (concrete, wood, metal, grass).
 - **Edge warning:** a rising tone when approaching a cliff.
-- **Beacon ping:** directional audio toward placed beacons.
+- **Beacon ping:** directional audio toward level-authored audio beacons.
 - **Haptic compass:** vibration intensity shows proximity to the next guidance object.
 
 ### Ledge Slow-Down (unlockable)
@@ -84,14 +84,32 @@
 
 ### Object types
 
+Objects fall into two categories:
+
+- **Guidance Objects** — player tools. The player taps one in the toolbar, then drags and drops it in the world (GDD §4 placement rules). These are the only objects that appear in the HUD.
+- **Level Objects** — authored into a level by the designer. They are part of the level layout and can never be selected or moved by the player. They never appear in the HUD.
+
+#### Guidance Objects
+
 | Object | Effect | Physics |
 | --- | --- | --- |
 | Ramp | Bridges a 1-cell height gap | Static, friction 0.8 |
-| Spring | Launches the deliveryman 5 cells up or forward | Impulse force, 0.3s cooldown |
-| Tactile Tile | Forces turn, stop or speed change | Trigger zone |
-| Audio Beacon | Emits a directional ping (5s) | Audio only |
-| Wind Break | Blocks horizontal wind in a 3-cell radius | Static |
-| Cushion | Prevents crate loss on long drops | Soft body, deforms |
+| Bridge | Bridges a 1-cell width gap | Static |
+| JumpPad | Sends the deliveryman 5 cells upward | Impulse force |
+| Cardbox | Prevents crate loss on long drops | Soft body, deforms |
+| Crate | Closes a 1-cell gap or blocks a path so the player can change direction | Static |
+| Bubble Gum | Slows down the deliveryman | Trigger zone |
+| Oil | Speeds up the deliveryman | Trigger zone |
+
+#### Level Objects
+
+| Object | Effect | Physics |
+| --- | --- | --- |
+| Ramp | Bridges a 1-cell height gap, authored into the level | Static, friction 0.8 |
+| Audio Beacon | Emits a directional ping (1s) | Audio only |
+| Wind Break | A wall of wind that sends the deliveryman 5 cells upward | Trigger zone |
+| Spikes | Kills the deliveryman | Hazard trigger |
+| Falling Objects | When the deliveryman passes the trigger, they fall on him and make him lose one delivery box | Trigger + falling body |
 
 ## 5. Scoring: Stars and Points
 
@@ -113,9 +131,26 @@
 - The pool is shown as a visible meter on the HUD.
 - Points feed the leaderboard and the daily route ranking.
 
+### Run timer
+
+- Every run records a **run time**: how long the player takes to complete the level.
+- The timer starts when the prep countdown ends and the deliveryman starts walking; it stops when the run ends, delivered or failed.
+- The elapsed time is displayed on the end-of-run result screen alongside stars and score.
+- **Scoring impact is deferred:** the timer is recorded as a level result but does not change stars or points yet. Later it can become part of the score calculation (for example, a speed bonus or a time-adjusted leaderboard rank). That rule needs its own tuning pass before it goes live.
+
+### Replay loop (three passes per level)
+
+The same level is replayed with a different goal each time. Players are free to replay any level at any point; this is the intended progression, not a forced sequence.
+
+1. **First pass — normal run.** Complete the level with the base tool set and deliver the target crates. The goal is to finish and earn stars.
+2. **Second pass — more deliveries.** After unlocking the **Box Capacity** upgrade, replay the level to carry more crates and finish with more stars: 4 crates adds a gold bonus star, 5 gives the **"3 stars plus plus"** rating. This is how a cleared level is improved without changing the level itself.
+3. **Third and later passes — speedrun.** Replay to finish in the shortest time and by the shortest route possible. The run timer is the feedback; players try to beat their own best time.
+
+Only the best result per level counts toward the star total used by upgrade gates, so replaying never double counts stars and never takes stars away. Best time is recorded as a separate per-level result alongside best stars and best score; it does not affect stars or points yet (see Run timer above).
+
 ## 6. Level Structure
 
-Every level fits on one portrait screen. The grid is narrow and tall, roughly 8–10 cells wide and 14–20 cells tall, so the deliveryman zigzags between platforms like a pinball. Most levels run from A at the top to B at the bottom. Some run from the bottom up, using wind and springs.
+Every level fits on one portrait screen. The grid is narrow and tall, roughly 8–10 cells wide and 14–20 cells tall, so the deliveryman zigzags between platforms like a pinball. Most levels run from A at the top to B at the bottom. Some run from the bottom up, using JumpPads and Wind Breaks.
 
 **Level data (per level):**
 
@@ -140,9 +175,9 @@ Each mechanic is introduced exactly once. Later worlds combine or intensify it.
 
 | World | Levels | New mechanics introduced |
 | --- | --- | --- |
-| Tutorial | 1–5 | Ramp, spring, basic audio (footsteps, edge warning) |
-| Downtown | 6–15 | Audio beacons, tactile tiles, wind, wind break |
-| Industrial | 16–30 | Cushions, moving platforms |
+| Tutorial | 1–5 | Ramp, Bridge, JumpPad, Cardbox, basic audio (footsteps, edge warning) |
+| Downtown | 6–15 | Audio beacons, Wind Breaks, spikes, falling objects |
+| Industrial | 16–30 | Cardboxes, moving platforms |
 | Harbor | 31–50 | Fog (limits echolocation), currents |
 | Skyline | 51+ | Verticality, multi-path, time dilation |
 
@@ -168,7 +203,7 @@ Every upgrade tier has two requirements. **Stars** act as a gate: the player mus
 | Box Capacity | 2 | Start with 4, then 5 crates. Extra crates are bonus-star crates | 500/1500 |
 | Prep Time | 3 | +15s prep countdown per level | 200/600/1800 |
 | Haptic Sensitivity | 3 | Detects ledges 1 cell earlier per level | 100/300/900 |
-| Beacon Duration | 3 | +2s ping duration | 100/300/900 |
+| Beacon Duration | 3 | +2s ping duration on top of the 1s base | 100/300/900 |
 | Cargo Insurance | 3 | 1 crate survives loss per run | 300/900/2700 |
 
 Star thresholds per tier are still to be defined and tuned with the world star counts.

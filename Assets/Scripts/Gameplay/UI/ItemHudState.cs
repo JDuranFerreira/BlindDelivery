@@ -18,9 +18,13 @@ namespace BlindDelivery.Gameplay.UI
         [SerializeField] ItemPlacementController items;
         [SerializeField] SimulationRunner runner;
 
-        static readonly IReadOnlyList<ItemType> AllTools = (ItemType[])Enum.GetValues(typeof(ItemType));
+        static readonly IReadOnlyList<ItemType> NoTools = Array.Empty<ItemType>();
 
-        public IReadOnlyList<ItemType> Tools => AllTools;
+        /// <summary>
+        /// Only the player tools this level grants. The placement controller builds its factory
+        /// from those definitions, so level fixtures (wind, etc.) never reach the HUD.
+        /// </summary>
+        public IReadOnlyList<ItemType> Tools => items != null ? items.SupportedTypes : NoTools;
 
         // Availability comes from the factory, so adding a tool never edits this adapter.
         public bool IsToolAvailable(ItemType type) => items != null && items.IsToolSupported(type);
@@ -75,8 +79,9 @@ namespace BlindDelivery.Gameplay.UI
 
         public void SelectTool(int index)
         {
-            if (items == null || index < 0 || index >= AllTools.Count) return;
-            if (IsToolAvailable(AllTools[index])) items.SelectType(AllTools[index]);
+            IReadOnlyList<ItemType> tools = Tools;
+            if (index < 0 || index >= tools.Count) return;
+            if (IsToolAvailable(tools[index])) items.SelectType(tools[index]);
         }
     }
 }

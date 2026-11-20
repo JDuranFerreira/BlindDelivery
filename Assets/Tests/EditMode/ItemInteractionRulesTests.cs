@@ -66,6 +66,17 @@ namespace BlindDelivery.Tests.EditMode
         }
 
         [Test]
+        public void SpeedFactor_SlowsWithGum_AndSpeedsWithOil()
+        {
+            GameBalance balance = Balance();
+            balance.BubbleGumSpeedFactor = 0.5f;
+            balance.OilSpeedFactor = 1.5f;
+            Assert.AreEqual(0.5f, ItemInteractionRules.SpeedFactor(balance, ItemType.BubbleGum), 1e-5f);
+            Assert.AreEqual(1.5f, ItemInteractionRules.SpeedFactor(balance, ItemType.Oil), 1e-5f);
+            Assert.AreEqual(1f, ItemInteractionRules.SpeedFactor(balance, ItemType.Cardbox), 1e-5f);
+        }
+
+        [Test]
         public void NullBalance_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => ItemInteractionRules.LaunchVerticalSpeed(null));

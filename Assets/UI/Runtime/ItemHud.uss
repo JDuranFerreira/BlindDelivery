@@ -69,7 +69,8 @@
     right: 0;
     height: 56px;
     flex-direction: row;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
     pointer-events: auto;
 }
 

@@ -21,17 +21,27 @@ namespace BlindDelivery.Editor
         const float RowHeight = 58f;
 
         SerializedProperty tools;
+        SerializedProperty fixtures;
         ReorderableList list;
+        ReorderableList fixtureList;
 
         void OnEnable()
         {
             tools = serializedObject.FindProperty("tools");
+            fixtures = serializedObject.FindProperty("fixtures");
             list = new ReorderableList(serializedObject, tools, true, true, true, true)
             {
-                drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Items granted by this level  (drag to reorder)"),
-                drawElementCallback = DrawElement,
+                drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Guidance Objects — shown in HUD (drag to reorder)"),
+                drawElementCallback = (rect, index, active, focused) => DrawElement(rect, tools, index, active, focused, true),
                 elementHeightCallback = _ => RowHeight,
-                onAddCallback = AddElement,
+                onAddCallback = _ => AddElement(tools),
+            };
+            fixtureList = new ReorderableList(serializedObject, fixtures, true, true, true, true)
+            {
+                drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Level Objects — never in HUD"),
+                drawElementCallback = (rect, index, active, focused) => DrawElement(rect, fixtures, index, active, focused, false),
+                elementHeightCallback = _ => 20f,
+                onAddCallback = _ => AddElement(fixtures),
             };
         }
 
@@ -44,7 +54,7 @@ namespace BlindDelivery.Editor
             {
                 do
                 {
-                    if (property.name == "tools") continue;
+                    if (property.name == "tools" || property.name == "fixtures") continue;
                     EditorGUILayout.PropertyField(property, true);
                 }
                 while (property.NextVisible(false));
@@ -52,6 +62,8 @@ namespace BlindDelivery.Editor
 
             EditorGUILayout.Space(8f);
             list.DoList(EditorGUILayout.GetControlRect(false, list.GetHeight()));
+            EditorGUILayout.Space(8f);
+            fixtureList.DoList(EditorGUILayout.GetControlRect(false, fixtureList.GetHeight()));
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("New Item Definition")) CreateDefinition();
@@ -59,16 +71,17 @@ namespace BlindDelivery.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.HelpBox(
-                "Player tools appear in the HUD and can be dragged by the player. " +
-                "Level fixtures (wind zones, etc.) are design-time objects only.",
+                "Guidance Objects appear in the HUD and can be dragged by the player. " +
+                "Level Objects (wind breaks, spikes, etc.) belong in the second list: they are " +
+                "authored into the level and can never be selected by the player.",
                 MessageType.Info);
 
             serializedObject.ApplyModifiedProperties();
         }
 
-        void DrawElement(Rect rect, int index, bool active, bool focused)
+        void DrawElement(Rect rect, SerializedProperty listProperty, int index, bool active, bool focused, bool allowDuplicate)
         {
-            SerializedProperty element = tools.GetArrayElementAtIndex(index);
+            SerializedProperty element = listProperty.GetArrayElementAtIndex(index);
             ItemDefinitionAsset definition = element.objectReferenceValue as ItemDefinitionAsset;
 
             Rect field = new Rect(rect.x, rect.y + 2f, rect.width - 74f, 18f);
@@ -86,7 +99,7 @@ namespace BlindDelivery.Editor
                     "  •  cost " + definition.ToData().MoveCost +
                     "  •  cd " + definition.ToData().CooldownSeconds.ToString("0.0") + "s");
 
-                if (definition.Usage == ItemUsage.PlayerTool && definition.Prefab == null)
+                if (definition.Usage == ItemUsage.Guidance && definition.Prefab == null)
                 {
                     EditorGUI.LabelField(new Rect(rect.x + 38f, rect.y + 40f, rect.width - 118f, 14f),
                         "Player tool needs a prefab", EditorStyles.helpBox);
@@ -98,17 +111,20 @@ namespace BlindDelivery.Editor
                     "Drop an Item Definition asset here", EditorStyles.helpBox);
             }
 
-            Rect copy = new Rect(rect.x + rect.width - 70f, rect.y + 24f, 66f, 20f);
-            using (new EditorGUI.DisabledScope(definition == null))
+            if (allowDuplicate)
             {
-                if (GUI.Button(copy, "Copy")) DuplicateDefinition(index);
+                Rect copy = new Rect(rect.x + rect.width - 70f, rect.y + 24f, 66f, 20f);
+                using (new EditorGUI.DisabledScope(definition == null))
+                {
+                    if (GUI.Button(copy, "Copy")) DuplicateDefinition(index);
+                }
             }
         }
 
-        void AddElement(ReorderableList reorderable)
+        void AddElement(SerializedProperty property)
         {
-            tools.InsertArrayElementAtIndex(tools.arraySize);
-            tools.GetArrayElementAtIndex(tools.arraySize - 1).objectReferenceValue = null;
+            property.InsertArrayElementAtIndex(property.arraySize);
+            property.GetArrayElementAtIndex(property.arraySize - 1).objectReferenceValue = null;
         }
 
         void DuplicateDefinition(int index)
@@ -150,32 +166,39 @@ namespace BlindDelivery.Editor
         {
             var seen = new HashSet<ItemType>();
             int issues = 0;
-            for (int i = 0; i < tools.arraySize; i++)
+            ValidateList(tools, seen, "Player item", ref issues);
+            ValidateList(fixtures, seen, "Fixture", ref issues);
+
+            Debug.Log(issues == 0
+                ? "[LevelData] " + target.name + ": item lists are valid."
+                : "[LevelData] " + target.name + ": " + issues + " issue(s) found.");
+        }
+
+        void ValidateList(SerializedProperty property, HashSet<ItemType> seen, string label, ref int issues)
+        {
+            for (int i = 0; i < property.arraySize; i++)
             {
-                var definition = tools.GetArrayElementAtIndex(i).objectReferenceValue as ItemDefinitionAsset;
+                ItemDefinitionAsset definition =
+                    property.GetArrayElementAtIndex(i).objectReferenceValue as ItemDefinitionAsset;
                 if (definition == null)
                 {
-                    Debug.LogWarning("[LevelData] Slot " + (i + 1) + " is empty.", target);
+                    Debug.LogWarning("[LevelData] " + label + " slot " + (i + 1) + " is empty.", target);
                     issues++;
                     continue;
                 }
 
-                if (definition.Usage == ItemUsage.PlayerTool && definition.Prefab == null)
+                if (definition.Usage == ItemUsage.Guidance && definition.Prefab == null)
                 {
-                    Debug.LogWarning("[LevelData] " + definition.name + " is a player tool but has no prefab.", target);
+                    Debug.LogWarning("[LevelData] " + definition.name + " is a Guidance Object but has no prefab.", target);
                     issues++;
                 }
 
                 if (!seen.Add(definition.Type))
                 {
-                    Debug.LogWarning("[LevelData] Duplicate item type in list: " + definition.Type + ".", target);
+                    Debug.LogWarning("[LevelData] Duplicate item type: " + definition.Type + ".", target);
                     issues++;
                 }
             }
-
-            Debug.Log(issues == 0
-                ? "[LevelData] " + target.name + ": item list is valid."
-                : "[LevelData] " + target.name + ": " + issues + " issue(s) found.");
         }
     }
 }

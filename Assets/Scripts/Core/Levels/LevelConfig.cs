@@ -29,11 +29,11 @@ namespace BlindDelivery.Core.Levels
         /// <summary>Tools granted by this level, in HUD order.</summary>
         public IReadOnlyList<ItemDefinitionData> Tools { get; set; } = Array.Empty<ItemDefinitionData>();
 
-        /// <summary>Items the player can place and drag; these become HUD slots.</summary>
-        public IReadOnlyList<ItemDefinitionData> PlayerTools => Filter(ItemUsage.PlayerTool);
+        /// <summary>Guidance Objects granted by this level, in HUD order.</summary>
+        public IReadOnlyList<ItemDefinitionData> GuidanceObjects => Filter(ItemUsage.Guidance);
 
-        /// <summary>Level-design-only items (wind zones, etc.); never shown in the player HUD.</summary>
-        public IReadOnlyList<ItemDefinitionData> Fixtures => Filter(ItemUsage.LevelFixture);
+        /// <summary>Level Objects (wind breaks, spikes, etc.); never shown in the player HUD.</summary>
+        public IReadOnlyList<ItemDefinitionData> LevelObjects => Filter(ItemUsage.LevelObject);
 
         IReadOnlyList<ItemDefinitionData> Filter(ItemUsage usage)
         {

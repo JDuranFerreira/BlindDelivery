@@ -39,3 +39,18 @@ MonoBehaviour:
   - type: 5
     moveCost: 10
     cooldownSeconds: 2
+  - type: 6
+    moveCost: 5
+    cooldownSeconds: 1
+  - type: 7
+    moveCost: 2
+    cooldownSeconds: 0.5
+  - type: 8
+    moveCost: 5
+    cooldownSeconds: 0.5
+  - type: 9
+    moveCost: 0
+    cooldownSeconds: 0
+  - type: 10
+    moveCost: 0
+    cooldownSeconds: 0
